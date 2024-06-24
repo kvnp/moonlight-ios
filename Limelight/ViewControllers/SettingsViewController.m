@@ -315,7 +315,61 @@ BOOL isCustomResolution(CGSize res) {
     [self.mousePointerVelocityFactorSlider setEnabled: currentSettings.touchMode.intValue == RELATIVE_TOUCH_MODE]; // mouse velocity scaling works only in relative touch mode.
 
     
+    //CustomOSC stuff
+    [self.onscreenControlSelector addTarget:self action:@selector(onscreenControlChanged) forControlEvents:UIControlEventValueChanged];
+    /* sets a reference to the correct 'LayoutOnScreenControlsViewController' depending on whether the user is on an iPhone or iPad */
+    self.layoutOnScreenControlsVC = [[LayoutOnScreenControlsViewController alloc] init];
+    BOOL isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
+    if (isIPhone) {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"iPhone" bundle:nil];
+        self.layoutOnScreenControlsVC = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
+    }
+    else {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"iPad" bundle:nil];
+        self.layoutOnScreenControlsVC = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
+        self.layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationFullScreen;
+    }
+  /*
+    if(currentSettings.touchMode.intValue == RELATIVE_TOUCH_MODE && currentSettings.onscreenControls.intValue == 4){  // load old settings
+        if (self.layoutOnScreenControlsVC.isBeingPresented == NO) {
+            [self presentViewController:self.layoutOnScreenControlsVC animated:YES completion:nil];
+        }
+    }*/
 }
+
+- (void)onscreenControlChanged{
+    
+    LayoutOnScreenControlsViewController *vc = [[LayoutOnScreenControlsViewController alloc] init];
+    BOOL isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
+    if (isIPhone) {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"iPhone" bundle:nil];
+        vc = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
+    }
+    else {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"iPad" bundle:nil];
+        vc = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
+        vc.modalPresentationStyle = UIModalPresentationFullScreen;
+    }
+
+    switch ([self.onscreenControlSelector selectedSegmentIndex]) {
+            case 0:
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                if (self.layoutOnScreenControlsVC.isBeingPresented == NO) {
+                    [self presentViewController:self.layoutOnScreenControlsVC animated:YES completion:nil];
+                }
+                break;
+        }
+
+    
+}
+
 
 - (void) pointerVelocityModeDividerSliderMoved {
     [self.pointerVelocityModeDividerUILabel setText:[NSString stringWithFormat:@"Touch Pointer Velocity: Scaled on %d%% of Right Screen", 100 - (uint8_t)self.pointerVelocityModeDividerSlider.value]];

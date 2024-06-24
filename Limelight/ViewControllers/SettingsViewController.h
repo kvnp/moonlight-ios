@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "AppDelegate.h"
+#import "CustomOSCViewControl/LayoutOnScreenControlsViewController.h"
 
 @interface SettingsViewController : UIViewController
 @property (strong, nonatomic) IBOutlet UILabel *bitrateLabel;
@@ -40,7 +41,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *touchPointerVelocityFactorUILabel;
 @property (strong, nonatomic) IBOutlet UISlider *mousePointerVelocityFactorSlider;
 @property (strong, nonatomic) IBOutlet UILabel *mousePointerVelocityFactorUILabel;
-
+@property (strong, nonatomic) LayoutOnScreenControlsViewController *layoutOnScreenControlsVC;
 
 
 #pragma clang diagnostic push
