@@ -29,8 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) IBOutlet UIImageView *chevronImageView;
 @property (weak, nonatomic) IBOutlet UIStackView *toolbarStackView;
 
-
-
 @end
+
 
 NS_ASSUME_NONNULL_END

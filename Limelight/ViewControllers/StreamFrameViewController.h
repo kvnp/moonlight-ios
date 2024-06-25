@@ -9,6 +9,7 @@
 #import "Connection.h"
 #import "StreamConfiguration.h"
 #import "StreamView.h"
+#import "LayoutOnScreenControlsViewController.h"
 
 #import <UIKit/UIKit.h>
 
@@ -18,6 +19,7 @@
 @interface StreamFrameViewController : GCEventViewController <ConnectionCallbacks, ControllerSupportDelegate, UserInteractionDelegate, UIScrollViewDelegate>
 #else
 @interface StreamFrameViewController : UIViewController <ConnectionCallbacks, ControllerSupportDelegate, UserInteractionDelegate, UIScrollViewDelegate>
+
 #endif
 @property (nonatomic) StreamConfiguration* streamConfig;
 

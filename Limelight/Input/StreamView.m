@@ -74,7 +74,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     
     isInputingText = false;
     keyboardToggleRecognizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleKeyboard)];
-    keyboardToggleRecognizer.numberOfTouchesRequired = settings.keyboardToggleFingers.intValue;
+    keyboardToggleRecognizer.numberOfTouchesRequired = settings.keyboardToggleFingers.intValue; //will be changed accordinly by touch modes.
     keyboardToggleRecognizer.tapDownTimeThreshold = 0.3; // tap down time threshold in seconds.
     keyboardToggleRecognizer.delaysTouchesBegan = NO;
     keyboardToggleRecognizer.delaysTouchesEnded = NO;
@@ -101,7 +101,8 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
             self->touchHandler = [[NativeTouchHandler alloc] initWithView:self andSettings:settings];break;
         case RELATIVE_TOUCH_MODE:
             self->touchHandler = [[RelativeTouchHandler alloc] initWithView:self andSettings:settings];
-            keyboardToggleRecognizer.immediateTriggering = true; //triggers signal in touchesBegan callback stage
+            keyboardToggleRecognizer.immediateTriggering = false;
+            keyboardToggleRecognizer.numberOfTouchesRequired = 3; //fixing keyboard taps to 3, in order to invoke OSC rebase in stream view by 4-finger tap.
             break;
         case ABSOLUTE_TOUCH_MODE:
             self->touchHandler = [[AbsoluteTouchHandler alloc] initWithView:self]; 
@@ -268,6 +269,17 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 #if !TARGET_OS_TV
     [onScreenControls show];
 #endif
+}
+- (void) disableOnScreenControls {
+#if !TARGET_OS_TV
+    [onScreenControls setLevel:OnScreenControlsLevelOff];
+#endif
+}
+
+- (void) reloadOnScreenControlsWith:(ControllerSupport*)controllerSupport
+                         andConfig:(StreamConfiguration*)streamConfig {
+    onScreenControls = [[OnScreenControls alloc] initWithView:self controllerSup:controllerSupport streamConfig:streamConfig];
+    [onScreenControls setLevel:OnScreenControlsCustom];
 }
 
 - (OnScreenControlsLevel) getCurrentOscState {

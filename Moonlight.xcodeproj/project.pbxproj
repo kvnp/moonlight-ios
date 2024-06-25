@@ -1495,6 +1495,7 @@
 					"$(PROJECT_DIR)/Limelight/Input/CustomOSC",
 					"$(PROJECT_DIR)/Limelight/ViewControllers/CustomOSCViewControl",
 					"$(PROJECT_DIR)/Limelight/ViewControllers/CustomOSCViewControl/Cells",
+					"$(PROJECT_DIR)/Limelight/Input",
 				);
 				INFOPLIST_FILE = "Limelight/Limelight-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = MoonlightZWM;
@@ -1549,6 +1550,7 @@
 					"$(PROJECT_DIR)/Limelight/Input/CustomOSC",
 					"$(PROJECT_DIR)/Limelight/ViewControllers/CustomOSCViewControl",
 					"$(PROJECT_DIR)/Limelight/ViewControllers/CustomOSCViewControl/Cells",
+					"$(PROJECT_DIR)/Limelight/Input",
 				);
 				INFOPLIST_FILE = "Limelight/Limelight-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = MoonlightZWM;

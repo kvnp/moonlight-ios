@@ -28,6 +28,9 @@
      interactionDelegate:(id<UserInteractionDelegate>)interactionDelegate
                   config:(StreamConfiguration*)streamConfig;
 - (void) showOnScreenControls;
+- (void) disableOnScreenControls;
+- (void) reloadOnScreenControlsWith:(ControllerSupport*)controllerSupport
+                          andConfig:(StreamConfiguration*)streamConfig;
 - (CGSize) getVideoAreaSize;
 - (CGPoint) adjustCoordinatesForVideoArea:(CGPoint)point;
 - (uint16_t)getRotationFromAzimuthAngle:(float)azimuthAngle;

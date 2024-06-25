@@ -31,6 +31,12 @@
 @synthesize chevronView;
 @synthesize chevronImageView;
 
+
+- (void) viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"OscLayoutCloseNotification" object:self];
+}
+
 - (void) viewDidLoad {
     [super viewDidLoad];
     
@@ -57,7 +63,7 @@
     [self.chevronView addGestureRecognizer:singleFingerTap];
 
     self.layoutOSC = [[LayoutOnScreenControls alloc] initWithView:self.view controllerSup:nil streamConfig:nil oscLevel:OSCSegmentSelected];
-    self.layoutOSC._level = 4;
+    self.layoutOSC._level = OnScreenControlsCustom;
     [self.layoutOSC show];  // draw on screen controls
     
     [self addInnerAnalogSticksToOuterAnalogLayers]; // allows inner and analog sticks to be dragged together around the screen together as one unit which is the expected behavior
@@ -93,6 +99,7 @@
             }];
         }];
     });
+    [self profileRefresh];
 }
 
 
@@ -270,6 +277,33 @@
     }]];
     [self presentViewController:inputNameAlertController animated:YES completion:nil];
 }
+
+
+/* Presents the view controller that lists all OSC profiles the user can choose from */
+- (void)profileRefresh{
+    UIStoryboard *storyboard;
+    BOOL isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
+    if (isIPhone) {
+        storyboard = [UIStoryboard storyboardWithName:@"iPhone" bundle:nil];
+    }
+    else {
+        storyboard = [UIStoryboard storyboardWithName:@"iPad" bundle:nil];
+    }
+    
+    OSCProfilesTableViewController *vc = [storyboard   instantiateViewControllerWithIdentifier:@"OSCProfilesTableViewController"] ;
+    
+    vc.didDismissOSCProfilesTVC = ^() {   // a block that will be called when the modally presented 'OSCProfilesTableViewController' VC is dismissed. By the time the 'OSCProfilesTableViewController' VC is dismissed the user would have potentially selected a different OSC profile with a different layout and they want to see this layout on this 'LayoutOnScreenControlsViewController.' This block of code will load the profile and then hide/show and move each OSC button to their appropriate position
+        [self.layoutOSC updateControls];  // creates and saves a 'Default' OSC profile or loads the one the user selected on the previous screen
+        
+        [self addInnerAnalogSticksToOuterAnalogLayers];
+        
+        [self.layoutOSC.layoutChanges removeAllObjects];  // since a new OSC profile is being loaded, this will remove all previous layout changes made from the array
+        
+        [self OSCLayoutChanged];    // fades the 'Undo Button' out
+    };
+    [self presentViewController:vc animated:YES completion:nil];
+}
+
 
 /* Presents the view controller that lists all OSC profiles the user can choose from */
 - (IBAction) loadTapped:(id)sender {

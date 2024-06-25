@@ -12,12 +12,13 @@
 #import "StreamManager.h"
 #import "ControllerSupport.h"
 #import "DataManager.h"
+#import "CustomEdgeSwipeGestureRecognizer.h"
+#import "CustomTapGestureRecognizer.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <Limelight.h>
-#import "CustomEdgeSwipeGestureRecognizer.h"
 
 #if TARGET_OS_TV
 #import <AVFoundation/AVDisplayCriteria.h>
@@ -53,6 +54,8 @@
     
 #if !TARGET_OS_TV
     CustomEdgeSwipeGestureRecognizer *_exitSwipeRecognizer;
+    CustomTapGestureRecognizer *_oscLayoutTapRecoginizer;
+    LayoutOnScreenControlsViewController *_layoutOnScreenControlsVC;
 #endif
 }
 
@@ -139,6 +142,30 @@
     _exitSwipeRecognizer.delaysTouchesEnded = NO;
     [self.view addGestureRecognizer:_exitSwipeRecognizer];
     
+    
+    if(_settings.touchMode.intValue == RELATIVE_TOUCH_MODE && _settings.onscreenControls.intValue == OnScreenControlsCustom){
+        _oscLayoutTapRecoginizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(layoutOSC)];
+        _oscLayoutTapRecoginizer.numberOfTouchesRequired = 4; //tap 4 fingers to invoke OSC rebase
+        _oscLayoutTapRecoginizer.tapDownTimeThreshold = 1;
+        _oscLayoutTapRecoginizer.delaysTouchesBegan = NO;
+        _oscLayoutTapRecoginizer.delaysTouchesEnded = NO;
+        [self.view addGestureRecognizer:_oscLayoutTapRecoginizer];
+        /* sets a reference to the correct 'LayoutOnScreenControlsViewController' depending on whether the user is on an iPhone or iPad */
+        _layoutOnScreenControlsVC = [[LayoutOnScreenControlsViewController alloc] init];
+        BOOL isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
+        if (isIPhone) {
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"iPhone" bundle:nil];
+            _layoutOnScreenControlsVC = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
+        }
+        else {
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"iPad" bundle:nil];
+            _layoutOnScreenControlsVC = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
+            _layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationFullScreen;
+        }
+        _layoutOnScreenControlsVC.view.backgroundColor = UIColor.clearColor;
+        _layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+    }
+
 #endif
     
     _tipLabel = [[UILabel alloc] init];
@@ -175,6 +202,11 @@
                                              selector: @selector(applicationDidEnterBackground:)
                                                  name: UIApplicationDidEnterBackgroundNotification
                                                object: nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(oscLayoutClosed)
+                                                 name:@"OscLayoutCloseNotification"
+                                               object:nil];
 
 #if 0
     // FIXME: This doesn't work reliably on iPad for some reason. Showing and hiding the keyboard
@@ -215,6 +247,19 @@
     [self.view addSubview:_spinner];
     [self.view addSubview:_tipLabel];
 }
+
+- (void)layoutOSC{
+    [self->_streamView disableOnScreenControls];
+    [self presentViewController:_layoutOnScreenControlsVC animated:YES completion:nil];
+}
+
+- (void)oscLayoutClosed{
+    // Handle the callback
+    [self->_streamView reloadOnScreenControlsWith:(ControllerSupport*)_controllerSupport
+                                        andConfig:(StreamConfiguration*)_streamConfig];
+    [self->_streamView showOnScreenControls];
+}
+
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
     return _streamView;
