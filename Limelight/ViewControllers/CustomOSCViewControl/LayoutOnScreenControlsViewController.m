@@ -74,6 +74,11 @@
         [profilesManager saveProfileWithName:@"Default" andButtonLayers:self.layoutOSC.OSCButtonLayers];
     }
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(profileRefresh)
+                                                 name:@"OscLayoutTableViewCloseNotification"
+                                               object:nil];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(OSCLayoutChanged) name:@"OSCLayoutChanged" object:nil];    // used to notifiy this view controller that the user made a change to the OSC layout so that the VC can either fade in or out its 'Undo button' which will signify to the user whether there are any OSC layout changes to undo
     
     /* This will animate the toolbar with a subtle up and down motion intended to telegraph to the user that they can hide the toolbar if they wish*/
@@ -273,18 +278,22 @@
         storyboard = [UIStoryboard storyboardWithName:@"iPad" bundle:nil];
     }
     
-    OSCProfilesTableViewController *vc = [storyboard   instantiateViewControllerWithIdentifier:@"OSCProfilesTableViewController"] ;
+    // Center the current profile lable horizontally:;
+    // Calculate the x-position
+    CGFloat xPosition = (self.view.bounds.size.width - self.currentProfileLabel.frame.size.width) / 2;
+    // Set the label's frame with the calculated x-position
+    self.currentProfileLabel.frame = CGRectMake(xPosition, self.currentProfileLabel.frame.origin.y, self.currentProfileLabel.frame.size.width, self.currentProfileLabel.frame.size.height);
+    self.currentProfileLabel.hidden = NO; // Show Current Profile display
+    [self.currentProfileLabel setText:[NSString stringWithFormat:@"Current Profile: %@",[profilesManager getSelectedProfile].name]]; // display current profile name when profile is being refreshed.
+
+    _oscProfilesTableViewController = [storyboard instantiateViewControllerWithIdentifier:@"OSCProfilesTableViewController"];
     
-    vc.didDismissOSCProfilesTVC = ^() {   // a block that will be called when the modally presented 'OSCProfilesTableViewController' VC is dismissed. By the time the 'OSCProfilesTableViewController' VC is dismissed the user would have potentially selected a different OSC profile with a different layout and they want to see this layout on this 'LayoutOnScreenControlsViewController.' This block of code will load the profile and then hide/show and move each OSC button to their appropriate position
+    _oscProfilesTableViewController.didDismissOSCProfilesTVC = ^() {   // a block that will be called when the modally presented 'OSCProfilesTableViewController' VC is dismissed. By the time the 'OSCProfilesTableViewController' VC is dismissed the user would have potentially selected a different OSC profile with a different layout and they want to see this layout on this 'LayoutOnScreenControlsViewController.' This block of code will load the profile and then hide/show and move each OSC button to their appropriate position
         [self.layoutOSC updateControls];  // creates and saves a 'Default' OSC profile or loads the one the user selected on the previous screen
-        
         [self addInnerAnalogSticksToOuterAnalogLayers];
-        
         [self.layoutOSC.layoutChanges removeAllObjects];  // since a new OSC profile is being loaded, this will remove all previous layout changes made from the array
-        
         [self OSCLayoutChanged];    // fades the 'Undo Button' out
-        
-        _oscProfilesTableViewController.currentOSCButtonLayers = self.layoutOSC.OSCButtonLayers; //pass updated OSCLayout to OSCProfView again
+        _oscProfilesTableViewController.currentOSCButtonLayers = self.layoutOSC.OSCButtonLayers; //pass updated OSCLayout to OSCProfileTableView again
     };
     // [self presentViewController:vc animated:YES completion:nil];
 }
@@ -312,6 +321,7 @@
         
         [self OSCLayoutChanged];    // fades the 'Undo Button' out
     };
+    self.currentProfileLabel.hidden = YES; // Hide Current Profile display before entering the profile table view
     _oscProfilesTableViewController.currentOSCButtonLayers = self.layoutOSC.OSCButtonLayers;
     [self presentViewController:_oscProfilesTableViewController animated:YES completion:nil];
 }

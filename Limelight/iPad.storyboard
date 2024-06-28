@@ -695,6 +695,15 @@ ICAgICAgICAgICAgICA
                                     <constraint firstItem="YLK-IE-ajS" firstAttribute="centerX" secondItem="fZU-G0-fgM" secondAttribute="centerX" id="xm7-a0-8G7"/>
                                 </constraints>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Current Profile:" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" id="cRV-Xw-CVi">
+                                <rect key="frame" x="207" y="128" width="420" height="54"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.38551661729999998" green="0.28289704380000003" blue="0.61853601300000005" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="tintColor" red="0.81533776120000001" green="0.85979419950000002" blue="0.91372549020000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="28"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
@@ -706,6 +715,7 @@ ICAgICAgICAgICAgICA
                     <connections>
                         <outlet property="chevronImageView" destination="iVZ-Fd-dY7" id="403-Nj-wRx"/>
                         <outlet property="chevronView" destination="hKp-ds-86I" id="Og9-aT-zNH"/>
+                        <outlet property="currentProfileLabel" destination="cRV-Xw-CVi" id="Zrb-zn-ptp"/>
                         <outlet property="toolbarRootView" destination="fZU-G0-fgM" id="txP-M2-GKi"/>
                         <outlet property="toolbarStackView" destination="YLK-IE-ajS" id="j4o-Kp-7Z8"/>
                         <outlet property="toolbarTopConstraintiPad" destination="Ppb-J1-lXg" id="laN-Zh-lHm"/>
@@ -715,7 +725,7 @@ ICAgICAgICAgICAgICA
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dev-Ck-vTF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2700" y="1068"/>
+            <point key="canvasLocation" x="2699.2805755395684" y="1067.8391959798996"/>
         </scene>
         <!--Profiles Table View Controller-->
         <scene sceneID="W0E-wz-n2b">

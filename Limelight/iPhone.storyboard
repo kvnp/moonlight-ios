@@ -693,6 +693,14 @@ ICAgICAgICAgICAgIA
                                     <action selector="closeTapped:" destination="ZYS-Zm-PJs" eventType="touchUpInside" id="U8V-Ry-ym9"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Current Profile:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yJC-bq-EOU">
+                                <rect key="frame" x="39" y="86" width="337" height="38"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.38551661729999998" green="0.28289704380000003" blue="0.61853601300000005" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                                <color key="textColor" red="0.95132106540000005" green="0.97490358349999995" blue="0.99987185000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
@@ -706,6 +714,7 @@ ICAgICAgICAgICAgIA
                     <connections>
                         <outlet property="chevronImageView" destination="76O-3K-aa8" id="yGv-fM-Ohf"/>
                         <outlet property="chevronView" destination="Zll-IP-PFt" id="MGR-C0-h57"/>
+                        <outlet property="currentProfileLabel" destination="yJC-bq-EOU" id="6Sn-El-zPG"/>
                         <outlet property="toolbarRootView" destination="Jnu-63-bcf" id="Y17-e2-18R"/>
                         <outlet property="toolbarStackView" destination="4he-pe-kYB" id="eVm-jM-dcv"/>
                         <outlet property="toolbarTopConstraintiPhone" destination="wNr-7F-S0i" id="iXe-d3-R7i"/>

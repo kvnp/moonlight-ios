@@ -26,6 +26,12 @@ const double NAV_BAR_HEIGHT = 50;
 
 @synthesize tableView;
 
+- (void) viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"OscLayoutTableViewCloseNotification" object:self]; // notify other view that oscLayoutManager is closing
+}
+
+
 - (void) viewDidLoad {
     [super viewDidLoad];
     
@@ -101,7 +107,6 @@ const double NAV_BAR_HEIGHT = 50;
                 [self presentViewController:savedAlertController animated:YES completion:nil];
             }
             else if ([self->profilesManager profileNameAlreadyExist:enteredProfileName] == YES) {  // if the entered profile name already
-                NSLog(@"tttttttttt");
                 UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"Profile name already exists"] preferredStyle:UIAlertControllerStyleAlert];
                 
                 [savedAlertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
@@ -139,7 +144,7 @@ const double NAV_BAR_HEIGHT = 50;
     }
 }
 
-- (IBAction) deleteTapped:(id)sender{
+- (IBAction) deleteTapped:(id)sender{// delete can be executed simply by calling this 2 methods.
     [profilesManager deleteCurrentSelectedProfile];
     [self profileViewRefresh];
 }

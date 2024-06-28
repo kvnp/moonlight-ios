@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) IBOutlet UIStackView *toolbarStackView;
 @property (strong, nonatomic) OSCProfilesTableViewController *oscProfilesTableViewController;
 @property (nonatomic, assign) NSString *currentProfileName;
+@property (strong, nonatomic) IBOutlet UILabel *currentProfileLabel;
 
 @end
 
