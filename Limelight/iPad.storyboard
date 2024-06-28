@@ -670,6 +670,20 @@ ICAgICAgICAgICAgICA
                                             <constraint firstItem="iVZ-Fd-dY7" firstAttribute="top" secondItem="hKp-ds-86I" secondAttribute="top" id="rRw-UW-drh"/>
                                         </constraints>
                                     </view>
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7bp-Wn-j9n" userLabel="Exit">
+                                        <rect key="frame" x="15" y="0.0" width="80" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="50" id="qtH-gP-Fjj"/>
+                                            <constraint firstAttribute="height" constant="50" id="tqU-Lh-NQA"/>
+                                        </constraints>
+                                        <color key="tintColor" red="0.6705882353" green="0.61568627450000002" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="OSCLayoutExit"/>
+                                        <connections>
+                                            <action selector="closeTapped:" destination="xSZ-i2-Jts" eventType="touchUpInside" id="sc6-Mq-rbQ"/>
+                                            <action selector="undoTapped:" destination="xSZ-i2-Jts" eventType="touchUpInside" id="d4b-0R-vJU"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
@@ -681,25 +695,12 @@ ICAgICAgICAgICAgICA
                                     <constraint firstItem="YLK-IE-ajS" firstAttribute="centerX" secondItem="fZU-G0-fgM" secondAttribute="centerX" id="xm7-a0-8G7"/>
                                 </constraints>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wcw-3N-DdH">
-                                <rect key="frame" x="30" y="29" width="57" height="72"/>
-                                <color key="tintColor" red="0.6705882353" green="0.61568627450000002" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="x" buttonSize="large">
-                                    <fontDescription key="titleFontDescription" type="system" pointSize="35"/>
-                                </buttonConfiguration>
-                                <connections>
-                                    <action selector="closeTapped:" destination="xSZ-i2-Jts" eventType="touchUpInside" id="M8m-Vu-KwH"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="fZU-G0-fgM" secondAttribute="trailing" id="6wU-vF-mZw"/>
                             <constraint firstItem="fZU-G0-fgM" firstAttribute="leading" secondItem="Acw-S4-f8a" secondAttribute="leading" id="DVc-cD-qO0"/>
                             <constraint firstItem="fZU-G0-fgM" firstAttribute="top" secondItem="O1f-cu-KVo" secondAttribute="bottom" id="Ppb-J1-lXg" userLabel="Toolbar Top Constraint iPad"/>
-                            <constraint firstItem="wcw-3N-DdH" firstAttribute="top" secondItem="O1f-cu-KVo" secondAttribute="bottom" constant="5" id="hjM-uY-rEa"/>
-                            <constraint firstItem="wcw-3N-DdH" firstAttribute="leading" secondItem="Acw-S4-f8a" secondAttribute="leadingMargin" constant="10" id="qQD-rW-mv0"/>
                         </constraints>
                     </view>
                     <connections>
@@ -714,7 +715,7 @@ ICAgICAgICAgICAgICA
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dev-Ck-vTF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3138" y="1068"/>
+            <point key="canvasLocation" x="3137.4100719424464" y="1067.8391959798996"/>
         </scene>
         <!--Profiles Table View Controller-->
         <scene sceneID="W0E-wz-n2b">
@@ -728,7 +729,7 @@ ICAgICAgICAgICAgICA
                         <rect key="frame" x="0.0" y="0.0" width="834" height="1194"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="BA3-hd-bDp">
+                            <tableView opaque="NO" clearsContextBeforeDrawing="NO" alpha="0.5" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="BA3-hd-bDp">
                                 <rect key="frame" x="0.0" y="44" width="834" height="1150"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </tableView>
@@ -785,6 +786,7 @@ ICAgICAgICAgICAgICA
     <resources>
         <image name="ArrowBackward" width="40" height="40"/>
         <image name="ChevronCompactUp" width="35" height="10"/>
+        <image name="OSCLayoutExit" width="40" height="40"/>
         <image name="SquareAndArrowDown" width="40" height="40"/>
         <image name="SquaresArrowUp" width="40" height="40"/>
         <image name="Trash" width="40" height="40"/>

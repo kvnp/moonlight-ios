@@ -577,11 +577,11 @@ ICAgICAgICAgICAgIA
                         <viewControllerLayoutGuide type="top" id="OEV-LT-On1"/>
                         <viewControllerLayoutGuide type="bottom" id="TWA-bF-hnk"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="Mwx-9q-yJJ">
+                    <view key="view" opaque="NO" clearsContextBeforeDrawing="NO" alpha="0.75" contentMode="scaleToFill" id="Mwx-9q-yJJ">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view alpha="0.75" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jnu-63-bcf" customClass="ToolBarContainerView">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jnu-63-bcf" customClass="ToolBarContainerView">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="50"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleAspectFill" alignment="center" spacing="70" translatesAutoresizingMaskIntoConstraints="NO" id="4he-pe-kYB">
@@ -684,12 +684,11 @@ ICAgICAgICAgICAgIA
                                     <constraint firstItem="Zll-IP-PFt" firstAttribute="centerX" secondItem="Jnu-63-bcf" secondAttribute="centerX" id="yvK-OU-Gl6"/>
                                 </constraints>
                             </view>
-                            <button opaque="NO" tag="40" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nHH-6h-4D1">
-                                <rect key="frame" x="25" y="5" width="30" height="47"/>
-                                <fontDescription key="fontDescription" name="ArialRoundedMTBold" family="Arial Rounded MT Bold" pointSize="30"/>
+                            <button opaque="NO" tag="40" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nHH-6h-4D1">
+                                <rect key="frame" x="25" y="5" width="40" height="40"/>
                                 <color key="tintColor" red="0.6705882353" green="0.61568627450000002" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" title="x"/>
+                                <state key="normal" image="OSCLayoutExit"/>
                                 <connections>
                                     <action selector="closeTapped:" destination="ZYS-Zm-PJs" eventType="touchUpInside" id="U8V-Ry-ym9"/>
                                 </connections>
@@ -726,14 +725,14 @@ ICAgICAgICAgICAgIA
                         <viewControllerLayoutGuide type="top" id="Nat-X1-41w"/>
                         <viewControllerLayoutGuide type="bottom" id="9SV-fx-82v"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="bTO-bs-q93">
+                    <view key="view" alpha="0.75" contentMode="scaleToFill" id="bTO-bs-q93">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="kTH-ez-aKD">
+                            <tableView opaque="NO" clearsContextBeforeDrawing="NO" alpha="0.5" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="kTH-ez-aKD">
                                 <rect key="frame" x="0.0" y="48" width="414" height="848"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <color key="sectionIndexBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="sectionIndexBackgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </tableView>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zsA-6X-Qc5">
                                 <rect key="frame" x="0.0" y="48" width="414" height="44"/>
@@ -763,7 +762,7 @@ ICAgICAgICAgICAgIA
                                 </items>
                             </navigationBar>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemGray3Color"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="zsA-6X-Qc5" firstAttribute="leading" secondItem="bTO-bs-q93" secondAttribute="leading" id="0Fi-vo-M6P"/>
                             <constraint firstAttribute="bottom" secondItem="kTH-ez-aKD" secondAttribute="bottom" id="1FM-gO-6PR"/>
@@ -786,14 +785,12 @@ ICAgICAgICAgICAgIA
     <resources>
         <image name="ArrowBackward" width="40" height="40"/>
         <image name="ChevronCompactUp" width="35" height="10"/>
+        <image name="OSCLayoutExit" width="40" height="40"/>
         <image name="SquareAndArrowDown" width="40" height="40"/>
         <image name="SquaresArrowUp" width="40" height="40"/>
         <image name="Trash" width="40" height="40"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemGray3Color">
-            <color red="0.7803921568627451" green="0.7803921568627451" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
