@@ -577,7 +577,7 @@ ICAgICAgICAgICAgIA
                         <viewControllerLayoutGuide type="top" id="OEV-LT-On1"/>
                         <viewControllerLayoutGuide type="bottom" id="TWA-bF-hnk"/>
                     </layoutGuides>
-                    <view key="view" opaque="NO" clearsContextBeforeDrawing="NO" alpha="0.75" contentMode="scaleToFill" id="Mwx-9q-yJJ">
+                    <view key="view" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="Mwx-9q-yJJ">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
@@ -715,7 +715,7 @@ ICAgICAgICAgICAgIA
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ORo-HP-JDj" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2641" y="1373"/>
+            <point key="canvasLocation" x="2640.579710144928" y="1372.7678571428571"/>
         </scene>
         <!--Profiles Table View Controller-->
         <scene sceneID="C7c-yg-gQK">
@@ -725,7 +725,7 @@ ICAgICAgICAgICAgIA
                         <viewControllerLayoutGuide type="top" id="Nat-X1-41w"/>
                         <viewControllerLayoutGuide type="bottom" id="9SV-fx-82v"/>
                     </layoutGuides>
-                    <view key="view" alpha="0.75" contentMode="scaleToFill" id="bTO-bs-q93">
+                    <view key="view" contentMode="scaleToFill" id="bTO-bs-q93">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>

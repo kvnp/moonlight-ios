@@ -715,7 +715,7 @@ ICAgICAgICAgICAgICA
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dev-Ck-vTF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3137.4100719424464" y="1067.8391959798996"/>
+            <point key="canvasLocation" x="2700" y="1068"/>
         </scene>
         <!--Profiles Table View Controller-->
         <scene sceneID="W0E-wz-n2b">
@@ -780,7 +780,7 @@ ICAgICAgICAgICAgICA
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="K4u-Tz-tXU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2501" y="1068"/>
+            <point key="canvasLocation" x="3388" y="1068"/>
         </scene>
     </scenes>
     <resources>
