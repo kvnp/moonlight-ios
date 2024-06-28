@@ -56,6 +56,35 @@
     return profilesEncoded;
 }
 
+
+/**
+ * Delete an 'OSCProfile' object of specific index for another in the 'OSCProfile' objects array stored in persistent storage
+ */
+-(void)deleteCurrentSelectedProfile{
+    NSMutableArray *profiles = [self getAllProfiles];
+    NSInteger selectedIndex = [self getIndexOfSelectedProfile];
+    
+    /* Remove the selected profile */
+    if(selectedIndex != 0) [profiles removeObjectAtIndex:selectedIndex]; //deleting default profile (index 0) is not allowed
+    else {
+        NSLog(@"Default profile!"); // to be updated here.
+    }
+    
+    selectedIndex--;
+    if(selectedIndex < 0) selectedIndex = 0;
+    OSCProfile *newSelectedProfile = [profiles objectAtIndex:selectedIndex];
+    newSelectedProfile.isSelected = YES;
+    
+    NSMutableArray *profilesEncoded = [self encodedProfilesFromArray:profiles]; // encode each 'profile' object in the array and add them to a new array
+    
+    /* Encode the array itself, NOT the objects in the array, which are already encoded. Save array to persistent storage */
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:profilesEncoded requiringSecureCoding:YES error:nil];
+    [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"OSCProfiles"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+}
+
+
 /**
  * Replaces one 'OSCProfile' object for another in the 'OSCProfile' objects array stored in persistent storage
  */
@@ -160,6 +189,32 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+
+- (bool) updateSelectedProfileSucceedWithButtonLayers:(NSMutableArray *)buttonLayers {
+    /* iterate through each OSC button the user sees on screen, create an 'OnScreenButtonState' object from each button, encode each object, and then add each object to an array */
+    NSMutableArray *buttonStatesEncoded = [[NSMutableArray alloc] init];
+    for (CALayer *buttonLayer in buttonLayers) {
+        
+        OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:buttonLayer.name  isHidden:buttonLayer.isHidden andPosition:buttonLayer.position];
+        NSData *buttonStateEncoded = [NSKeyedArchiver archivedDataWithRootObject:buttonState requiringSecureCoding:YES error:nil];
+        [buttonStatesEncoded addObject: buttonStateEncoded];
+    }
+    if([self getIndexOfSelectedProfile]==0) return false;
+    OSCProfile *newProfile = [[OSCProfile alloc] initWithName:[self getSelectedProfile].name
+                            buttonStates:buttonStatesEncoded isSelected:YES];        // create a new 'OSCProfile'. Set the array of encoded button states created above to the 'buttonStates' property of the new profile, along with a 'name'. Set 'isSelected' argument to YES which will set this saved profile as the one that will show up in the game stream view
+
+    
+    /* set all saved OSCProfiles 'isSelected' property to NO since the new profile you're adding will be set as the selected profile */
+    NSMutableArray *profiles = [self getAllProfiles];
+    for (OSCProfile *profile in profiles) {
+        profile.isSelected = NO;
+    }
+    [self replaceProfile:[self getSelectedProfile] withProfile:newProfile];
+    return true;
+}
+
+
+
 - (void) saveProfileWithName:(NSString*)name andButtonLayers:(NSMutableArray *)buttonLayers {
     /* iterate through each OSC button the user sees on screen, create an 'OnScreenButtonState' object from each button, encode each object, and then add each object to an array */
     NSMutableArray *buttonStatesEncoded = [[NSMutableArray alloc] init];
@@ -211,5 +266,9 @@
     
     return NO;
 }
+
+
+
+
 
 @end

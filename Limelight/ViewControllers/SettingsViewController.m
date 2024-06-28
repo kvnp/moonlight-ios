@@ -288,10 +288,10 @@ BOOL isCustomResolution(CGSize res) {
     [self updateBitrateText];
     [self updateResolutionDisplayViewText];
     
-    
+    //init keyboardToggle settings
     if(currentSettings.touchMode.intValue == RELATIVE_TOUCH_MODE){
         [self.keyboardToggleFingerNumSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] != RELATIVE_TOUCH_MODE];
-        [self.keyboardToggleFingerNumSlider setValue:3.0];
+        [self.keyboardToggleFingerNumSlider setValue:3.0];  //force 3 finger tap to toggle keyboard in relative touch mode. This is for the 4 finger OSC layout tool gesture.
         [self.keyboardToggleFingerNumLabel setText:[NSString stringWithFormat:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]];
     }
     else{
@@ -301,34 +301,38 @@ BOOL isCustomResolution(CGSize res) {
     }
     [self.keyboardToggleFingerNumSlider addTarget:self action:@selector(keyboardToggleFingerNumSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
     
-    
+    // lift streamview setting
     [self.liftStreamViewForKeyboardSelector setSelectedSegmentIndex:currentSettings.liftStreamViewForKeyboard ? 1 : 0];// Load old setting
+    
+    // showkeyboard toolbar setting
     [self.showKeyboardToolbarSelector setSelectedSegmentIndex:currentSettings.showKeyboardToolbar ? 1 : 0];// Load old setting
+    
+    // swipe & exit setting
     [self.swipeExitScreenEdgeSelector setSelectedSegmentIndex:[self getSelectorIndexFromScreenEdge:(uint32_t)currentSettings.swipeExitScreenEdge.integerValue]]; // Load old setting
     [self.swipeToExitDistanceSlider setValue:(CGFloat)currentSettings.swipeToExitDistance.floatValue animated:YES]; // Load old setting.
     [self.swipeToExitDistanceUILabel setText:[NSString stringWithFormat:@"Swipe & Exit Distance: %.2f * screen-width", self.swipeToExitDistanceSlider.value]]; // Initiate label display
     [self.swipeToExitDistanceSlider addTarget:self action:@selector(swipeToExitDistanceSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
     
-    
+    // pointer veloc setting
     [self.pointerVelocityModeDividerSlider setValue:currentSettings.pointerVelocityModeDivider.floatValue * 100 animated:YES]; // Load old setting.
     [self.pointerVelocityModeDividerUILabel setText:[NSString stringWithFormat:@"Touch Pointer Velocity: Scaled on %d%% of Right Screen", 100 - (uint8_t)self.pointerVelocityModeDividerSlider.value]]; // Initiate label display
     [self.pointerVelocityModeDividerSlider addTarget:self action:@selector(pointerVelocityModeDividerSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
     [self.pointerVelocityModeDividerSlider setEnabled: currentSettings.touchMode.intValue == NATIVE_TOUCH_MODE]; // pointer velocity scaling works only in native touch mode.
 
-    
+    // init pointer veloc setting
     [self.touchPointerVelocityFactorSlider setValue:currentSettings.touchPointerVelocityFactor.floatValue * 100 animated:YES]; // Load old setting.
     [self.touchPointerVelocityFactorUILabel setText:[NSString stringWithFormat:@"Touch Pointer Velocity: %d%%", (uint16_t)self.touchPointerVelocityFactorSlider.value]]; // Initiate label display
     [self.touchPointerVelocityFactorSlider addTarget:self action:@selector(touchPointerVelocityFactorSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
     [self.touchPointerVelocityFactorSlider setEnabled: currentSettings.touchMode.intValue == NATIVE_TOUCH_MODE]; // pointer velocity scaling works only in native touch mode.
     
-    
+    // init relative touch mouse pointer veloc setting
     [self.mousePointerVelocityFactorSlider setValue:currentSettings.mousePointerVelocityFactor.floatValue * 100 animated:YES]; // Load old setting.
     [self.mousePointerVelocityFactorUILabel setText:[NSString stringWithFormat:@"Mouse Pointer Velocity: %d%%", (uint16_t)self.mousePointerVelocityFactorSlider.value]]; // Initiate label display
     [self.mousePointerVelocityFactorSlider addTarget:self action:@selector(mousePointerVelocityFactorSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
     [self.mousePointerVelocityFactorSlider setEnabled: currentSettings.touchMode.intValue == RELATIVE_TOUCH_MODE]; // mouse velocity scaling works only in relative touch mode.
 
     
-    //CustomOSC stuff
+    // init CustomOSC stuff
     [self.onscreenControlSelector addTarget:self action:@selector(onscreenControlChanged) forControlEvents:UIControlEventValueChanged];
     /* sets a reference to the correct 'LayoutOnScreenControlsViewController' depending on whether the user is on an iPhone or iPad */
     self.layoutOnScreenControlsVC = [[LayoutOnScreenControlsViewController alloc] init];
@@ -342,8 +346,8 @@ BOOL isCustomResolution(CGSize res) {
         self.layoutOnScreenControlsVC = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
         self.layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationFullScreen;
     }
-    if(currentSettings.onscreenControls.intValue == OnScreenControlsCustom && currentSettings.touchMode.intValue == RELATIVE_TOUCH_MODE) {
-        [self.onscreenControllerLabel setText:@"Tap 4 Fingers to Change OSC Layout in Stream View"];
+    if(currentSettings.onscreenControls.intValue == OnScreenControlsCustom && currentSettings.touchMode.intValue == RELATIVE_TOUCH_MODE) { //load OSC slider UI Lable to remind user:
+        [self.onscreenControllerLabel setText:@"Tap 4 Fingers to Change OSC Layout in Stream View"]; //keyboard is force set to 3 finger to make this working.
         //if (self.layoutOnScreenControlsVC.isBeingPresented == NO)
     }
     else{

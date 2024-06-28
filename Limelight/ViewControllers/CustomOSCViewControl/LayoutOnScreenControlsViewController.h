@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "LayoutOnScreenControls.h"
 #import "ToolBarContainerView.h"
+#import "OSCProfilesManager.h"
+#import "OSCProfilesTableViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
  This view controller provides the user interface which allows the user to position on screen controller buttons anywhere they'd like on the screen. It also provides the user with the abilities to undo a change, save the on screen controller layout for later retrieval, and load previously saved controller layouts
  */
 @interface LayoutOnScreenControlsViewController : UIViewController 
-
+- (void)profileRefresh;
 
 @property LayoutOnScreenControls *layoutOSC;    // object that contains a view which contains the on screen controller buttons that allows the user to drag and positions each button on the screen using touch
 @property int OSCSegmentSelected;
@@ -28,6 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) IBOutlet UIView *chevronView;
 @property (weak, nonatomic) IBOutlet UIImageView *chevronImageView;
 @property (weak, nonatomic) IBOutlet UIStackView *toolbarStackView;
+@property (strong, nonatomic) OSCProfilesTableViewController *oscProfilesTableViewController;
+@property (nonatomic, assign) NSString *currentProfileName;
 
 @end
 

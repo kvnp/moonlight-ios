@@ -695,7 +695,7 @@ ICAgICAgICAgICAgIA
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemGrayColor"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="Jnu-63-bcf" firstAttribute="leading" secondItem="Mwx-9q-yJJ" secondAttribute="leading" id="3k1-o1-EkI"/>
                             <constraint firstAttribute="trailing" secondItem="Jnu-63-bcf" secondAttribute="trailing" id="MRJ-Z6-gk9"/>
@@ -732,7 +732,7 @@ ICAgICAgICAgICAgIA
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="kTH-ez-aKD">
                                 <rect key="frame" x="0.0" y="48" width="414" height="848"/>
-                                <color key="backgroundColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="sectionIndexBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </tableView>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zsA-6X-Qc5">
@@ -741,17 +741,24 @@ ICAgICAgICAgICAgIA
                                     <constraint firstAttribute="height" constant="44" id="R90-2b-UrU"/>
                                 </constraints>
                                 <items>
-                                    <navigationItem title="On Screen Controller Profiles" id="5pN-Sn-SCN">
+                                    <navigationItem title="OSC Layout Profiles" id="5pN-Sn-SCN">
                                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="D9X-7p-9oc">
                                             <connections>
                                                 <action selector="cancelTapped:" destination="0K8-kQ-xlN" id="Sam-Ct-kqC"/>
                                             </connections>
                                         </barButtonItem>
-                                        <barButtonItem key="rightBarButtonItem" title="Load" style="plain" id="bue-hp-CWD">
-                                            <connections>
-                                                <action selector="loadTapped:" destination="0K8-kQ-xlN" id="m7K-sI-MPb"/>
-                                            </connections>
-                                        </barButtonItem>
+                                        <rightBarButtonItems>
+                                            <barButtonItem title="Duplicate" width="80" style="plain" id="bue-hp-CWD">
+                                                <connections>
+                                                    <action selector="duplicateTapped:" destination="0K8-kQ-xlN" id="Gb7-bx-nxp"/>
+                                                </connections>
+                                            </barButtonItem>
+                                            <barButtonItem title="Delete" width="80" style="plain" id="ghM-zc-sr6">
+                                                <connections>
+                                                    <action selector="deleteTapped:" destination="0K8-kQ-xlN" id="h6N-Gl-oiW"/>
+                                                </connections>
+                                            </barButtonItem>
+                                        </rightBarButtonItems>
                                     </navigationItem>
                                 </items>
                             </navigationBar>
@@ -786,10 +793,7 @@ ICAgICAgICAgICAgIA
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray3Color">
-            <color red="0.78039215689999997" green="0.78039215689999997" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="systemGrayColor">
-            <color red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.7803921568627451" green="0.7803921568627451" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

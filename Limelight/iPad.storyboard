@@ -682,10 +682,10 @@ ICAgICAgICAgICAgICA
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wcw-3N-DdH">
-                                <rect key="frame" x="30" y="29" width="41" height="56"/>
+                                <rect key="frame" x="30" y="29" width="57" height="72"/>
                                 <color key="tintColor" red="0.6705882353" green="0.61568627450000002" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="x">
+                                <buttonConfiguration key="configuration" style="plain" title="x" buttonSize="large">
                                     <fontDescription key="titleFontDescription" type="system" pointSize="35"/>
                                 </buttonConfiguration>
                                 <connections>
@@ -730,7 +730,7 @@ ICAgICAgICAgICAgICA
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="BA3-hd-bDp">
                                 <rect key="frame" x="0.0" y="44" width="834" height="1150"/>
-                                <color key="backgroundColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </tableView>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="62V-DN-FUk">
                                 <rect key="frame" x="0.0" y="0.0" width="834" height="44"/>
@@ -738,22 +738,29 @@ ICAgICAgICAgICAgICA
                                     <constraint firstAttribute="height" constant="44" id="lQr-5u-g05"/>
                                 </constraints>
                                 <items>
-                                    <navigationItem title="On Screen Controller Profiles" id="Q2V-XF-4jq">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="Cot-Ci-xRH">
+                                    <navigationItem title="OSC Layout Profiles" id="Q2V-XF-4jq">
+                                        <barButtonItem key="leftBarButtonItem" title="Cancel" width="90" style="plain" id="Bhn-IO-Wlt" userLabel="Delete">
                                             <connections>
-                                                <action selector="cancelTapped:" destination="Atv-Nj-0qv" id="18I-6Y-Alf"/>
+                                                <action selector="cancelTapped:" destination="Atv-Nj-0qv" id="pwG-sO-9he"/>
                                             </connections>
                                         </barButtonItem>
-                                        <barButtonItem key="rightBarButtonItem" title="Load" style="plain" id="P34-hO-6cX">
-                                            <connections>
-                                                <action selector="loadTapped:" destination="Atv-Nj-0qv" id="9sL-1m-ob4"/>
-                                            </connections>
-                                        </barButtonItem>
+                                        <rightBarButtonItems>
+                                            <barButtonItem title="Duplicate" width="90" style="plain" id="P34-hO-6cX">
+                                                <connections>
+                                                    <action selector="duplicateTapped:" destination="Atv-Nj-0qv" id="Ymg-8q-iIc"/>
+                                                </connections>
+                                            </barButtonItem>
+                                            <barButtonItem title="Delete" width="90" style="plain" id="egC-9E-zS4" userLabel="Delete">
+                                                <connections>
+                                                    <action selector="deleteTapped:" destination="Atv-Nj-0qv" id="UpR-VB-qez"/>
+                                                </connections>
+                                            </barButtonItem>
+                                        </rightBarButtonItems>
                                     </navigationItem>
                                 </items>
                             </navigationBar>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="62V-DN-FUk" firstAttribute="leading" secondItem="PlJ-LJ-d1p" secondAttribute="leading" id="5fw-ZV-2GR"/>
                             <constraint firstAttribute="bottom" secondItem="BA3-hd-bDp" secondAttribute="bottom" id="5xN-fy-xH7"/>
@@ -764,6 +771,8 @@ ICAgICAgICAgICAgICA
                             <constraint firstAttribute="trailing" secondItem="BA3-hd-bDp" secondAttribute="trailing" id="iwN-Gw-g4S"/>
                         </constraints>
                     </view>
+                    <toolbarItems/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="tableView" destination="BA3-hd-bDp" id="Jzl-sP-ANp"/>
                     </connections>

@@ -215,40 +215,22 @@
 
 /* show pop up notification that lets users choose to save the current OSC layout configuration as a profile they can load when they want. User can also choose to cancel out of this pop up */
 - (IBAction) saveTapped:(id)sender {
-    UIAlertController * inputNameAlertController = [UIAlertController alertControllerWithTitle: @"Enter the name you want to save this controller profile as" message: @"" preferredStyle:UIAlertControllerStyleAlert];
-    [inputNameAlertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {  // pop up notification with text field where user can enter the text they wish to name their OSC layout profile
-        textField.placeholder = @"name";
-        textField.textColor = [UIColor lightGrayColor];
-        textField.clearButtonMode = UITextFieldViewModeWhileEditing;
-        textField.borderStyle = UITextBorderStyleNone;
-    }];
-    [inputNameAlertController addAction:[UIAlertAction actionWithTitle:@"Save" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {   // add save button to allow user to save the on screen controller configuration
-        NSArray *textFields = inputNameAlertController.textFields;
-        UITextField *nameField = textFields[0];
-        NSString *enteredProfileName = nameField.text;
-        
-        if ([enteredProfileName isEqualToString:@"Default"]) {  // don't let user user overwrite the 'Default' profile
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"Saving over the 'Default' profile is not allowed"] preferredStyle:UIAlertControllerStyleAlert];
-            
-            [alertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-                [alertController dismissViewControllerAnimated:NO completion:^{
-                    [self presentViewController:inputNameAlertController animated:YES completion:nil];
-                }];
-            }]];
-            [self presentViewController:alertController animated:YES completion:nil];
-        }
-        else if ([enteredProfileName length] == 0) {    // if user entered no text and taps the 'Save' button let them know they can't do that
-            UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"Profile name cannot be blank!"] preferredStyle:UIAlertControllerStyleAlert];
-            
-            [savedAlertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) { // show pop up notification letting user know they must enter a name in the text field if they wish to save the controller profile
-                
-                [savedAlertController dismissViewControllerAnimated:NO completion:^{
-                    [self presentViewController:inputNameAlertController animated:YES completion:nil];
-                }];
-            }]];
-            [self presentViewController:savedAlertController animated:YES completion:nil];
-        }
-        else if ([self->profilesManager profileNameAlreadyExist:enteredProfileName] == YES) {  // if the entered profile name already exists then let the user know. Offer to allow them to overwrite the existing profile
+    
+    if([self->profilesManager updateSelectedProfileSucceedWithButtonLayers:self.layoutOSC.OSCButtonLayers]){
+        UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"Current profile updated successfully"] preferredStyle:UIAlertControllerStyleAlert];
+        [savedAlertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        }]];
+        [self presentViewController:savedAlertController animated:YES completion:nil];
+    }
+    else{
+        UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"Profile Default can not be overwritten"] preferredStyle:UIAlertControllerStyleAlert];
+        [savedAlertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        }]];
+        [self presentViewController:savedAlertController animated:YES completion:nil];
+    }
+
+        /*
+        if ([self->profilesManager profileNameAlreadyExist:enteredProfileName] == YES) {  // if the entered profile name already exists then let the user know. Offer to allow them to overwrite the existing profile
             UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"Another profile with the name '%@' already exists! Do you want to overwrite it?", enteredProfileName] preferredStyle:UIAlertControllerStyleAlert];
             
             [savedAlertController addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {    // overwrite existing profile
@@ -275,11 +257,12 @@
     [inputNameAlertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) { // adds a button that allows user to decline the option to save the controller layout they currently see on screen
         [inputNameAlertController dismissViewControllerAnimated:NO completion:nil];
     }]];
-    [self presentViewController:inputNameAlertController animated:YES completion:nil];
+    [self presentViewController:inputNameAlertController animated:YES completion:nil]; */
 }
 
 
-/* Presents the view controller that lists all OSC profiles the user can choose from */
+
+/* Basically the same method as loadTapped, without parameter*/
 - (void)profileRefresh{
     UIStoryboard *storyboard;
     BOOL isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
@@ -300,8 +283,10 @@
         [self.layoutOSC.layoutChanges removeAllObjects];  // since a new OSC profile is being loaded, this will remove all previous layout changes made from the array
         
         [self OSCLayoutChanged];    // fades the 'Undo Button' out
+        
+        _oscProfilesTableViewController.currentOSCButtonLayers = self.layoutOSC.OSCButtonLayers; //pass updated OSCLayout to OSCProfView again
     };
-    [self presentViewController:vc animated:YES completion:nil];
+    // [self presentViewController:vc animated:YES completion:nil];
 }
 
 
@@ -316,9 +301,9 @@
         storyboard = [UIStoryboard storyboardWithName:@"iPad" bundle:nil];
     }
     
-    OSCProfilesTableViewController *vc = [storyboard   instantiateViewControllerWithIdentifier:@"OSCProfilesTableViewController"] ;
+    _oscProfilesTableViewController = [storyboard instantiateViewControllerWithIdentifier:@"OSCProfilesTableViewController"] ;
     
-    vc.didDismissOSCProfilesTVC = ^() {   // a block that will be called when the modally presented 'OSCProfilesTableViewController' VC is dismissed. By the time the 'OSCProfilesTableViewController' VC is dismissed the user would have potentially selected a different OSC profile with a different layout and they want to see this layout on this 'LayoutOnScreenControlsViewController.' This block of code will load the profile and then hide/show and move each OSC button to their appropriate position
+    _oscProfilesTableViewController.didDismissOSCProfilesTVC = ^() {   // a block that will be called when the modally presented 'OSCProfilesTableViewController' VC is dismissed. By the time the 'OSCProfilesTableViewController' VC is dismissed the user would have potentially selected a different OSC profile with a different layout and they want to see this layout on this 'LayoutOnScreenControlsViewController.' This block of code will load the profile and then hide/show and move each OSC button to their appropriate position
         [self.layoutOSC updateControls];  // creates and saves a 'Default' OSC profile or loads the one the user selected on the previous screen
         
         [self addInnerAnalogSticksToOuterAnalogLayers];
@@ -327,7 +312,8 @@
         
         [self OSCLayoutChanged];    // fades the 'Undo Button' out
     };
-    [self presentViewController:vc animated:YES completion:nil];
+    _oscProfilesTableViewController.currentOSCButtonLayers = self.layoutOSC.OSCButtonLayers;
+    [self presentViewController:_oscProfilesTableViewController animated:YES completion:nil];
 }
 
 

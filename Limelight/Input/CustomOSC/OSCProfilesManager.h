@@ -50,6 +50,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void) saveProfileWithName:(NSString*)name andButtonLayers:(NSMutableArray *)buttonLayers;
 
+- (bool) updateSelectedProfileSucceedWithButtonLayers:(NSMutableArray *)buttonLayers;
+/**
+ * Delete current selected profile.
+ */
+- (void) deleteCurrentSelectedProfile;
 
 #pragma mark - Queries
 /**

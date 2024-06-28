@@ -21,15 +21,32 @@ const double NAV_BAR_HEIGHT = 50;
 
 @implementation OSCProfilesTableViewController {
     OSCProfilesManager *profilesManager;
+    LayoutOnScreenControlsViewController *parentLayoutOSCViewController;
 }
 
 @synthesize tableView;
 
 - (void) viewDidLoad {
     [super viewDidLoad];
-        
+    
+    
     profilesManager = [OSCProfilesManager sharedManager];
+    
+    self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, NAV_BAR_HEIGHT)];
+    
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    
+    [self.tableView registerNib:[UINib nibWithNibName:@"ProfileTableViewCell" bundle:nil]
+         forCellReuseIdentifier:@"Cell"]; // Register the custom cell nib file with the table view
+    self.tableView.alpha = 0.5;
+    
+    self.tableView.backgroundColor = [[UIColor colorWithRed:0.5 green:0.7 blue:1.0 alpha:1.0] colorWithAlphaComponent:0.5]; // set background color & transparency
+}
 
+- (void) viewDidAppear:(BOOL)animated {
+    [super viewDidAppear: animated];
+    
     self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, NAV_BAR_HEIGHT)];
 
     self.tableView.delegate = self;
@@ -38,28 +55,95 @@ const double NAV_BAR_HEIGHT = 50;
     [self.tableView registerNib:[UINib nibWithNibName:@"ProfileTableViewCell" bundle:nil]
                                         forCellReuseIdentifier:@"Cell"]; // Register the custom cell nib file with the table view
 
-}
-
-- (void) viewDidAppear:(BOOL)animated {
-    [super viewDidAppear: animated];
-    
     if ([[profilesManager getAllProfiles] count] > 0) { // scroll to selected profile if user has any saved profiles
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[profilesManager getIndexOfSelectedProfile] inSection:0];
         [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
-    }
+     }
 }
 
 
 #pragma mark - UIButton Actions
 
 /* Loads the OSC profile that user selected, dismisses this VC, then tells the presenting view controller to lay out the on screen buttons according to the selected profile's instructions */
-- (IBAction) loadTapped:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:nil];
+- (IBAction) duplicateTapped:(id)sender {
 
+        UIAlertController * inputNameAlertController = [UIAlertController alertControllerWithTitle: @"Enter the name you want to save this controller profile as" message: @"" preferredStyle:UIAlertControllerStyleAlert];
+        [inputNameAlertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {  // pop up notification with text field where user can enter the text they wish to name their OSC layout profile
+            textField.placeholder = @"name";
+            textField.textColor = [UIColor lightGrayColor];
+            textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+            textField.borderStyle = UITextBorderStyleNone;
+        }];
+        [inputNameAlertController addAction:[UIAlertAction actionWithTitle:@"Save" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {   // add save button to allow user to save the on screen controller configuration
+            NSArray *textFields = inputNameAlertController.textFields;
+            UITextField *nameField = textFields[0];
+            NSString *enteredProfileName = nameField.text;
+            
+            if ([enteredProfileName isEqualToString:@"Default"]) {  // don't let user user overwrite the 'Default' profile
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"Saving over the 'Default' profile is not allowed"] preferredStyle:UIAlertControllerStyleAlert];
+                
+                [alertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                    [alertController dismissViewControllerAnimated:NO completion:^{
+                        [self presentViewController:inputNameAlertController animated:YES completion:nil];
+                    }];
+                }]];
+                [self presentViewController:alertController animated:YES completion:nil];
+            }
+            else if ([enteredProfileName length] == 0) {    // if user entered no text and taps the 'Save' button let them know they can't do that
+                UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"Profile name cannot be blank!"] preferredStyle:UIAlertControllerStyleAlert];
+                
+                [savedAlertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) { // show pop up notification letting user know they must enter a name in the text field if they wish to save the controller profile
+                    
+                    [savedAlertController dismissViewControllerAnimated:NO completion:^{
+                        [self presentViewController:inputNameAlertController animated:YES completion:nil];
+                    }];
+                }]];
+                [self presentViewController:savedAlertController animated:YES completion:nil];
+            }
+            else if ([self->profilesManager profileNameAlreadyExist:enteredProfileName] == YES) {  // if the entered profile name already
+                NSLog(@"tttttttttt");
+                UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"Profile name already exists"] preferredStyle:UIAlertControllerStyleAlert];
+                
+                [savedAlertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                    //[savedAlertController dismissViewControllerAnimated:NO completion:nil];
+                    //[self profileViewRefresh]; //refresh profile view after saving new profile;
+                }]];
+                [self presentViewController:savedAlertController animated:YES completion:nil];
+            }
+            else {  // if user entered a valid name that doesn't already exist then save the profile to persistent storage
+                [self->profilesManager saveProfileWithName: enteredProfileName andButtonLayers:self.currentOSCButtonLayers]; // the OSC layout here is passed from parent LayoutOSCViewController;
+                [self->profilesManager setProfileToSelected: enteredProfileName];
+                
+                UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"Profile %@ duplicated from current layout", enteredProfileName] preferredStyle:UIAlertControllerStyleAlert];  // Let user know this profile has been duplicated & saved
+                
+                [savedAlertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                    [savedAlertController dismissViewControllerAnimated:NO completion:nil];
+                    [self profileViewRefresh]; //refresh profile view after saving new profile;
+                }]];
+                [self presentViewController:savedAlertController animated:YES completion:nil];
+            }
+        }]];
+        [inputNameAlertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) { // adds a button that allows user to decline the option to save the controller layout they currently see on screen
+            [inputNameAlertController dismissViewControllerAnimated:NO completion:nil];
+        }]];
+        [self presentViewController:inputNameAlertController animated:YES completion:nil];
+}
+
+/* basically the same with loadTapped */
+- (void) profileViewRefresh{
+    //[self dismissViewControllerAnimated:YES completion:nil];
+    //[selfparentLayoutOSCViewController]
+    [self.tableView reloadData]; // table view will be refreshed by calling reloadData
     if (self.didDismissOSCProfilesTVC) {    // tells the presenting view controller to lay out the on screen buttons according to the selected profile's instructions
         self.didDismissOSCProfilesTVC();
     }
 }
+
+- (IBAction) deleteTapped:(id)sender{
+    [profilesManager deleteCurrentSelectedProfile];
+    [self profileViewRefresh];
+}
+
 
 - (IBAction) cancelTapped:(id)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
@@ -76,6 +160,7 @@ const double NAV_BAR_HEIGHT = 50;
     ProfileTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
     OSCProfile *profile = [[profilesManager getAllProfiles] objectAtIndex: indexPath.row];
     cell.name.text = profile.name;
+    cell.backgroundColor = [[UIColor clearColor] colorWithAlphaComponent:0.99];
     
     if ([profile.name isEqualToString: [profilesManager getSelectedProfile].name]) { // if this cell contains the name of the currently selected OSC profile then add a checkmark to the right side of the cell
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
@@ -152,6 +237,7 @@ const double NAV_BAR_HEIGHT = 50;
         lastSelectedCell.accessoryType = UITableViewCellAccessoryNone; 
         [tableView deselectRowAtIndexPath:lastSelectedIndexPath animated:YES];
     }
+    [self profileViewRefresh]; // update OSC layout when table view option is changed
 }
 
 
