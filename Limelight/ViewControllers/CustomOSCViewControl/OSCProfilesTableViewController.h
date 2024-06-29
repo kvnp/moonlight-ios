@@ -15,6 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface OSCProfilesTableViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
+- (void)profileViewRefresh;
+
+
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, copy) void (^didDismissOSCProfilesTVC)(void);
 @property (nonatomic, assign) NSMutableArray *currentOSCButtonLayers;

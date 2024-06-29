@@ -230,6 +230,7 @@
     else{
         UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"Profile Default can not be overwritten"] preferredStyle:UIAlertControllerStyleAlert];
         [savedAlertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [self.oscProfilesTableViewController profileViewRefresh]; // execute this will reset layout in OSC tool!
         }]];
         [self presentViewController:savedAlertController animated:YES completion:nil];
     }
@@ -268,6 +269,7 @@
 
 
 /* Basically the same method as loadTapped, without parameter*/
+// Make sure whenever self view controller load the selected profile and layout its buttons.
 - (void)profileRefresh{
     UIStoryboard *storyboard;
     BOOL isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
@@ -285,9 +287,11 @@
     self.currentProfileLabel.frame = CGRectMake(xPosition, self.currentProfileLabel.frame.origin.y, self.currentProfileLabel.frame.size.width, self.currentProfileLabel.frame.size.height);
     self.currentProfileLabel.hidden = NO; // Show Current Profile display
     [self.currentProfileLabel setText:[NSString stringWithFormat:@"Current Profile: %@",[profilesManager getSelectedProfile].name]]; // display current profile name when profile is being refreshed.
-
+    
+    //initialiaze _oscProfilesTableViewController
     _oscProfilesTableViewController = [storyboard instantiateViewControllerWithIdentifier:@"OSCProfilesTableViewController"];
     
+    //this part is just for registration, will not be immediately executed.
     _oscProfilesTableViewController.didDismissOSCProfilesTVC = ^() {   // a block that will be called when the modally presented 'OSCProfilesTableViewController' VC is dismissed. By the time the 'OSCProfilesTableViewController' VC is dismissed the user would have potentially selected a different OSC profile with a different layout and they want to see this layout on this 'LayoutOnScreenControlsViewController.' This block of code will load the profile and then hide/show and move each OSC button to their appropriate position
         [self.layoutOSC updateControls];  // creates and saves a 'Default' OSC profile or loads the one the user selected on the previous screen
         [self addInnerAnalogSticksToOuterAnalogLayers];
@@ -295,6 +299,9 @@
         [self OSCLayoutChanged];    // fades the 'Undo Button' out
         _oscProfilesTableViewController.currentOSCButtonLayers = self.layoutOSC.OSCButtonLayers; //pass updated OSCLayout to OSCProfileTableView again
     };
+    
+    [self.oscProfilesTableViewController profileViewRefresh]; // execute this will make sure OSCLayout is updated from persisted profile, not any cache.
+
     // [self presentViewController:vc animated:YES completion:nil];
 }
 
@@ -383,6 +390,15 @@
         trashCanButton.tintColor = [UIColor colorWithRed:171.0/255.0 green:157.0/255.0 blue:255.0/255.0 alpha:1];
     }
     [self.layoutOSC touchesEnded:touches withEvent:event];
+    
+    // in case of default profile OSC change, popup msgbox & remind user it's not allowed.
+    if([profilesManager getIndexOfSelectedProfile] == 0 && [self.layoutOSC.layoutChanges count] > 0){
+        UIAlertController * movedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"Layout of the Default profile can not be changed"] preferredStyle:UIAlertControllerStyleAlert];
+        [movedAlertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [self.oscProfilesTableViewController profileViewRefresh];
+        }]];
+        [self presentViewController:movedAlertController animated:YES completion:nil];
+    }
 }
 
 @end

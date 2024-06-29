@@ -670,8 +670,8 @@ ICAgICAgICAgICAgICA
                                             <constraint firstItem="iVZ-Fd-dY7" firstAttribute="top" secondItem="hKp-ds-86I" secondAttribute="top" id="rRw-UW-drh"/>
                                         </constraints>
                                     </view>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7bp-Wn-j9n" userLabel="Exit">
-                                        <rect key="frame" x="15" y="0.0" width="80" height="50"/>
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7bp-Wn-j9n" userLabel="Exit">
+                                        <rect key="frame" x="15" y="0.0" width="100" height="50"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="50" id="qtH-gP-Fjj"/>
                                             <constraint firstAttribute="height" constant="50" id="tqU-Lh-NQA"/>
