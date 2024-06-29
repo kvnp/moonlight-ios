@@ -875,6 +875,8 @@ static NSMutableSet* hostList;
     // If we moved back to the center position, we should save the settings
     if (position == FrontViewPositionLeft) {
         [(SettingsViewController*)[revealController rearViewController] saveSettings];
+        _settingsButton.enabled = YES; // make sure these 2 buttons are enabled after closing setting view.
+        _upButton.enabled = YES; // here is the select new host button
     }
     
     currentPosition = position;
