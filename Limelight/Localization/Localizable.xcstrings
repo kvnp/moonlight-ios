@@ -349,6 +349,23 @@
         }
       }
     },
+    "Manual_Add_Host_Fail" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not connect to host.\n\nIf you're hosting using GeForce Experience, make sure you've enabled the toggle on the SHIELD tab.\n\nIf you're hosting using Sunshine, ensure it is running properly. If you're using a non-default port, you will need to include that here."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法连接远程主机\n\n如果主机运行的是Geforce Experience, 确认SHIELD已启用.\n\n如果主机运行的是Sushine, 确认服务正常运行. 如果使用非默认端口, 请添加到地址中."
+          }
+        }
+      }
+    },
     "ML_TEST_RESULT_INCONCLUSIVE" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -362,6 +379,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法执行网络测试. 请检查网络连接后重试."
+          }
+        }
+      }
+    },
+    "Moonlight-iOS/tvOS only supports adding PCs on your local network on %s." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moonlight-iOS/tvOS仅支持添加局域网中的主机"
           }
         }
       }
@@ -924,7 +952,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "调节靠右 %d%%屏幕区域的触点灵敏度"
+            "value" : "调节屏幕靠右 %d%%区域的触点灵敏度"
           }
         }
       }
