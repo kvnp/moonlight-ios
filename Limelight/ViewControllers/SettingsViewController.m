@@ -14,6 +14,8 @@
 #import <VideoToolbox/VideoToolbox.h>
 #import <AVFoundation/AVFoundation.h>
 
+#import "LocalizationHelper.h"
+
 @implementation SettingsViewController {
     NSInteger _bitrate;
     NSInteger _lastSelectedResolutionIndex;
@@ -21,7 +23,7 @@
 
 @dynamic overrideUserInterfaceStyle;
 
-static NSString* bitrateFormat = @"Bitrate: %.1f Mbps";
+//static NSString* bitrateFormat;
 static const int bitrateTable[] = {
     500,
     1000,
@@ -151,7 +153,7 @@ BOOL isCustomResolution(CGSize res) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    
     // Always run settings in dark mode because we want the light fonts
     if (@available(iOS 13.0, tvOS 13.0, *)) {
         self.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
@@ -256,7 +258,7 @@ BOOL isCustomResolution(CGSize res) {
     
     if (!VTIsHardwareDecodeSupported(kCMVideoCodecType_HEVC) || !(AVPlayer.availableHDRModes & AVPlayerHDRModeHDR10)) {
         [self.hdrSelector removeAllSegments];
-        [self.hdrSelector insertSegmentWithTitle:@"Unsupported on this device" atIndex:0 animated:NO];
+        [self.hdrSelector insertSegmentWithTitle:[LocalizationHelper localizedStringForKey:@"Unsupported on this device"] atIndex:0 animated:NO];
         [self.hdrSelector setEnabled:NO];
     }
     else {
@@ -292,12 +294,12 @@ BOOL isCustomResolution(CGSize res) {
     if(currentSettings.touchMode.intValue == RELATIVE_TOUCH_MODE){
         [self.keyboardToggleFingerNumSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] != RELATIVE_TOUCH_MODE];
         [self.keyboardToggleFingerNumSlider setValue:3.0];  //force 3 finger tap to toggle keyboard in relative touch mode. This is for the 4 finger OSC layout tool gesture.
-        [self.keyboardToggleFingerNumLabel setText:[NSString stringWithFormat:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]];
+        [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]];
     }
     else{
         [self.keyboardToggleFingerNumSlider setValue:(CGFloat)currentSettings.keyboardToggleFingers.intValue animated:YES]; // Load old setting. old setting was converted to uint16_t before saving.
-        if (self.keyboardToggleFingerNumSlider.value > 10.5f) [self.keyboardToggleFingerNumLabel setText:[NSString stringWithFormat:@"Tap-Toggle Local Keyboard Disabled"]]; // Initiate label display. Allow higher required finger number to completely disable keyboard toggle
-        else [self.keyboardToggleFingerNumLabel setText:[NSString stringWithFormat:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]]; // Initiate label display
+        if (self.keyboardToggleFingerNumSlider.value > 10.5f) [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"Tap-Toggle Local Keyboard Disabled"]]; // Initiate label display. Allow higher required finger number to completely disable keyboard toggle
+        else [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]]; // Initiate label display
     }
     [self.keyboardToggleFingerNumSlider addTarget:self action:@selector(keyboardToggleFingerNumSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
     
@@ -310,24 +312,24 @@ BOOL isCustomResolution(CGSize res) {
     // swipe & exit setting
     [self.swipeExitScreenEdgeSelector setSelectedSegmentIndex:[self getSelectorIndexFromScreenEdge:(uint32_t)currentSettings.swipeExitScreenEdge.integerValue]]; // Load old setting
     [self.swipeToExitDistanceSlider setValue:(CGFloat)currentSettings.swipeToExitDistance.floatValue animated:YES]; // Load old setting.
-    [self.swipeToExitDistanceUILabel setText:[NSString stringWithFormat:@"Swipe & Exit Distance: %.2f * screen-width", self.swipeToExitDistanceSlider.value]]; // Initiate label display
+    [self.swipeToExitDistanceUILabel setText:[LocalizationHelper localizedStringForKey:@"Swipe & Exit Distance: %.2f * screen-width", self.swipeToExitDistanceSlider.value]]; // Initiate label display
     [self.swipeToExitDistanceSlider addTarget:self action:@selector(swipeToExitDistanceSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
     
     // pointer veloc setting
     [self.pointerVelocityModeDividerSlider setValue:currentSettings.pointerVelocityModeDivider.floatValue * 100 animated:YES]; // Load old setting.
-    [self.pointerVelocityModeDividerUILabel setText:[NSString stringWithFormat:@"Touch Pointer Velocity: Scaled on %d%% of Right Screen", 100 - (uint8_t)self.pointerVelocityModeDividerSlider.value]]; // Initiate label display
+    [self.pointerVelocityModeDividerUILabel setText:[LocalizationHelper localizedStringForKey:@"Touch Pointer Velocity: Scaled on %d%% of Right Screen", 100 - (uint8_t)self.pointerVelocityModeDividerSlider.value]]; // Initiate label display
     [self.pointerVelocityModeDividerSlider addTarget:self action:@selector(pointerVelocityModeDividerSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
     [self.pointerVelocityModeDividerSlider setEnabled: currentSettings.touchMode.intValue == NATIVE_TOUCH_MODE]; // pointer velocity scaling works only in native touch mode.
 
     // init pointer veloc setting
     [self.touchPointerVelocityFactorSlider setValue:currentSettings.touchPointerVelocityFactor.floatValue * 100 animated:YES]; // Load old setting.
-    [self.touchPointerVelocityFactorUILabel setText:[NSString stringWithFormat:@"Touch Pointer Velocity: %d%%", (uint16_t)self.touchPointerVelocityFactorSlider.value]]; // Initiate label display
+    [self.touchPointerVelocityFactorUILabel setText:[LocalizationHelper localizedStringForKey: @"Touch Pointer Velocity: %d%%",  (uint16_t)self.touchPointerVelocityFactorSlider.value]]; // Initiate label display
     [self.touchPointerVelocityFactorSlider addTarget:self action:@selector(touchPointerVelocityFactorSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
     [self.touchPointerVelocityFactorSlider setEnabled: currentSettings.touchMode.intValue == NATIVE_TOUCH_MODE]; // pointer velocity scaling works only in native touch mode.
     
     // init relative touch mouse pointer veloc setting
     [self.mousePointerVelocityFactorSlider setValue:currentSettings.mousePointerVelocityFactor.floatValue * 100 animated:YES]; // Load old setting.
-    [self.mousePointerVelocityFactorUILabel setText:[NSString stringWithFormat:@"Mouse Pointer Velocity: %d%%", (uint16_t)self.mousePointerVelocityFactorSlider.value]]; // Initiate label display
+    [self.mousePointerVelocityFactorUILabel setText:[LocalizationHelper localizedStringForKey: @"Mouse Pointer Velocity: %d%%",  (uint16_t)self.mousePointerVelocityFactorSlider.value]]; // Initiate label display
     [self.mousePointerVelocityFactorSlider addTarget:self action:@selector(mousePointerVelocityFactorSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
     [self.mousePointerVelocityFactorSlider setEnabled: currentSettings.touchMode.intValue == RELATIVE_TOUCH_MODE]; // mouse velocity scaling works only in relative touch mode.
 
@@ -347,20 +349,20 @@ BOOL isCustomResolution(CGSize res) {
         self.layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationFullScreen;
     }
     if(currentSettings.onscreenControls.intValue == OnScreenControlsCustom && currentSettings.touchMode.intValue == RELATIVE_TOUCH_MODE) { //load OSC slider UI Lable to remind user:
-        [self.onscreenControllerLabel setText:@"Tap 4 Fingers to Change OSC Layout in Stream View"]; //keyboard is force set to 3 finger to make this working.
+        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap 4 Fingers to Change OSC Layout in Stream View"]]; //keyboard is force set to 3 finger to make this working.
         //if (self.layoutOnScreenControlsVC.isBeingPresented == NO)
     }
     else{
-        [self.onscreenControllerLabel setText:@"On-Screen Controls"];
+        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"On-Screen Controls"]];
     }
 }
 
 
 - (void)showCustomOSCTip {
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Rebase in Stream View"
-                                                                             message:@"Tap 4 fingers to change on-screen controller layout in stream view ~"
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[LocalizationHelper localizedStringForKey:@"Rebase in Stream View"]
+                                                                             message:[LocalizationHelper localizedStringForKey:@"Tap 4 fingers to change on-screen controller layout in stream view"]
                                                                       preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Got it!"
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey: @"Got it!"]
                                                        style:UIAlertActionStyleDefault
                                                      handler:^(UIAlertAction *action) {
                                                         // Continue execution after the alert is dismissed
@@ -386,12 +388,12 @@ BOOL isCustomResolution(CGSize res) {
     }
 
     if([self.onscreenControlSelector selectedSegmentIndex] == OnScreenControlsCustom && [self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH_MODE) {
-        [self.onscreenControllerLabel setText:@"Tap 4 Fingers to Change OSC Layout in Stream View"];
+        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap 4 Fingers to Change OSC Layout in Stream View"]];
         [self showCustomOSCTip];
         //if (self.layoutOnScreenControlsVC.isBeingPresented == NO)
     }
     else{
-        [self.onscreenControllerLabel setText:@"On-Screen Controls"];
+        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"On-Screen Controls"]];
     }
 }
 
@@ -401,15 +403,15 @@ BOOL isCustomResolution(CGSize res) {
 
 
 - (void) pointerVelocityModeDividerSliderMoved {
-    [self.pointerVelocityModeDividerUILabel setText:[NSString stringWithFormat:@"Touch Pointer Velocity: Scaled on %d%% of Right Screen", 100 - (uint8_t)self.pointerVelocityModeDividerSlider.value]];
+    [self.pointerVelocityModeDividerUILabel setText:[LocalizationHelper localizedStringForKey:@"Touch Pointer Velocity: Scaled on %d%% of Right Screen", 100 - (uint8_t)self.pointerVelocityModeDividerSlider.value]];
 }
 
 - (void) touchPointerVelocityFactorSliderMoved {
-    [self.touchPointerVelocityFactorUILabel setText:[NSString stringWithFormat:@"Touch Pointer Velocity: %d%%", (uint16_t)self.touchPointerVelocityFactorSlider.value]]; // Update label display
+    [self.touchPointerVelocityFactorUILabel setText:[LocalizationHelper localizedStringForKey: @"Touch Pointer Velocity: %d%%",  (uint16_t)self.touchPointerVelocityFactorSlider.value]]; // Update label display
 }
 
 - (void) mousePointerVelocityFactorSliderMoved {
-    [self.mousePointerVelocityFactorUILabel setText:[NSString stringWithFormat:@"Mouse Pointer Velocity: %d%%", (uint16_t)self.mousePointerVelocityFactorSlider.value]]; // Update label display
+    [self.mousePointerVelocityFactorUILabel setText:[LocalizationHelper localizedStringForKey: @"Mouse Pointer Velocity: %d%%",  (uint16_t)self.mousePointerVelocityFactorSlider.value]]; // Update label display
 }
 
 - (uint32_t) getScreenEdgeFromSelector {
@@ -442,15 +444,15 @@ BOOL isCustomResolution(CGSize res) {
     [self.keyboardToggleFingerNumSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] != RELATIVE_TOUCH_MODE];
     if([self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH_MODE) {
         [self.keyboardToggleFingerNumSlider setValue:3.0];
-        [self.keyboardToggleFingerNumLabel setText:[NSString stringWithFormat:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]];
+        [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]];
     }
     
     if([self.onscreenControlSelector selectedSegmentIndex] == OnScreenControlsCustom && [self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH_MODE) {
-        [self.onscreenControllerLabel setText:@"Tap 4 Fingers to Change OSC Layout in Stream View"];
+        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap 4 Fingers to Change OSC Layout in Stream View"]];
         //if (self.layoutOnScreenControlsVC.isBeingPresented == NO)
     }
     else{
-        [self.onscreenControllerLabel setText:@"On-Screen Controls"];
+        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"On-Screen Controls"]];
     }
 }
 
@@ -529,10 +531,10 @@ BOOL isCustomResolution(CGSize res) {
 }
 
 - (void) promptCustomResolutionDialog {
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Enter Custom Resolution" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[LocalizationHelper localizedStringForKey: @"Enter Custom Resolution"] message:nil preferredStyle:UIAlertControllerStyleAlert];
 
     [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.placeholder = @"Video Width";
+        textField.placeholder = [LocalizationHelper localizedStringForKey:@"Video Width"];
         textField.clearButtonMode = UITextFieldViewModeAlways;
         textField.borderStyle = UITextBorderStyleRoundedRect;
         textField.keyboardType = UIKeyboardTypeNumberPad;
@@ -546,7 +548,7 @@ BOOL isCustomResolution(CGSize res) {
     }];
 
     [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.placeholder = @"Video Height";
+        textField.placeholder = [LocalizationHelper localizedStringForKey:@"Video Height"];
         textField.clearButtonMode = UITextFieldViewModeAlways;
         textField.borderStyle = UITextBorderStyleRoundedRect;
         textField.keyboardType = UIKeyboardTypeNumberPad;
@@ -559,7 +561,7 @@ BOOL isCustomResolution(CGSize res) {
         }
     }];
 
-    [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [alertController addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Ok"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         NSArray * textfields = alertController.textFields;
         UITextField *widthField = textfields[0];
         UITextField *heightField = textfields[1];
@@ -594,12 +596,12 @@ BOOL isCustomResolution(CGSize res) {
         [self updateResolutionDisplayViewText];
         self->_lastSelectedResolutionIndex = [self.resolutionSelector selectedSegmentIndex];
         
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Custom Resolution Selected" message: @"Custom resolutions are not officially supported by GeForce Experience, so it will not set your host display resolution. You will need to set it manually while in game.\n\nResolutions that are not supported by your client or host PC may cause streaming errors." preferredStyle:UIAlertControllerStyleAlert];
-        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[LocalizationHelper localizedStringForKey:@"Custom Resolution Selected"] message: [LocalizationHelper localizedStringForKey:@"Custom resolutions are not officially supported by GeForce Experience, so it will not set your host display resolution. You will need to set it manually while in game.\n\nResolutions that are not supported by your client or host PC may cause streaming errors."] preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Ok"] style:UIAlertActionStyleDefault handler:nil]];
         [self presentViewController:alertController animated:YES completion:nil];
     }]];
 
-    [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+    [alertController addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Cancel"] style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
         // Restore the previous selection
         [self.resolutionSelector setSelectedSegmentIndex:self->_lastSelectedResolutionIndex];
     }]];
@@ -626,7 +628,7 @@ BOOL isCustomResolution(CGSize res) {
         [subview removeFromSuperview];
     }
     UILabel *label1 = [[UILabel alloc] init];
-    label1.text = @"Set PC/Game resolution: ";
+    label1.text = [LocalizationHelper localizedStringForKey:@"Set PC/Game resolution:"];
     label1.font = [UIFont systemFontOfSize:fontSize];
     [label1 sizeToFit];
     label1.frame = CGRectMake(padding, (viewFrameHeight - label1.frame.size.height) / 2, label1.frame.size.width, label1.frame.size.height);
@@ -641,12 +643,12 @@ BOOL isCustomResolution(CGSize res) {
 }
 
 - (void) keyboardToggleFingerNumSliderMoved{
-    if (self.keyboardToggleFingerNumSlider.value > 10.5f) [self.keyboardToggleFingerNumLabel setText:[NSString stringWithFormat:@"Local Keyboard Toggle Disabled"]];
-    else [self.keyboardToggleFingerNumLabel setText:[NSString stringWithFormat:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]]; // Initiate label display
+    if (self.keyboardToggleFingerNumSlider.value > 10.5f) [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"Local Keyboard Toggle Disabled"]];
+    else [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]]; // Initiate label display
 }
 
 - (void) swipeToExitDistanceSliderMoved{
-    [self.swipeToExitDistanceUILabel setText:[NSString stringWithFormat:@"Swipe & Exit Distance: %.2f * screen-width", self.swipeToExitDistanceSlider.value]];
+    [self.swipeToExitDistanceUILabel setText:[LocalizationHelper localizedStringForKey:@"Swipe & Exit Distance: %.2f * screen-width", self.swipeToExitDistanceSlider.value]];
 }
 
 - (void) bitrateSliderMoved {
@@ -657,7 +659,7 @@ BOOL isCustomResolution(CGSize res) {
 
 - (void) updateBitrateText {
     // Display bitrate in Mbps
-    [self.bitrateLabel setText:[NSString stringWithFormat:bitrateFormat, _bitrate / 1000.]];
+    [self.bitrateLabel setText:[LocalizationHelper localizedStringForKey:@"Bitrate: %.1f Mbps", _bitrate / 1000.]];
 }
 
 - (NSInteger) getChosenFrameRate {

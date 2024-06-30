@@ -11,6 +11,7 @@
 #import "OnScreenButtonState.h"
 #import "OnScreenControls.h"
 #import "OSCProfilesManager.h"
+#import "LocalizationHelper.h"
 
 @interface LayoutOnScreenControlsViewController ()
 
@@ -172,9 +173,9 @@
 }
 
 - (IBAction) trashCanTapped:(id)sender {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Delete Buttons Here" message:@"Drag and drop buttons onto this trash can to remove them from the interface" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:[LocalizationHelper localizedStringForKey:@"Delete Buttons Here"] message:[LocalizationHelper localizedStringForKey:@"Drag and drop buttons onto this trash can to remove them from the interface"] preferredStyle:UIAlertControllerStyleAlert];
 
-    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:nil];
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Ok"] style:UIAlertActionStyleDefault handler:nil];
     [alert addAction:ok];
     [self presentViewController:alert animated:YES completion:nil];
 }
@@ -210,8 +211,8 @@
         [self OSCLayoutChanged]; // will fade the undo button in or out depending on whether there are any further changes to undo
     }
     else {  // there are no changes to undo. let user know there are no changes to undo
-        UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@"Nothing to Undo"] message: @"There are no changes to undo" preferredStyle:UIAlertControllerStyleAlert];
-        [savedAlertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [LocalizationHelper localizedStringForKey:@"Nothing to Undo"] message: [LocalizationHelper localizedStringForKey: @"There are no changes to undo"] preferredStyle:UIAlertControllerStyleAlert];
+        [savedAlertController addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Ok"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             [savedAlertController dismissViewControllerAnimated:NO completion:nil];
         }]];
         [self presentViewController:savedAlertController animated:YES completion:nil];
@@ -222,14 +223,14 @@
 - (IBAction) saveTapped:(id)sender {
     
     if([self->profilesManager updateSelectedProfileSucceedWithButtonLayers:self.layoutOSC.OSCButtonLayers]){
-        UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"Current profile updated successfully"] preferredStyle:UIAlertControllerStyleAlert];
-        [savedAlertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [LocalizationHelper localizedStringForKey:@"Current profile updated successfully"] preferredStyle:UIAlertControllerStyleAlert];
+        [savedAlertController addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Ok"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         }]];
         [self presentViewController:savedAlertController animated:YES completion:nil];
     }
     else{
-        UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"Profile Default can not be overwritten"] preferredStyle:UIAlertControllerStyleAlert];
-        [savedAlertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [LocalizationHelper localizedStringForKey:@"Profile Default can not be overwritten"] preferredStyle:UIAlertControllerStyleAlert];
+        [savedAlertController addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Ok"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             [self.oscProfilesTableViewController profileViewRefresh]; // execute this will reset layout in OSC tool!
         }]];
         [self presentViewController:savedAlertController animated:YES completion:nil];
@@ -243,7 +244,7 @@
                 [self->profilesManager saveProfileWithName: enteredProfileName andButtonLayers:self.layoutOSC.OSCButtonLayers];
             }]];
             
-            [savedAlertController addAction:[UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) { // don't overwrite the existing profile
+            [savedAlertController addAction:[UIAlertAction actionWithpinNo" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) { // don't overwrite the existing profile
                 [savedAlertController dismissViewControllerAnimated:NO completion:nil];
             }]];
             [self presentViewController:savedAlertController animated:YES completion:nil];
@@ -254,13 +255,13 @@
             
             UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"%@ profile saved and set as your active in-game controller profile layout", enteredProfileName] preferredStyle:UIAlertControllerStyleAlert];  // Let user know this profile has been saved and is now the selected controller layout
             
-            [savedAlertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [savedAlertController addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Ok"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [savedAlertController dismissViewControllerAnimated:NO completion:nil];
             }]];
             [self presentViewController:savedAlertController animated:YES completion:nil];
         }
     }]];
-    [inputNameAlertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) { // adds a button that allows user to decline the option to save the controller layout they currently see on screen
+    [inputNameAlertController addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Cancel"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) { // adds a button that allows user to decline the option to save the controller layout they currently see on screen
         [inputNameAlertController dismissViewControllerAnimated:NO completion:nil];
     }]];
     [self presentViewController:inputNameAlertController animated:YES completion:nil]; */
@@ -286,7 +287,7 @@
     // Set the label's frame with the calculated x-position
     self.currentProfileLabel.frame = CGRectMake(xPosition, self.currentProfileLabel.frame.origin.y, self.currentProfileLabel.frame.size.width, self.currentProfileLabel.frame.size.height);
     self.currentProfileLabel.hidden = NO; // Show Current Profile display
-    [self.currentProfileLabel setText:[NSString stringWithFormat:@"Current Profile: %@",[profilesManager getSelectedProfile].name]]; // display current profile name when profile is being refreshed.
+    [self.currentProfileLabel setText:[LocalizationHelper localizedStringForKey:@"Current Profile: %@",[profilesManager getSelectedProfile].name]]; // display current profile name when profile is being refreshed.
     
     //initialiaze _oscProfilesTableViewController
     _oscProfilesTableViewController = [storyboard instantiateViewControllerWithIdentifier:@"OSCProfilesTableViewController"];
@@ -393,8 +394,8 @@
     
     // in case of default profile OSC change, popup msgbox & remind user it's not allowed.
     if([profilesManager getIndexOfSelectedProfile] == 0 && [self.layoutOSC.layoutChanges count] > 0){
-        UIAlertController * movedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"Layout of the Default profile can not be changed"] preferredStyle:UIAlertControllerStyleAlert];
-        [movedAlertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        UIAlertController * movedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [LocalizationHelper localizedStringForKey:@"Layout of the Default profile can not be changed"] preferredStyle:UIAlertControllerStyleAlert];
+        [movedAlertController addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Ok"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             [self.oscProfilesTableViewController profileViewRefresh];
         }]];
         [self presentViewController:movedAlertController animated:YES completion:nil];
