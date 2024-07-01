@@ -193,7 +193,7 @@
         }
         
         if (![self addHostToDiscovery:host]) {
-            callback(nil, @"Host information updated");
+            callback(nil, [LocalizationHelper localizedStringForKey:@"Host information updated"]);
         } else {
             callback(host, nil);
         }

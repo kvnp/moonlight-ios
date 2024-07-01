@@ -452,7 +452,7 @@ static NSMutableSet* hostList;
     
     switch (host.state) {
         case StateOffline:
-            message = @"Offline";
+            message = [LocalizationHelper localizedStringForKey:@"Offline"];
             break;
             
         case StateOnline:

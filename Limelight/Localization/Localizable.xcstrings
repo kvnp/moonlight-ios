@@ -305,6 +305,17 @@
         }
       }
     },
+    "Host information updated" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主机信息已更新"
+          }
+        }
+      }
+    },
     "Host MAC unknown, unable to send WOL Packet" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -501,6 +512,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "NVIDIA GAMESTREAM 服务终止"
+          }
+        }
+      }
+    },
+    "Offline" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "离线"
           }
         }
       }
