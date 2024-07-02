@@ -360,6 +360,17 @@
         }
       }
     },
+    "Local Keyboard Toggle Disabled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本地软键盘切换手势已禁用"
+          }
+        }
+      }
+    },
     "Manual_Add_Host_Fail" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -881,17 +892,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在串流视图中轻按4根手指修改虚拟手柄布局"
-          }
-        }
-      }
-    },
-    "Tap-Toggle Local Keyboard Disabled" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "本地软键盘切换手势已禁用"
           }
         }
       }

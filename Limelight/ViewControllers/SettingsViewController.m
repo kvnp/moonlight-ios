@@ -292,13 +292,13 @@ BOOL isCustomResolution(CGSize res) {
     
     //init keyboardToggle settings
     if(currentSettings.touchMode.intValue == RELATIVE_TOUCH_MODE){
-        [self.keyboardToggleFingerNumSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] != RELATIVE_TOUCH_MODE];
+        [self widget:self.keyboardToggleFingerNumSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] != RELATIVE_TOUCH_MODE];
         [self.keyboardToggleFingerNumSlider setValue:3.0];  //force 3 finger tap to toggle keyboard in relative touch mode. This is for the 4 finger OSC layout tool gesture.
         [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]];
     }
     else{
         [self.keyboardToggleFingerNumSlider setValue:(CGFloat)currentSettings.keyboardToggleFingers.intValue animated:YES]; // Load old setting. old setting was converted to uint16_t before saving.
-        if (self.keyboardToggleFingerNumSlider.value > 10.5f) [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"Tap-Toggle Local Keyboard Disabled"]]; // Initiate label display. Allow higher required finger number to completely disable keyboard toggle
+        if (self.keyboardToggleFingerNumSlider.value > 10.5f) [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"Local Keyboard Toggle Disabled"]]; // Initiate label display. Allow higher required finger number to completely disable keyboard toggle
         else [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]]; // Initiate label display
     }
     [self.keyboardToggleFingerNumSlider addTarget:self action:@selector(keyboardToggleFingerNumSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
@@ -319,19 +319,19 @@ BOOL isCustomResolution(CGSize res) {
     [self.pointerVelocityModeDividerSlider setValue:currentSettings.pointerVelocityModeDivider.floatValue * 100 animated:YES]; // Load old setting.
     [self.pointerVelocityModeDividerUILabel setText:[LocalizationHelper localizedStringForKey:@"Touch Pointer Velocity: Scaled on %d%% of Right Screen", 100 - (uint8_t)self.pointerVelocityModeDividerSlider.value]]; // Initiate label display
     [self.pointerVelocityModeDividerSlider addTarget:self action:@selector(pointerVelocityModeDividerSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
-    [self.pointerVelocityModeDividerSlider setEnabled: currentSettings.touchMode.intValue == NATIVE_TOUCH_MODE]; // pointer velocity scaling works only in native touch mode.
+    [self widget:self.pointerVelocityModeDividerSlider setEnabled: currentSettings.touchMode.intValue == NATIVE_TOUCH_MODE]; // pointer velocity scaling works only in native touch mode.
 
     // init pointer veloc setting
     [self.touchPointerVelocityFactorSlider setValue:currentSettings.touchPointerVelocityFactor.floatValue * 100 animated:YES]; // Load old setting.
     [self.touchPointerVelocityFactorUILabel setText:[LocalizationHelper localizedStringForKey: @"Touch Pointer Velocity: %d%%",  (uint16_t)self.touchPointerVelocityFactorSlider.value]]; // Initiate label display
     [self.touchPointerVelocityFactorSlider addTarget:self action:@selector(touchPointerVelocityFactorSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
-    [self.touchPointerVelocityFactorSlider setEnabled: currentSettings.touchMode.intValue == NATIVE_TOUCH_MODE]; // pointer velocity scaling works only in native touch mode.
+    [self widget:self.touchPointerVelocityFactorSlider setEnabled: currentSettings.touchMode.intValue == NATIVE_TOUCH_MODE]; // pointer velocity scaling works only in native touch mode.
     
     // init relative touch mouse pointer veloc setting
     [self.mousePointerVelocityFactorSlider setValue:currentSettings.mousePointerVelocityFactor.floatValue * 100 animated:YES]; // Load old setting.
     [self.mousePointerVelocityFactorUILabel setText:[LocalizationHelper localizedStringForKey: @"Mouse Pointer Velocity: %d%%",  (uint16_t)self.mousePointerVelocityFactorSlider.value]]; // Initiate label display
     [self.mousePointerVelocityFactorSlider addTarget:self action:@selector(mousePointerVelocityFactorSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
-    [self.mousePointerVelocityFactorSlider setEnabled: currentSettings.touchMode.intValue == RELATIVE_TOUCH_MODE]; // mouse velocity scaling works only in relative touch mode.
+    [self widget:self.mousePointerVelocityFactorSlider setEnabled: currentSettings.touchMode.intValue == RELATIVE_TOUCH_MODE]; // mouse velocity scaling works only in relative touch mode.
 
     
     // init CustomOSC stuff
@@ -433,15 +433,24 @@ BOOL isCustomResolution(CGSize res) {
     return 0;
 }
 
+- (void) widget:(UISlider*)widget setEnabled:(bool)enabled{
+    [widget setEnabled:enabled];
+    if(enabled){
+        widget.alpha = 1.0;
+        [widget setValue:widget.value + 0.0001]; // this is for low iOS version (like iOS14), only setting this minor value change is able to make widget visibility clear
+    }
+    else widget.alpha = 0.5; // this is for updating widget visibility on low iOS version like mini5 ios14
+}
 
 - (void) touchModeChanged {
-    // Disable on-screen controls in absolute touch mode
+    // Disable on-screen controls in non-relative touch mode
     [self.onscreenControlSelector setEnabled:[self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH_MODE];
-    [self.pointerVelocityModeDividerSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] == NATIVE_TOUCH_MODE]; // pointer velocity scaling works only in native touch mode.
-    [self.touchPointerVelocityFactorSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] == NATIVE_TOUCH_MODE]; // pointer velocity scaling works only in native touch mode.
-    [self.mousePointerVelocityFactorSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH_MODE]; // mouse velocity scaling works only in relative touch mode.
+    
+    [self widget:self.pointerVelocityModeDividerSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] == NATIVE_TOUCH_MODE]; // pointer velocity scaling works only in native touch mode.
+    [self widget:self.touchPointerVelocityFactorSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] == NATIVE_TOUCH_MODE]; // pointer velocity scaling works only in native touch mode.
+    [self widget:self.mousePointerVelocityFactorSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH_MODE]; // mouse velocity scaling works only in relative touch mode.
     // number of touches required to toggle keyboard in relative touch mode will be fixed to 3.
-    [self.keyboardToggleFingerNumSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] != RELATIVE_TOUCH_MODE];
+    [self widget:self.keyboardToggleFingerNumSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] != RELATIVE_TOUCH_MODE];
     if([self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH_MODE) {
         [self.keyboardToggleFingerNumSlider setValue:3.0];
         [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]];
