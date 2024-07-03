@@ -39,6 +39,7 @@
 #include <Limelight.h>
 
 @implementation MainFrameViewController {
+    UILabel* waterMark;
     NSOperationQueue* _opQueue;
     TemporaryHost* _selectedHost;
     BOOL _showHiddenApps;
@@ -921,10 +922,44 @@ static NSMutableSet* hostList;
     [self adjustScrollViewForSafeArea:self->hostScrollView];
 }
 
+- (void)waterMarkTapped {
+    // Handle the tap action here, e.g., open a URL
+    NSURL *url = [NSURL URLWithString:@"https://www.bilibili.com/video/BV1K4421D7Be"];
+    if ([[UIApplication sharedApplication] canOpenURL:url]) {
+        [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+    }
+}
+
+- (void)attachWaterMark {
+    // Create and configure the label
+    self->waterMark = [[UILabel alloc] init];
+    self->waterMark.translatesAutoresizingMaskIntoConstraints = NO;
+    self->waterMark.text = [LocalizationHelper localizedStringForKey:@"Modified by: True砖家 on Bilibili"];
+    self->waterMark.textColor = UIColor.blackColor;
+    self->waterMark.alpha = 0.2;
+    self->waterMark.font = [UIFont systemFontOfSize:20];
+    self->waterMark.textAlignment = NSTextAlignmentCenter;
+    self->waterMark.backgroundColor = [UIColor clearColor];
+    self->waterMark.userInteractionEnabled = YES; // Enable user interaction for tap gesture
+    // Add tap gesture recognizer to handle hyperlink action
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(waterMarkTapped)];
+    [self->waterMark addGestureRecognizer:tapGesture];
+    // Add the label to the view hierarchy
+    [self.view addSubview:self->waterMark];
+    // Set up constraints
+    [NSLayoutConstraint activateConstraints:@[
+        [self->waterMark.centerXAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-250], // Aligns the horizontal center of label to the horizontal center of view
+        [self->waterMark.centerYAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-50], // Aligns the vertical center of label to the vertical center of view
+        [self->waterMark.widthAnchor constraintEqualToConstant:500],                     // Sets the width of label to 200 points
+        [self->waterMark.heightAnchor constraintEqualToConstant:60]                      // Sets the height of label to 50 points
+    ]];
+}
+
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-        
+    [self attachWaterMark];
 #if !TARGET_OS_TV
     // Set the side bar button action. When it's tapped, it'll show the sidebar.
     [_settingsButton setTarget:self.revealViewController];

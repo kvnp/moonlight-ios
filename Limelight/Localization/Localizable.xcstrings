@@ -813,6 +813,29 @@
         }
       }
     },
+    "Modified by: True砖家 on Bilibili" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modified & Localized by: True砖家 on Bilibili"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modified & Localized by: True砖家 on Bilibili"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modified & Localized by: True砖家 on Bilibili"
+          }
+        }
+      }
+    },
     "Moonlight-iOS/tvOS only supports adding PCs on your local network on %s." : {
       "extractionState" : "manual",
       "localizations" : {
