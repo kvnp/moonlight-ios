@@ -7,9 +7,10 @@
 //
 
 #import "Settings+CoreDataClass.h"
-#define RELATIVE_TOUCH_MODE 0
-#define NATIVE_TOUCH_MODE 1
-#define ABSOLUTE_TOUCH_MODE 2
+#define RELATIVE_TOUCH 0
+#define REGULAR_NATIVE_TOUCH 1
+#define PURE_NATIVE_TOUCH 2
+#define ABSOLUTE_TOUCH 3
 
 
 @interface TemporarySettings : NSObject

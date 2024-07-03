@@ -144,7 +144,7 @@
     [self.view addGestureRecognizer:_exitSwipeRecognizer];
     
     
-    if(_settings.touchMode.intValue == RELATIVE_TOUCH_MODE && _settings.onscreenControls.intValue == OnScreenControlsCustom){
+    if(_settings.touchMode.intValue == RELATIVE_TOUCH && _settings.onscreenControls.intValue == OnScreenControlsCustom){
         _oscLayoutTapRecoginizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(layoutOSC)];
         _oscLayoutTapRecoginizer.numberOfTouchesRequired = 4; //tap 4 fingers to invoke OSC rebase
         _oscLayoutTapRecoginizer.tapDownTimeThreshold = 1;
@@ -225,7 +225,7 @@
 #endif
     
     // Only enable scroll and zoom in absolute touch mode
-    if (_settings.touchMode.intValue == ABSOLUTE_TOUCH_MODE) {
+    if (_settings.touchMode.intValue == ABSOLUTE_TOUCH) {
         _scrollView = [[UIScrollView alloc] initWithFrame:self.view.frame];
 #if !TARGET_OS_TV
         [_scrollView.panGestureRecognizer setMinimumNumberOfTouches:2];

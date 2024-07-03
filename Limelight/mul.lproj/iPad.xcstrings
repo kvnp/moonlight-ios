@@ -626,61 +626,73 @@
       }
     },
     "e4G-id-vjI.segmentTitles[1]" : {
-      "comment" : "Class = \"UISegmentedControl\"; e4G-id-vjI.segmentTitles[1] = \"Native Multi-Touch\"; ObjectID = \"e4G-id-vjI\";",
+      "comment" : "Class = \"UISegmentedControl\"; e4G-id-vjI.segmentTitles[1] = \"Native Touch\"; ObjectID = \"e4G-id-vjI\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Native Multi-Touch"
+            "value" : "Native Touch"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "原生多点触控"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "原生多点触控"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "原生多点触控"
           }
         }
       }
     },
     "e4G-id-vjI.segmentTitles[2]" : {
-      "comment" : "Class = \"UISegmentedControl\"; e4G-id-vjI.segmentTitles[2] = \"Absolute Touch\"; ObjectID = \"e4G-id-vjI\";",
+      "comment" : "Class = \"UISegmentedControl\"; e4G-id-vjI.segmentTitles[2] = \"Native Only\"; ObjectID = \"e4G-id-vjI\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Native Only"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "鼠标模式"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "鼠标模式"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "鼠标模式"
+          }
+        }
+      }
+    },
+    "e4G-id-vjI.segmentTitles[3]" : {
+      "comment" : "Class = \"UISegmentedControl\"; e4G-id-vjI.segmentTitles[3] = \"Absolute Touch\"; ObjectID = \"e4G-id-vjI\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Absolute Touch"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "鼠标模式"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "鼠标模式"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "鼠标模式"
           }
         }
       }

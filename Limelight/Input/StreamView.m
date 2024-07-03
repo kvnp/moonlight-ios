@@ -97,14 +97,15 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     
     
     switch (settings.touchMode.intValue) {
-        case NATIVE_TOUCH_MODE:
+        case PURE_NATIVE_TOUCH:
+        case REGULAR_NATIVE_TOUCH:
             self->touchHandler = [[NativeTouchHandler alloc] initWithView:self andSettings:settings];break;
-        case RELATIVE_TOUCH_MODE:
+        case RELATIVE_TOUCH:
             self->touchHandler = [[RelativeTouchHandler alloc] initWithView:self andSettings:settings];
             keyboardToggleRecognizer.immediateTriggering = false;
             keyboardToggleRecognizer.numberOfTouchesRequired = 3; //fixing keyboard taps to 3, in order to invoke OSC rebase in stream view by 4-finger tap.
             break;
-        case ABSOLUTE_TOUCH_MODE:
+        case ABSOLUTE_TOUCH:
             self->touchHandler = [[AbsoluteTouchHandler alloc] initWithView:self]; 
             keyboardToggleRecognizer.immediateTriggering = true; //triggers signal in touchesBegan callback stage
             break;
@@ -115,7 +116,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     
     onScreenControls = [[OnScreenControls alloc] initWithView:self controllerSup:controllerSupport streamConfig:streamConfig];
     OnScreenControlsLevel level = (OnScreenControlsLevel)[settings.onscreenControls integerValue];
-    if (settings.touchMode.intValue != RELATIVE_TOUCH_MODE) {
+    if (settings.touchMode.intValue != RELATIVE_TOUCH) {
         Log(LOG_I, @"On-screen controls disabled in non-relative touch mode");
         [onScreenControls setLevel:OnScreenControlsLevelOff];
     }
@@ -436,7 +437,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 #if !TARGET_OS_TV
     if (@available(iOS 13.4, *)) {
-        if (settings.touchMode.intValue == NATIVE_TOUCH_MODE) {
+        if (settings.touchMode.intValue == PURE_NATIVE_TOUCH) {
             [touchHandler touchesBegan:touches withEvent:event];
             return; //This is a native touch oriented fork, in native touch mode, this call back method deals with native touch only.
         }
@@ -594,7 +595,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
 #if !TARGET_OS_TV
     if (@available(iOS 13.4, *)) {
-        if (settings.touchMode.intValue == NATIVE_TOUCH_MODE) {
+        if (settings.touchMode.intValue == PURE_NATIVE_TOUCH) {
             [touchHandler touchesMoved:touches withEvent:event];
             return; //This is a native touch oriented fork, in native touch mode, this call back method deals with native touch only.
         }
@@ -674,7 +675,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
 #if !TARGET_OS_TV
     if (@available(iOS 13.4, *)) {
-        if (settings.touchMode.intValue == NATIVE_TOUCH_MODE) {
+        if (settings.touchMode.intValue == PURE_NATIVE_TOUCH) {
             [touchHandler touchesEnded:touches withEvent:event];
             return; //This is a native touch oriented fork, in native touch mode, this call back method deals with native touch only.
         }
@@ -707,7 +708,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     [touchHandler touchesCancelled:touches withEvent:event];
 #if !TARGET_OS_TV
     if (@available(iOS 13.4, *)) {
-        if (settings.touchMode.intValue == NATIVE_TOUCH_MODE) return; //This is a native touch oriented fork, in native touch mode, this call back method deals with native touch only.
+        if (settings.touchMode.intValue == PURE_NATIVE_TOUCH) return; //This is a native touch oriented fork, in native touch mode, this call back method deals with native touch only.
         else{
             for (UITouch* touch in touches) {
                 if (touch.type == UITouchTypePencil) {

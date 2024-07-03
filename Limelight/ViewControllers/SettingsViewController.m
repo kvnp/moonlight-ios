@@ -282,7 +282,7 @@ BOOL isCustomResolution(CGSize res) {
     [self.framerateSelector setSelectedSegmentIndex:framerate];
     [self.framerateSelector addTarget:self action:@selector(updateBitrate) forControlEvents:UIControlEventValueChanged];
     [self.onscreenControlSelector setSelectedSegmentIndex:onscreenControls];
-    [self.onscreenControlSelector setEnabled: currentSettings.touchMode.intValue == RELATIVE_TOUCH_MODE];//enable/disable controller UI widget for the first time.
+    [self.onscreenControlSelector setEnabled: currentSettings.touchMode.intValue == RELATIVE_TOUCH];//enable/disable controller UI widget for the first time.
     [self.bitrateSlider setMinimumValue:0];
     [self.bitrateSlider setMaximumValue:(sizeof(bitrateTable) / sizeof(*bitrateTable)) - 1];
     [self.bitrateSlider setValue:[self getSliderValueForBitrate:_bitrate] animated:YES];
@@ -291,8 +291,8 @@ BOOL isCustomResolution(CGSize res) {
     [self updateResolutionDisplayViewText];
     
     //init keyboardToggle settings
-    if(currentSettings.touchMode.intValue == RELATIVE_TOUCH_MODE){
-        [self widget:self.keyboardToggleFingerNumSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] != RELATIVE_TOUCH_MODE];
+    if(currentSettings.touchMode.intValue == RELATIVE_TOUCH){
+        [self widget:self.keyboardToggleFingerNumSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] != RELATIVE_TOUCH];
         [self.keyboardToggleFingerNumSlider setValue:3.0];  //force 3 finger tap to toggle keyboard in relative touch mode. This is for the 4 finger OSC layout tool gesture.
         [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]];
     }
@@ -319,19 +319,19 @@ BOOL isCustomResolution(CGSize res) {
     [self.pointerVelocityModeDividerSlider setValue:currentSettings.pointerVelocityModeDivider.floatValue * 100 animated:YES]; // Load old setting.
     [self.pointerVelocityModeDividerUILabel setText:[LocalizationHelper localizedStringForKey:@"Touch Pointer Velocity: Scaled on %d%% of Right Screen", 100 - (uint8_t)self.pointerVelocityModeDividerSlider.value]]; // Initiate label display
     [self.pointerVelocityModeDividerSlider addTarget:self action:@selector(pointerVelocityModeDividerSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
-    [self widget:self.pointerVelocityModeDividerSlider setEnabled: currentSettings.touchMode.intValue == NATIVE_TOUCH_MODE]; // pointer velocity scaling works only in native touch mode.
+    [self widget:self.pointerVelocityModeDividerSlider setEnabled: currentSettings.touchMode.intValue == PURE_NATIVE_TOUCH || currentSettings.touchMode.intValue == REGULAR_NATIVE_TOUCH]; // pointer velocity scaling works only in native touch mode.
 
     // init pointer veloc setting
     [self.touchPointerVelocityFactorSlider setValue:currentSettings.touchPointerVelocityFactor.floatValue * 100 animated:YES]; // Load old setting.
     [self.touchPointerVelocityFactorUILabel setText:[LocalizationHelper localizedStringForKey: @"Touch Pointer Velocity: %d%%",  (uint16_t)self.touchPointerVelocityFactorSlider.value]]; // Initiate label display
     [self.touchPointerVelocityFactorSlider addTarget:self action:@selector(touchPointerVelocityFactorSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
-    [self widget:self.touchPointerVelocityFactorSlider setEnabled: currentSettings.touchMode.intValue == NATIVE_TOUCH_MODE]; // pointer velocity scaling works only in native touch mode.
+    [self widget:self.touchPointerVelocityFactorSlider setEnabled: currentSettings.touchMode.intValue == PURE_NATIVE_TOUCH || currentSettings.touchMode.intValue == REGULAR_NATIVE_TOUCH]; // pointer velocity scaling works only in native touch mode.
     
     // init relative touch mouse pointer veloc setting
     [self.mousePointerVelocityFactorSlider setValue:currentSettings.mousePointerVelocityFactor.floatValue * 100 animated:YES]; // Load old setting.
     [self.mousePointerVelocityFactorUILabel setText:[LocalizationHelper localizedStringForKey: @"Mouse Pointer Velocity: %d%%",  (uint16_t)self.mousePointerVelocityFactorSlider.value]]; // Initiate label display
     [self.mousePointerVelocityFactorSlider addTarget:self action:@selector(mousePointerVelocityFactorSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
-    [self widget:self.mousePointerVelocityFactorSlider setEnabled: currentSettings.touchMode.intValue == RELATIVE_TOUCH_MODE]; // mouse velocity scaling works only in relative touch mode.
+    [self widget:self.mousePointerVelocityFactorSlider setEnabled: currentSettings.touchMode.intValue == RELATIVE_TOUCH]; // mouse velocity scaling works only in relative touch mode.
 
     
     // init CustomOSC stuff
@@ -348,7 +348,7 @@ BOOL isCustomResolution(CGSize res) {
         self.layoutOnScreenControlsVC = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
         self.layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationFullScreen;
     }
-    if(currentSettings.onscreenControls.intValue == OnScreenControlsCustom && currentSettings.touchMode.intValue == RELATIVE_TOUCH_MODE) { //load OSC slider UI Lable to remind user:
+    if(currentSettings.onscreenControls.intValue == OnScreenControlsCustom && currentSettings.touchMode.intValue == RELATIVE_TOUCH) { //load OSC slider UI Lable to remind user:
         [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap 4 Fingers to Change OSC Layout in Stream View"]]; //keyboard is force set to 3 finger to make this working.
         //if (self.layoutOnScreenControlsVC.isBeingPresented == NO)
     }
@@ -387,7 +387,7 @@ BOOL isCustomResolution(CGSize res) {
         self.layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationFullScreen;
     }
 
-    if([self.onscreenControlSelector selectedSegmentIndex] == OnScreenControlsCustom && [self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH_MODE) {
+    if([self.onscreenControlSelector selectedSegmentIndex] == OnScreenControlsCustom && [self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH) {
         [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap 4 Fingers to Change OSC Layout in Stream View"]];
         [self showCustomOSCTip];
         //if (self.layoutOnScreenControlsVC.isBeingPresented == NO)
@@ -444,19 +444,22 @@ BOOL isCustomResolution(CGSize res) {
 
 - (void) touchModeChanged {
     // Disable on-screen controls in non-relative touch mode
-    [self.onscreenControlSelector setEnabled:[self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH_MODE];
     
-    [self widget:self.pointerVelocityModeDividerSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] == NATIVE_TOUCH_MODE]; // pointer velocity scaling works only in native touch mode.
-    [self widget:self.touchPointerVelocityFactorSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] == NATIVE_TOUCH_MODE]; // pointer velocity scaling works only in native touch mode.
-    [self widget:self.mousePointerVelocityFactorSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH_MODE]; // mouse velocity scaling works only in relative touch mode.
+    bool isNative = [self.touchModeSelector selectedSegmentIndex] == PURE_NATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == REGULAR_NATIVE_TOUCH;
+    
+    [self.onscreenControlSelector setEnabled:[self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH];
+    
+    [self widget:self.pointerVelocityModeDividerSlider setEnabled:isNative]; // pointer velocity scaling works only in native touch mode.
+    [self widget:self.touchPointerVelocityFactorSlider setEnabled:isNative]; // pointer velocity scaling works only in native touch mode.
+    [self widget:self.mousePointerVelocityFactorSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH]; // mouse velocity scaling works only in relative touch mode.
     // number of touches required to toggle keyboard in relative touch mode will be fixed to 3.
-    [self widget:self.keyboardToggleFingerNumSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] != RELATIVE_TOUCH_MODE];
-    if([self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH_MODE) {
+    [self widget:self.keyboardToggleFingerNumSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] != RELATIVE_TOUCH];
+    if([self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH) {
         [self.keyboardToggleFingerNumSlider setValue:3.0];
         [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]];
     }
     
-    if([self.onscreenControlSelector selectedSegmentIndex] == OnScreenControlsCustom && [self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH_MODE) {
+    if([self.onscreenControlSelector selectedSegmentIndex] == OnScreenControlsCustom && [self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH) {
         [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap 4 Fingers to Change OSC Layout in Stream View"]];
         //if (self.layoutOnScreenControlsVC.isBeingPresented == NO)
     }
