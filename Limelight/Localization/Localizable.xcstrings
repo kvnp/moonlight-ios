@@ -13,7 +13,19 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "\n\n设备的网络连接似乎正在阻塞Moonlight. 可能无法在此网络中串流."
+            "value" : "\n\n设备的网络连接似乎正在屏蔽Moonlight. 可能无法在此网络中串流."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\n\n设备的网络连接似乎正在屏蔽Moonlight. 可能无法在此网络中串流."
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\n\n设备的网络连接似乎正在屏蔽Moonlight. 可能无法在此网络中串流."
           }
         }
       }
@@ -22,6 +34,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 正在运行"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 正在运行"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ 正在运行"
@@ -37,6 +61,18 @@
             "state" : "translated",
             "value" : "手动添加远程主机"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手动添加远程主机"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手动添加远程主机"
+          }
         }
       }
     },
@@ -44,6 +80,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流码率: %.1f Mbps"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流码率: %.1f Mbps"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "串流码率: %.1f Mbps"
@@ -59,6 +107,18 @@
             "state" : "translated",
             "value" : "取消"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
         }
       }
     },
@@ -66,6 +126,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在连接"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在连接"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在连接"
@@ -81,6 +153,18 @@
             "state" : "translated",
             "value" : "连接错误"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接错误"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接错误"
+          }
         }
       }
     },
@@ -88,6 +172,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接失败"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接失败"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "连接失败"
@@ -103,6 +199,18 @@
             "state" : "translated",
             "value" : "连接帮助"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接帮助"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接失败"
+          }
         }
       }
     },
@@ -114,6 +222,18 @@
             "state" : "translated",
             "value" : "连接已中断"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接已中断"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接已中断"
+          }
         }
       }
     },
@@ -121,6 +241,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接已终止"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接已终止"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "连接已终止"
@@ -142,6 +274,18 @@
             "state" : "translated",
             "value" : "\n\n检查主机端防火墙以及端口%s的转发规则"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\n\n检查主机端防火墙以及端口%s的转发规则"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\n\n检查主机端防火墙以及端口%s的转发规则"
+          }
         }
       }
     },
@@ -149,6 +293,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前布局已修改"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前布局已修改"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "当前布局已修改"
@@ -164,6 +320,18 @@
             "state" : "translated",
             "value" : "当前布局: %@"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前布局: %@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前布局: %@"
+          }
         }
       }
     },
@@ -171,6 +339,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已设定为自定义分辨率"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已设定为自定义分辨率"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "已设定为自定义分辨率"
@@ -186,6 +366,18 @@
             "state" : "translated",
             "value" : "您可能需要在主机端的显卡控制面板手动添加自定义分辨率"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "您可能需要在主机端的显卡控制面板手动添加自定义分辨率"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "您可能需要在主机端的显卡控制面板手动添加自定义分辨率"
+          }
         }
       }
     },
@@ -193,6 +385,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按键删除"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按键删除"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "按键删除"
@@ -208,6 +412,18 @@
             "state" : "translated",
             "value" : "将按键拖动到这个垃圾桶即可删除"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将按键拖动到这个垃圾桶即可删除"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将按键拖动到这个垃圾桶即可删除"
+          }
         }
       }
     },
@@ -219,6 +435,18 @@
             "state" : "translated",
             "value" : "输入自定义分辨率"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入自定义分辨率"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入自定义分辨率"
+          }
         }
       }
     },
@@ -226,6 +454,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将当前虚拟手柄布局另存为"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将当前虚拟手柄布局另存为"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "将当前虚拟手柄布局另存为"
@@ -247,6 +487,18 @@
             "state" : "translated",
             "value" : "\n请在主机端输入PIN码: %@\n\n如果主机运行的是Sunshine, 请在网页控制台输入PIN码"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\n请在主机端输入PIN码: %@\n\n如果主机运行的是Sunshine, 请在网页控制台输入PIN码"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\n请在主机端输入PIN码: %@\n\n如果主机运行的是Sunshine, 请在网页控制台输入PIN码"
+          }
         }
       }
     },
@@ -254,6 +506,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出应用失败. 如果此应用是由其他串流设备启动的, 请用相应的设备退出此应用"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出应用失败. 如果此应用是由其他串流设备启动的, 请用相应的设备退出此应用"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "退出应用失败. 如果此应用是由其他串流设备启动的, 请用相应的设备退出此应用"
@@ -269,6 +533,18 @@
             "state" : "translated",
             "value" : "解析主机域名失败"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解析主机域名失败"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解析主机域名失败"
+          }
         }
       }
     },
@@ -276,6 +552,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "了解！"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "了解！"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "了解！"
@@ -291,6 +579,18 @@
             "state" : "translated",
             "value" : "帮助"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "帮助"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "帮助"
+          }
         }
       }
     },
@@ -298,6 +598,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏应用"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏应用"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "隐藏应用"
@@ -313,6 +625,18 @@
             "state" : "translated",
             "value" : "主机信息已更新"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主机信息已更新"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主机信息已更新"
+          }
         }
       }
     },
@@ -320,6 +644,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未知主机MAC地址, 无法发送WOL包"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未知主机MAC地址, 无法发送WOL包"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "未知主机MAC地址, 无法发送WOL包"
@@ -335,6 +671,18 @@
             "state" : "translated",
             "value" : "输入主机端IP地址"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入主机端IP地址"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入主机端IP地址"
+          }
         }
       }
     },
@@ -342,6 +690,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启动应用"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启动应用"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "启动应用"
@@ -357,6 +717,18 @@
             "state" : "translated",
             "value" : "默认布局无法被修改"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认布局无法被修改"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认布局无法被修改"
+          }
         }
       }
     },
@@ -364,6 +736,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本地软键盘切换手势已禁用"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本地软键盘切换手势已禁用"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "本地软键盘切换手势已禁用"
@@ -385,6 +769,18 @@
             "state" : "translated",
             "value" : "无法连接远程主机\n\n如果主机运行的是Geforce Experience, 确认SHIELD已启用.\n\n如果主机运行的是Sushine, 确认服务正常运行. 如果使用非默认端口, 请添加到地址中."
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法连接远程主机\n\n如果主机运行的是Geforce Experience, 确认SHIELD已启用.\n\n如果主机运行的是Sushine, 确认服务正常运行. 如果使用非默认端口, 请添加到地址中."
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法连接远程主机\n\n如果主机运行的是Geforce Experience, 确认SHIELD已启用.\n\n如果主机运行的是Sushine, 确认服务正常运行. 如果使用非默认端口, 请添加到地址中."
+          }
         }
       }
     },
@@ -402,6 +798,18 @@
             "state" : "translated",
             "value" : "无法执行网络测试. 请检查网络连接后重试."
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法执行网络测试. 请检查网络连接后重试."
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法执行网络测试. 请检查网络连接后重试."
+          }
         }
       }
     },
@@ -409,6 +817,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moonlight-iOS/tvOS仅支持添加局域网中的主机"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moonlight-iOS/tvOS仅支持添加局域网中的主机"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Moonlight-iOS/tvOS仅支持添加局域网中的主机"
@@ -424,6 +844,18 @@
             "state" : "translated",
             "value" : "鼠标指针灵敏度: %d%%"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鼠标指针灵敏度: %d%%"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鼠标指针灵敏度: %d%%"
+          }
         }
       }
     },
@@ -431,6 +863,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名称"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名称"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "名称"
@@ -452,6 +896,18 @@
             "state" : "translated",
             "value" : "设备的网络连接似乎正在阻塞Moonlight. 可能无法在此网络中串流.\n\n以下网络端口被阻塞:\n%s"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设备的网络连接似乎正在阻塞Moonlight. 可能无法在此网络中串流.\n\n以下网络端口被阻塞:\n%s"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设备的网络连接似乎正在阻塞Moonlight. 可能无法在此网络中串流.\n\n以下网络端口被阻塞:\n%s"
+          }
         }
       }
     },
@@ -469,6 +925,18 @@
             "state" : "translated",
             "value" : "网络测试成功. 如果仍然无法连接远程主机, 请检查主机端防火墙设置."
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络测试成功. 如果仍然无法连接远程主机, 请检查主机端防火墙设置."
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络测试成功. 如果仍然无法连接远程主机, 请检查主机端防火墙设置."
+          }
         }
       }
     },
@@ -476,6 +944,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络错误"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络错误"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "网络错误"
@@ -491,6 +971,18 @@
             "state" : "translated",
             "value" : "网络测试已完成"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络测试已完成"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络测试已完成"
+          }
         }
       }
     },
@@ -498,6 +990,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法从主机接收视频帧"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法从主机接收视频帧"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法从主机接收视频帧"
@@ -513,6 +1017,18 @@
             "state" : "translated",
             "value" : "无修改可撤消"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无修改可撤消"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无修改可撤消"
+          }
         }
       }
     },
@@ -520,6 +1036,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NVIDIA GAMESTREAM 服务终止"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NVIDIA GAMESTREAM 服务终止"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "NVIDIA GAMESTREAM 服务终止"
@@ -535,6 +1063,18 @@
             "state" : "translated",
             "value" : "离线"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "离线"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "离线"
+          }
         }
       }
     },
@@ -542,6 +1082,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确认"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确认"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "确认"
@@ -557,6 +1109,18 @@
             "state" : "translated",
             "value" : "屏显虚拟手柄"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏显虚拟手柄"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏显虚拟手柄"
+          }
         }
       }
     },
@@ -564,6 +1128,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在线 - 未配对"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在线 - 未配对"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "在线 - 未配对"
@@ -579,6 +1155,18 @@
             "state" : "translated",
             "value" : "在线 - 已配对"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在线 - 已配对"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在线 - 已配对"
+          }
         }
       }
     },
@@ -586,6 +1174,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在配对"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在配对"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在配对"
@@ -601,6 +1201,18 @@
             "state" : "translated",
             "value" : "配对失败"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配对失败"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配对失败"
+          }
         }
       }
     },
@@ -608,6 +1220,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络状态较差"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络状态较差"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "网络状态较差"
@@ -623,6 +1247,18 @@
             "state" : "translated",
             "value" : "当前布局已另存为: %@"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前布局已另存为: %@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前布局已另存为: %@"
+          }
         }
       }
     },
@@ -630,6 +1266,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认布局无法被覆盖保存"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认布局无法被覆盖保存"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "默认布局无法被覆盖保存"
@@ -645,6 +1293,18 @@
             "state" : "translated",
             "value" : "布局名称已存"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "布局名称已存"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "布局名称已存"
+          }
         }
       }
     },
@@ -652,6 +1312,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "布局名称不能为空!"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "布局名称不能为空!"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "布局名称不能为空!"
@@ -667,6 +1339,18 @@
             "state" : "translated",
             "value" : "退出应用"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出应用"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出应用"
+          }
         }
       }
     },
@@ -674,6 +1358,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出运行中的应用"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出运行中的应用"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "退出运行中的应用"
@@ -689,6 +1385,18 @@
             "state" : "translated",
             "value" : "退出运行中的应用, 并运行此应用"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出运行中的应用, 并运行此应用"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出运行中的应用, 并运行此应用"
+          }
         }
       }
     },
@@ -696,6 +1404,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出应用失败"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出应用失败"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "退出应用失败"
@@ -711,6 +1431,18 @@
             "state" : "translated",
             "value" : "正在退出应用: %@"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在退出应用: %@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在退出应用: %@"
+          }
         }
       }
     },
@@ -718,6 +1450,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流中修改布局"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流中修改布局"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "串流中修改布局"
@@ -733,6 +1477,18 @@
             "state" : "translated",
             "value" : "移除主机"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除主机"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除主机"
+          }
         }
       }
     },
@@ -740,6 +1496,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "恢复应用"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "恢复应用"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "恢复应用"
@@ -755,6 +1523,18 @@
             "state" : "translated",
             "value" : "恢复运行中的应用"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "恢复运行中的应用"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "恢复运行中的应用"
+          }
         }
       }
     },
@@ -766,6 +1546,18 @@
             "state" : "translated",
             "value" : "保存"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存"
+          }
         }
       }
     },
@@ -773,6 +1565,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认布局无法被覆盖保存"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认布局无法被覆盖保存"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "默认布局无法被覆盖保存"
@@ -794,6 +1598,18 @@
             "state" : "translated",
             "value" : "正在搜索网络中的主机 ..."
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在搜索网络中的主机 ..."
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在搜索网络中的主机 ..."
+          }
         }
       }
     },
@@ -801,6 +1617,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择主机"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择主机"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "选择主机"
@@ -816,6 +1644,18 @@
             "state" : "translated",
             "value" : "选择新主机"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择新主机"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择新主机"
+          }
         }
       }
     },
@@ -823,6 +1663,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流分辨率:"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流分辨率:"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "串流分辨率:"
@@ -838,6 +1690,18 @@
             "state" : "translated",
             "value" : "显示应用"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示应用"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示应用"
+          }
         }
       }
     },
@@ -845,6 +1709,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络带宽不足, 请降低串流码率"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络带宽不足, 请降低串流码率"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "网络带宽不足, 请降低串流码率"
@@ -860,6 +1736,18 @@
             "state" : "translated",
             "value" : "成功发送唤醒请求. 主机唤醒需要一定时间. 如果主机未被唤醒, 请检查Wake-on-LAN设置"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功发送唤醒请求. 主机唤醒需要一定时间. 如果主机未被唤醒, 请检查Wake-on-LAN设置"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功发送唤醒请求. 主机唤醒需要一定时间. 如果主机未被唤醒, 请检查Wake-on-LAN设置"
+          }
         }
       }
     },
@@ -867,6 +1755,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出远程桌面的滑动距离: %.2f x 屏幕宽度"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出远程桌面的滑动距离: %.2f x 屏幕宽度"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "退出远程桌面的滑动距离: %.2f x 屏幕宽度"
@@ -882,6 +1782,18 @@
             "state" : "translated",
             "value" : "在串流视图中轻按4根手指修改虚拟手柄布局"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在串流视图中轻按4根手指修改虚拟手柄布局"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在串流视图中轻按4根手指修改虚拟手柄布局"
+          }
         }
       }
     },
@@ -889,6 +1801,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在串流视图中轻按4根手指修改虚拟手柄布局"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在串流视图中轻按4根手指修改虚拟手柄布局"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "在串流视图中轻按4根手指修改虚拟手柄布局"
@@ -904,6 +1828,18 @@
             "state" : "translated",
             "value" : "测试网络"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "测试网络"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "测试网络"
+          }
         }
       }
     },
@@ -911,6 +1847,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接终止, 错误码: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接终止, 错误码: %@"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "连接终止, 错误码: %@"
@@ -926,6 +1874,18 @@
             "state" : "translated",
             "value" : "已经没有修改可以撤消"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已经没有修改可以撤消"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已经没有修改可以撤消"
+          }
         }
       }
     },
@@ -933,6 +1893,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提示: 从屏幕连续滑动一定距离退出远程桌面. 滑动边缘和距离取决于菜单设置."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提示: 从屏幕连续滑动一定距离退出远程桌面. 滑动边缘和距离取决于菜单设置."
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "提示: 从屏幕连续滑动一定距离退出远程桌面. 滑动边缘和距离取决于菜单设置."
@@ -954,6 +1926,18 @@
             "state" : "translated",
             "value" : "轻按%d根手指, 切换本地软键盘"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轻按%d根手指, 切换本地软键盘"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轻按%d根手指, 切换本地软键盘"
+          }
         }
       }
     },
@@ -961,6 +1945,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触点灵敏度: %d%%"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触点灵敏度: %d%%"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "触点灵敏度: %d%%"
@@ -976,6 +1972,18 @@
             "state" : "translated",
             "value" : "调节屏幕靠右 %d%%区域的触点灵敏度"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "调节屏幕靠右 %d%%区域的触点灵敏度"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "调节屏幕靠右 %d%%区域的触点灵敏度"
+          }
         }
       }
     },
@@ -983,6 +1991,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该设备不支持"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该设备不支持"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "该设备不支持"
@@ -998,6 +2018,18 @@
             "state" : "translated",
             "value" : "视频高度"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "视频高度"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "视频高度"
+          }
         }
       }
     },
@@ -1005,6 +2037,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "视频宽度"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "视频宽度"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "视频宽度"
@@ -1020,6 +2064,18 @@
             "state" : "translated",
             "value" : "查看所有应用"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看所有应用"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看所有应用"
+          }
         }
       }
     },
@@ -1027,6 +2083,18 @@
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "唤醒PC"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "唤醒PC"
+          }
+        },
+        "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "唤醒PC"
@@ -1042,6 +2110,18 @@
             "state" : "translated",
             "value" : "Wake-on-LAN"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wake-on-LAN"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wake-on-LAN"
+          }
         }
       }
     },
@@ -1051,7 +2131,19 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "网络状态较差. 请降低码率或更换更可靠的网络连接."
+            "value" : "网络状态较差. 请降低码率或更换可靠的网络连接."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络状态较差. 请降低码率或更换可靠的网络连接."
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络状态较差. 请降低码率或更换可靠的网络连接."
           }
         }
       }

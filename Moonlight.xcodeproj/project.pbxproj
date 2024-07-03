@@ -1055,6 +1055,8 @@
 				en,
 				Base,
 				"zh-Hans",
+				"zh-Hant",
+				"zh-HK",
 			);
 			mainGroup = FB290CE519B2C406004C83CF;
 			productRefGroup = FB290CEF19B2C406004C83CF /* Products */;
