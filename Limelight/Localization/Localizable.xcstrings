@@ -1964,6 +1964,98 @@
         }
       }
     },
+    "Touch Mode - For MacOS Direct Touch" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控模式 - 适用MacOS单点触控"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控模式 - 适用MacOS单点触控"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控模式 - 适用MacOS单点触控"
+          }
+        }
+      }
+    },
+    "Touch Mode - No Mouse & Pencil Support" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控模式 - 不支持鼠标、手写笔"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控模式 - 不支持鼠标、手写笔"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控模式 - 不支持鼠标、手写笔"
+          }
+        }
+      }
+    },
+    "Touch Mode - On Screen Game Controller Available" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控模式 - 支持屏显手柄"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控模式 - 支持屏显手柄"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控模式 - 支持屏显手柄"
+          }
+        }
+      }
+    },
+    "Touch Mode - With Mouse & Pencil Support" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控模式 - 支持鼠标、手写笔"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控模式 - 支持鼠标、手写笔"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控模式 - 支持鼠标、手写笔"
+          }
+        }
+      }
+    },
     "Touch Pointer Velocity: %d%%" : {
       "extractionState" : "manual",
       "localizations" : {

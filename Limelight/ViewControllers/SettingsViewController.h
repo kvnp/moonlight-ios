@@ -16,6 +16,7 @@
 @property (strong, nonatomic) IBOutlet UISegmentedControl *framerateSelector;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *resolutionSelector;
 @property (strong, nonatomic) IBOutlet UIView *resolutionDisplayView;
+@property (strong, nonatomic) IBOutlet UILabel *touchModeLabel;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *touchModeSelector;
 @property (strong, nonatomic) IBOutlet UILabel *onscreenControllerLabel;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *onscreenControlSelector;

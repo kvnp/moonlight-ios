@@ -490,6 +490,7 @@ ICAgICAgICAgICAgIA
                         <outlet property="swipeExitScreenEdgeSelector" destination="2Lx-OY-ZPu" id="C3j-zx-gul"/>
                         <outlet property="swipeToExitDistanceSlider" destination="3MK-Qx-ZVc" id="Rv3-x0-qe3"/>
                         <outlet property="swipeToExitDistanceUILabel" destination="Ex1-zI-oAH" id="LDq-gh-z78"/>
+                        <outlet property="touchModeLabel" destination="CHp-14-aTt" id="4ul-RJ-5Dp"/>
                         <outlet property="touchModeSelector" destination="2lg-HW-tku" id="HrP-Pz-jQp"/>
                         <outlet property="touchPointerVelocityFactorSlider" destination="cSy-mj-8pD" id="4Jf-Sj-c4O"/>
                         <outlet property="touchPointerVelocityFactorUILabel" destination="c6f-bJ-Vji" id="uVM-o6-JPk"/>

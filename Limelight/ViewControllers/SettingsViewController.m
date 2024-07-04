@@ -268,6 +268,8 @@ BOOL isCustomResolution(CGSize res) {
     // [self.touchModeSelector setSelectedSegmentIndex:currentSettings.absoluteTouchMode ? 1 : 0];
     [self.touchModeSelector setSelectedSegmentIndex:currentSettings.touchMode.intValue]; //Load old touchMode setting
     [self.touchModeSelector addTarget:self action:@selector(touchModeChanged) forControlEvents:UIControlEventValueChanged];
+    [self updateTouchModeLabel];
+    
     [self.statsOverlaySelector setSelectedSegmentIndex:currentSettings.statsOverlay ? 1 : 0];
     [self.btMouseSelector setSelectedSegmentIndex:currentSettings.btMouseSupport ? 1 : 0];
     [self.optimizeSettingsSelector setSelectedSegmentIndex:currentSettings.optimizeGames ? 1 : 0];
@@ -355,6 +357,22 @@ BOOL isCustomResolution(CGSize res) {
     else{
         [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"On-Screen Controls"]];
     }
+}
+
+
+- (void)updateTouchModeLabel{
+    NSString* labelText;
+    switch([self.touchModeSelector selectedSegmentIndex]){
+        case RELATIVE_TOUCH:
+            labelText = [LocalizationHelper localizedStringForKey:@"Touch Mode - On Screen Game Controller Available"];break;
+        case REGULAR_NATIVE_TOUCH:
+            labelText = [LocalizationHelper localizedStringForKey:@"Touch Mode - With Mouse & Pencil Support"];break;
+        case PURE_NATIVE_TOUCH:
+            labelText = [LocalizationHelper localizedStringForKey:@"Touch Mode - No Mouse & Pencil Support"];break;
+        case ABSOLUTE_TOUCH:
+            labelText = [LocalizationHelper localizedStringForKey:@"Touch Mode - For MacOS Direct Touch"];break;
+    }
+    [self.touchModeLabel setText:labelText];
 }
 
 
@@ -466,6 +484,7 @@ BOOL isCustomResolution(CGSize res) {
     else{
         [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"On-Screen Controls"]];
     }
+    [self updateTouchModeLabel];
 }
 
 - (void) updateBitrate {

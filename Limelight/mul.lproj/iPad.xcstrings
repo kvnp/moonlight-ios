@@ -637,20 +637,20 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "原生多点触控"
+            "state" : "translated",
+            "value" : "多点触控"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "原生多点触控"
+            "state" : "translated",
+            "value" : "多点触控"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "原生多点触控"
+            "state" : "translated",
+            "value" : "多点触控"
           }
         }
       }
@@ -667,20 +667,20 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "鼠标模式"
+            "state" : "translated",
+            "value" : "仅多点触控"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "鼠标模式"
+            "state" : "translated",
+            "value" : "仅多点触控"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "鼠标模式"
+            "state" : "translated",
+            "value" : "仅多点触控"
           }
         }
       }
@@ -693,6 +693,24 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Absolute Touch"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "单点鼠标"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "单点鼠标"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "单点鼠标"
           }
         }
       }
