@@ -439,7 +439,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     if (@available(iOS 13.4, *)) {
         if (settings.touchMode.intValue == PURE_NATIVE_TOUCH) {
             [touchHandler touchesBegan:touches withEvent:event];
-            return; //This is a native touch oriented fork, in native touch mode, this call back method deals with native touch only.
+            return; //This is a native touch oriented fork, in pure native touch mode, this call back method deals with native touch only.
         }
         else{
             for (UITouch* touch in touches) {
@@ -597,7 +597,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     if (@available(iOS 13.4, *)) {
         if (settings.touchMode.intValue == PURE_NATIVE_TOUCH) {
             [touchHandler touchesMoved:touches withEvent:event];
-            return; //This is a native touch oriented fork, in native touch mode, this call back method deals with native touch only.
+            return; //This is a native touch oriented fork, in pure native touch mode, this call back method deals with native touch only.
         }
         else{
             for (UITouch* touch in touches) {
@@ -677,7 +677,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     if (@available(iOS 13.4, *)) {
         if (settings.touchMode.intValue == PURE_NATIVE_TOUCH) {
             [touchHandler touchesEnded:touches withEvent:event];
-            return; //This is a native touch oriented fork, in native touch mode, this call back method deals with native touch only.
+            return; //This is a native touch oriented fork, in pure native touch mode, this call back method deals with native touch only.
         }
         else{
             for (UITouch* touch in touches) {
@@ -708,7 +708,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     [touchHandler touchesCancelled:touches withEvent:event];
 #if !TARGET_OS_TV
     if (@available(iOS 13.4, *)) {
-        if (settings.touchMode.intValue == PURE_NATIVE_TOUCH) return; //This is a native touch oriented fork, in native touch mode, this call back method deals with native touch only.
+        if (settings.touchMode.intValue == PURE_NATIVE_TOUCH) return; //This is a native touch oriented fork, in pure native touch mode, this call back method deals with native touch only.
         else{
             for (UITouch* touch in touches) {
                 if (touch.type == UITouchTypePencil) {
