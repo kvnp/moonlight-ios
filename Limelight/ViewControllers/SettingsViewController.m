@@ -151,9 +151,40 @@ BOOL isCustomResolution(CGSize res) {
     return YES;
 }
 
+- (void)updateResolutionTable{
+    UIWindow *window = UIApplication.sharedApplication.windows.firstObject;
+    CGFloat screenScale = window.screen.scale;
+    CGFloat safeAreaWidth = (window.frame.size.width - window.safeAreaInsets.left - window.safeAreaInsets.right) * screenScale;
+    CGFloat fullScreenWidth = window.frame.size.width * screenScale;
+    CGFloat fullScreenHeight = window.frame.size.height * screenScale;
+    resolutionTable[4] = CGSizeMake(safeAreaWidth, fullScreenHeight);
+    resolutionTable[5] = CGSizeMake(fullScreenWidth, fullScreenHeight);
+    [self updateResolutionDisplayViewText];
+}
+
+- (void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    [self updateResolutionTable];
+}
+
+- (void)deviceOrientationDidChange{
+    double delayInSeconds = 1.0;
+    // Convert the delay into a dispatch_time_t value
+    dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    // Perform some task after the delay
+    dispatch_after(delayTime, dispatch_get_main_queue(), ^{
+        // Code to execute after the delay
+        NSLog(@"Resolution table to be updated");
+        [self updateResolutionTable];
+    });
+}
+
 - (void)viewDidLoad {
-    [super viewDidLoad];
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(deviceOrientationDidChange) // handle orientation change since i made portrait mode available
+                                                 name:UIDeviceOrientationDidChangeNotification
+                                               object:nil];
+
     // Always run settings in dark mode because we want the light fonts
     if (@available(iOS 13.0, tvOS 13.0, *)) {
         self.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
@@ -559,6 +590,7 @@ BOOL isCustomResolution(CGSize res) {
         [self updateResolutionDisplayViewText];
         _lastSelectedResolutionIndex = [self.resolutionSelector selectedSegmentIndex];
     }
+    [self updateResolutionTable];
 }
 
 - (void) promptCustomResolutionDialog {
