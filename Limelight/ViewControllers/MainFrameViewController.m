@@ -872,6 +872,13 @@ static NSMutableSet* hostList;
 }
 
 #if !TARGET_OS_TV
+- (void)simulateSettingsButtonPress { //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
+    if (currentPosition == FrontViewPositionLeft && _settingsButton.target && [_settingsButton.target respondsToSelector:_settingsButton.action]) {
+        [_settingsButton.target performSelector:_settingsButton.action withObject:_settingsButton];
+    }
+}
+
+
 - (void)revealController:(SWRevealViewController *)revealController didMoveToPosition:(FrontViewPosition)position {
     // If we moved back to the center position, we should save the settings
     if (position == FrontViewPositionLeft) {
@@ -960,6 +967,10 @@ static NSMutableSet* hostList;
 {
     [super viewDidLoad];
     [self attachWaterMark];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(simulateSettingsButtonPress) // //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
+                                                 name:UIDeviceOrientationDidChangeNotification
+                                               object:nil];
 #if !TARGET_OS_TV
     // Set the side bar button action. When it's tapped, it'll show the sidebar.
     [_settingsButton setTarget:self.revealViewController];
