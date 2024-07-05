@@ -967,10 +967,7 @@ static NSMutableSet* hostList;
 {
     [super viewDidLoad];
     [self attachWaterMark];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(simulateSettingsButtonPress) // //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
-                                                 name:UIDeviceOrientationDidChangeNotification
-                                               object:nil];
+
 #if !TARGET_OS_TV
     // Set the side bar button action. When it's tapped, it'll show the sidebar.
     [_settingsButton setTarget:self.revealViewController];
@@ -1145,6 +1142,11 @@ static NSMutableSet* hostList;
     [super viewDidAppear:animated];
     
 #if !TARGET_OS_TV
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(simulateSettingsButtonPress) // //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
+                                                 name:UIDeviceOrientationDidChangeNotification
+                                               object:nil];
+    
     [[self revealViewController] setPrimaryViewController:self];
 #endif
     
