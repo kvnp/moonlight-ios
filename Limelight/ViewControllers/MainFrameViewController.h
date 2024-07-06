@@ -20,6 +20,8 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *settingsButton;
 #if !TARGET_OS_TV
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *upButton;
+
+-(void)simulateSettingsButtonPress;
 #endif
 
 @end

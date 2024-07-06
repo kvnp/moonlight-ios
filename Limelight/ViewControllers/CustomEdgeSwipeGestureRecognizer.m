@@ -13,13 +13,14 @@
 
 @implementation CustomEdgeSwipeGestureRecognizer
 UITouch* capturedUITouch;
-CGFloat _startPointX;
+CGFloat startPointX;
 static CGFloat screenWidthInPoints;
-static CGFloat EDGE_TOLERANCE_POINTS = 50.0f;
 
 - (instancetype)initWithTarget:(nullable id)target action:(nullable SEL)action {
     self = [super initWithTarget:target action:action];
     screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]); // Get the screen's bounds (in points)
+    _immediateTriggering = false;
+    _edgeTolerancePoints = 50.0f;
     return self;
 }
 
@@ -27,7 +28,23 @@ static CGFloat EDGE_TOLERANCE_POINTS = 50.0f;
     // [super touchesBegan:touches withEvent:event];
     UITouch *touch = [touches anyObject];
     capturedUITouch = touch;
-    _startPointX = [capturedUITouch locationInView:self.view].x;
+    startPointX = [capturedUITouch locationInView:self.view].x;
+    if(_immediateTriggering){
+        
+        if(self.edges & UIRectEdgeLeft){
+            if(startPointX < _edgeTolerancePoints){
+                self.state = UIGestureRecognizerStateEnded;
+            }
+            // NSLog(@"startPointX  %f , normalizedGestureDeltaX %f", startPointX,  normalizedGestureDistance);
+        }
+        if(self.edges & UIRectEdgeRight){
+            if(startPointX > screenWidthInPoints - _edgeTolerancePoints){
+                self.state = UIGestureRecognizerStateEnded;
+            }
+           // NSLog(@"startPointX  %f , normalizedGestureDeltaX %f", startPointX,  normalizedGestureDistance);
+        }
+
+    }
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
@@ -35,19 +52,19 @@ static CGFloat EDGE_TOLERANCE_POINTS = 50.0f;
     
     if([touches containsObject:capturedUITouch]){
         CGFloat _endPointX = [capturedUITouch locationInView:self.view].x;
-        CGFloat normalizedGestureDistance = fabs(_endPointX - _startPointX)/screenWidthInPoints;
+        CGFloat normalizedGestureDistance = fabs(_endPointX - startPointX)/screenWidthInPoints;
         
         if(self.edges & UIRectEdgeLeft){
-            if(_startPointX < EDGE_TOLERANCE_POINTS && normalizedGestureDistance > _normalizedThresholdDistance){
+            if(startPointX < _edgeTolerancePoints && normalizedGestureDistance > _normalizedThresholdDistance){
                 self.state = UIGestureRecognizerStateEnded;
             }
-            // NSLog(@"_startPointX  %f , normalizedGestureDeltaX %f", _startPointX,  normalizedGestureDistance);
+            // NSLog(@"startPointX  %f , normalizedGestureDeltaX %f", startPointX,  normalizedGestureDistance);
         }
         if(self.edges & UIRectEdgeRight){
-            if((_startPointX > (screenWidthInPoints - EDGE_TOLERANCE_POINTS)) && normalizedGestureDistance > _normalizedThresholdDistance){
+            if((startPointX > (screenWidthInPoints - _edgeTolerancePoints)) && normalizedGestureDistance > _normalizedThresholdDistance){
                 self.state = UIGestureRecognizerStateEnded;
             }
-           // NSLog(@"_startPointX  %f , normalizedGestureDeltaX %f", _startPointX,  normalizedGestureDistance);
+           // NSLog(@"startPointX  %f , normalizedGestureDeltaX %f", startPointX,  normalizedGestureDistance);
         }
     }
 }

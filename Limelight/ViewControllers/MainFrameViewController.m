@@ -27,6 +27,7 @@
 #import "IdManager.h"
 #import "ConnectionHelper.h"
 #import "LocalizationHelper.h"
+#import "CustomEdgeSwipeGestureRecognizer.h"
 
 #if !TARGET_OS_TV
 #import "SettingsViewController.h"
@@ -40,6 +41,8 @@
 
 @implementation MainFrameViewController {
     UILabel* waterMark;
+    CGFloat recordedScreenWidth;
+    CustomEdgeSwipeGestureRecognizer* _exitSwipeRecognizer;
     NSOperationQueue* _opQueue;
     TemporaryHost* _selectedHost;
     BOOL _showHiddenApps;
@@ -872,17 +875,35 @@ static NSMutableSet* hostList;
 }
 
 #if !TARGET_OS_TV
-- (void)simulateSettingsButtonPress { //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
+- (void)simulateSettingsButtonPressOpen { //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
     if (currentPosition == FrontViewPositionLeft && _settingsButton.target && [_settingsButton.target respondsToSelector:_settingsButton.action]) {
         [_settingsButton.target performSelector:_settingsButton.action withObject:_settingsButton];
     }
 }
 
+- (void)simulateSettingsButtonPress { //simulate pressing the setting button, called from setting view controller.
+    if (_settingsButton.target && [_settingsButton.target respondsToSelector:_settingsButton.action]) {
+        [_settingsButton.target performSelector:_settingsButton.action withObject:_settingsButton];
+    }
+}
+
+- (void)handleOrientaionChange {
+    double delayInSeconds = 0.7;
+    // Convert the delay into a dispatch_time_t value
+    dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    // Perform some task after the delay
+    dispatch_after(delayTime, dispatch_get_main_queue(), ^{// Code to execute after the delay
+        if(CGRectGetWidth([[UIScreen mainScreen] bounds]) != self->recordedScreenWidth) [self simulateSettingsButtonPressOpen]; //device orientation change condition.
+        self->recordedScreenWidth = CGRectGetWidth([[UIScreen mainScreen] bounds]);
+    });
+}
 
 - (void)revealController:(SWRevealViewController *)revealController didMoveToPosition:(FrontViewPosition)position {
     // If we moved back to the center position, we should save the settings
+    SettingsViewController* settingsViewController = (SettingsViewController*)[revealController rearViewController];
+    settingsViewController.mainFrameViewController = self;
     if (position == FrontViewPositionLeft) {
-        [(SettingsViewController*)[revealController rearViewController] saveSettings];
+        [settingsViewController saveSettings];
         _settingsButton.enabled = YES; // make sure these 2 buttons are enabled after closing setting view.
         _upButton.enabled = YES; // here is the select new host button
     }
@@ -969,6 +990,8 @@ static NSMutableSet* hostList;
     [self attachWaterMark];
 
 #if !TARGET_OS_TV
+    
+    
     // Set the side bar button action. When it's tapped, it'll show the sidebar.
     [_settingsButton setTarget:self.revealViewController];
     [_settingsButton setAction:@selector(revealToggle:)];
@@ -1049,6 +1072,12 @@ static NSMutableSet* hostList;
         [self updateTitle];
         [self.view addSubview:hostScrollView];
     }
+    
+    
+    //if([SettingsViewController isLandscapeNow] != _streamConfig.width > _streamConfig.height)
+        [self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
+        [self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
+
 }
 
 #if TARGET_OS_TV
@@ -1143,11 +1172,12 @@ static NSMutableSet* hostList;
     
 #if !TARGET_OS_TV
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(simulateSettingsButtonPress) // //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
+                                             selector:@selector(handleOrientaionChange) // //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
                                                  name:UIDeviceOrientationDidChangeNotification
                                                object:nil];
-    
+
     [[self revealViewController] setPrimaryViewController:self];
+    recordedScreenWidth = CGRectGetWidth([[UIScreen mainScreen] bounds]); // Get the screen's bounds (in points), for force expand setting view
 #endif
     
     [self.navigationController setNavigationBarHidden:NO animated:YES];

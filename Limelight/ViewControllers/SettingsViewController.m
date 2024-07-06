@@ -143,12 +143,17 @@ BOOL isCustomResolution(CGSize res) {
     }
     
     for (int i = 0; i < RESOLUTION_TABLE_CUSTOM_INDEX; i++) {
-        if (res.width == resolutionTable[i].width && res.height == resolutionTable[i].height) {
+        
+        if ((res.width == resolutionTable[i].width && res.height == resolutionTable[i].height) || (res.height == resolutionTable[i].width && res.width == resolutionTable[i].height)) {
             return NO;
         }
     }
     
     return YES;
+}
+
++ (bool)isLandscapeNow {
+    return CGRectGetWidth([[UIScreen mainScreen]bounds]) > CGRectGetHeight([[UIScreen mainScreen]bounds]);
 }
 
 - (void)updateResolutionTable{
@@ -157,8 +162,17 @@ BOOL isCustomResolution(CGSize res) {
     CGFloat safeAreaWidth = (window.frame.size.width - window.safeAreaInsets.left - window.safeAreaInsets.right) * screenScale;
     CGFloat fullScreenWidth = window.frame.size.width * screenScale;
     CGFloat fullScreenHeight = window.frame.size.height * screenScale;
+    
     resolutionTable[4] = CGSizeMake(safeAreaWidth, fullScreenHeight);
     resolutionTable[5] = CGSizeMake(fullScreenWidth, fullScreenHeight);
+
+    for(uint8_t i=0;i<7;i++){
+        CGFloat longSideLen = resolutionTable[i].height > resolutionTable[i].width ? resolutionTable[i].height : resolutionTable[i].width;
+        CGFloat shortSideLen = resolutionTable[i].height < resolutionTable[i].width ? resolutionTable[i].height : resolutionTable[i].width;
+        if([SettingsViewController isLandscapeNow]) resolutionTable[i] = CGSizeMake(longSideLen, shortSideLen);
+        else resolutionTable[i] = CGSizeMake(shortSideLen, longSideLen);
+    }
+    
     [self updateResolutionDisplayViewText];
 }
 
@@ -179,12 +193,27 @@ BOOL isCustomResolution(CGSize res) {
     });
 }
 
+- (void)simulateSettingsButtonPress{
+    [self.mainFrameViewController simulateSettingsButtonPress];
+}
+
+
 - (void)viewDidLoad {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(deviceOrientationDidChange) // handle orientation change since i made portrait mode available
                                                  name:UIDeviceOrientationDidChangeNotification
                                                object:nil];
-
+    
+    // for iphones that can not reach mainFrame, to register a gesture to simuluate setting button press & exit from setting view.
+    _exitSwipeRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(simulateSettingsButtonPress)];
+    _exitSwipeRecognizer.edges = UIRectEdgeLeft | UIRectEdgeRight;
+    _exitSwipeRecognizer.normalizedThresholdDistance = 0;
+    _exitSwipeRecognizer.edgeTolerancePoints = 5;
+    _exitSwipeRecognizer.immediateTriggering = true;
+    _exitSwipeRecognizer.delaysTouchesBegan = NO;
+    _exitSwipeRecognizer.delaysTouchesEnded = NO;
+    [self.view addGestureRecognizer:_exitSwipeRecognizer];
+    
     // Always run settings in dark mode because we want the light fonts
     if (@available(iOS 13.0, tvOS 13.0, *)) {
         self.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
@@ -215,6 +244,7 @@ BOOL isCustomResolution(CGSize res) {
     resolutionTable[4] = CGSizeMake(safeAreaWidth, fullScreenHeight);
     resolutionTable[5] = CGSizeMake(fullScreenWidth, fullScreenHeight);
     resolutionTable[6] = CGSizeMake([currentSettings.width integerValue], [currentSettings.height integerValue]); // custom initial value
+    [self updateResolutionTable];
     
     // Don't populate the custom entry unless we have a custom resolution
     if (!isCustomResolution(resolutionTable[6])) {
@@ -237,12 +267,11 @@ BOOL isCustomResolution(CGSize res) {
 
     NSInteger resolution = 1;
     for (int i = 0; i < RESOLUTION_TABLE_SIZE; i++) {
-        if ((int) resolutionTable[i].height == [currentSettings.height intValue]
-            && (int) resolutionTable[i].width == [currentSettings.width intValue]) {
+        if (((int) resolutionTable[i].height == [currentSettings.height intValue] && (int) resolutionTable[i].width == [currentSettings.width intValue]) || ((int) resolutionTable[i].width == [currentSettings.height intValue] && (int) resolutionTable[i].height == [currentSettings.width intValue])){
             resolution = i;
             break;
         }
-    }
+    }    
 
     // Only show the 120 FPS option if we have a > 60-ish Hz display
     bool enable120Fps = false;
@@ -425,6 +454,7 @@ BOOL isCustomResolution(CGSize res) {
 
 
 - (void)onscreenControlChanged{
+    
     BOOL isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
     if (isIPhone) {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"iPhone" bundle:nil];

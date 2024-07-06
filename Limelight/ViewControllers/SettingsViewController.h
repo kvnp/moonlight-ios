@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "AppDelegate.h"
 #import "CustomOSCViewControl/LayoutOnScreenControlsViewController.h"
+#import "MainFrameViewController.h"
+#import "CustomEdgeSwipeGestureRecognizer.h"
 
 @interface SettingsViewController : UIViewController
 @property (strong, nonatomic) IBOutlet UILabel *bitrateLabel;
@@ -44,6 +46,8 @@
 @property (strong, nonatomic) IBOutlet UISlider *mousePointerVelocityFactorSlider;
 @property (strong, nonatomic) IBOutlet UILabel *mousePointerVelocityFactorUILabel;
 @property (strong, nonatomic) LayoutOnScreenControlsViewController *layoutOnScreenControlsVC;
+@property (nonatomic, strong) MainFrameViewController *mainFrameViewController;
+@property (nonatomic, strong) CustomEdgeSwipeGestureRecognizer *exitSwipeRecognizer;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability"
@@ -54,5 +58,6 @@
 #pragma clang diagnostic pop
 
 - (void) saveSettings;
++ (bool) isLandscapeNow;
 
 @end
