@@ -836,6 +836,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     
     {
         short translationDeltaY = currentScrollTranslation.y - lastScrollTranslation.y;
+        translationDeltaY = -translationDeltaY;
         if (translationDeltaY != 0) {
             LiSendScrollEvent(translationDeltaY > 0 ? 1 : -1);
         }
