@@ -417,9 +417,9 @@ BOOL isCustomResolution(CGSize res) {
         case RELATIVE_TOUCH:
             labelText = [LocalizationHelper localizedStringForKey:@"Touch Mode - On Screen Game Controller Available"];break;
         case REGULAR_NATIVE_TOUCH:
-            labelText = [LocalizationHelper localizedStringForKey:@"Touch Mode - With Mouse & Pencil Support"];break;
+            labelText = [LocalizationHelper localizedStringForKey:@"Touch Mode - With OSC & Mouse Support"];break;
         case PURE_NATIVE_TOUCH:
-            labelText = [LocalizationHelper localizedStringForKey:@"Touch Mode - No Mouse & Pencil Support"];break;
+            labelText = [LocalizationHelper localizedStringForKey:@"Touch Mode - No OSC & Mouse Support"];break;
         case ABSOLUTE_TOUCH:
             labelText = [LocalizationHelper localizedStringForKey:@"Touch Mode - For MacOS Direct Touch"];break;
     }

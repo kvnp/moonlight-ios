@@ -32,61 +32,73 @@
       }
     },
     "2lg-HW-tku.segmentTitles[1]" : {
-      "comment" : "Class = \"UISegmentedControl\"; 2lg-HW-tku.segmentTitles[1] = \"Native Multi-Touch\"; ObjectID = \"2lg-HW-tku\";",
+      "comment" : "Class = \"UISegmentedControl\"; 2lg-HW-tku.segmentTitles[1] = \"Native Touch\"; ObjectID = \"2lg-HW-tku\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Native Multi-Touch"
+            "value" : "Native Touch"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "原生多点触控"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "原生多点触控"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "原生多点触控"
           }
         }
       }
     },
     "2lg-HW-tku.segmentTitles[2]" : {
-      "comment" : "Class = \"UISegmentedControl\"; 2lg-HW-tku.segmentTitles[2] = \"Absolute Touch\"; ObjectID = \"2lg-HW-tku\";",
+      "comment" : "Class = \"UISegmentedControl\"; 2lg-HW-tku.segmentTitles[2] = \"Native Only\"; ObjectID = \"2lg-HW-tku\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Native Only"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "鼠标模式"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "鼠标模式"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "鼠标模式"
+          }
+        }
+      }
+    },
+    "2lg-HW-tku.segmentTitles[3]" : {
+      "comment" : "Class = \"UISegmentedControl\"; 2lg-HW-tku.segmentTitles[3] = \"Absolute Touch\"; ObjectID = \"2lg-HW-tku\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Absolute Touch"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "鼠标模式"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "鼠标模式"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "鼠标模式"
           }
         }
       }
@@ -620,30 +632,30 @@
       }
     },
     "CHp-14-aTt.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"Touch Mode\"; ObjectID = \"CHp-14-aTt\";",
+      "comment" : "Class = \"UILabel\"; text = \"Touch Mode                                                                                 \"; ObjectID = \"CHp-14-aTt\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Touch Mode"
+            "value" : "Touch Mode                                                                                 "
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "触控模式"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "触控模式"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "触控模式"
           }
         }
