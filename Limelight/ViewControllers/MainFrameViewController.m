@@ -1199,6 +1199,8 @@ static NSMutableSet* hostList;
                                              selector: @selector(handleEnterBackground)
                                                  name: UIApplicationWillResignActiveNotification
                                                object: nil];
+    [self simulateSettingsButtonPress]; //force reload resolution table in the setting
+    [self simulateSettingsButtonPress];
 }
 
 - (void)viewWillAppear:(BOOL)animated
