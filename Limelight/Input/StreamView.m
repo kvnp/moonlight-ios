@@ -116,7 +116,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     
     onScreenControls = [[OnScreenControls alloc] initWithView:self controllerSup:controllerSupport streamConfig:streamConfig];
     OnScreenControlsLevel level = (OnScreenControlsLevel)[settings.onscreenControls integerValue];
-    if (settings.touchMode.intValue != RELATIVE_TOUCH) {
+    if (settings.touchMode.intValue != RELATIVE_TOUCH && settings.touchMode.intValue != REGULAR_NATIVE_TOUCH ) {
         Log(LOG_I, @"On-screen controls disabled in non-relative touch mode");
         [onScreenControls setLevel:OnScreenControlsLevelOff];
     }
@@ -280,7 +280,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 - (void) reloadOnScreenControlsWith:(ControllerSupport*)controllerSupport
                          andConfig:(StreamConfiguration*)streamConfig {
     onScreenControls = [[OnScreenControls alloc] initWithView:self controllerSup:controllerSupport streamConfig:streamConfig];
-    [onScreenControls setLevel:OnScreenControlsCustom];
+    [onScreenControls setLevel:OnScreenControlsLevelCustom];
 }
 
 - (OnScreenControlsLevel) getCurrentOscState {

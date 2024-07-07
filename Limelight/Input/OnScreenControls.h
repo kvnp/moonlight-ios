@@ -23,7 +23,7 @@ typedef NS_ENUM(NSInteger, OnScreenControlsLevel) {
     OnScreenControlsLevelAuto,
     OnScreenControlsLevelSimple,
     OnScreenControlsLevelFull,
-    OnScreenControlsCustom,
+    OnScreenControlsLevelCustom,
     
     // Internal levels selected by ControllerSupport
     OnScreenControlsLevelAutoGCGamepad,

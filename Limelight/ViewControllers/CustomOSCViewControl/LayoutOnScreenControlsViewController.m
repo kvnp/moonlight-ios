@@ -64,7 +64,7 @@
     [self.chevronView addGestureRecognizer:singleFingerTap];
 
     self.layoutOSC = [[LayoutOnScreenControls alloc] initWithView:self.view controllerSup:nil streamConfig:nil oscLevel:OSCSegmentSelected];
-    self.layoutOSC._level = OnScreenControlsCustom;
+    self.layoutOSC._level = OnScreenControlsLevelCustom;
     [self.layoutOSC show];  // draw on screen controls
     
     [self addInnerAnalogSticksToOuterAnalogLayers]; // allows inner and analog sticks to be dragged together around the screen together as one unit which is the expected behavior
@@ -107,6 +107,8 @@
     });
     [self profileRefresh];
 }
+
+
 
 
 #pragma mark - Class Helper Functions

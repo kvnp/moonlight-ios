@@ -300,7 +300,7 @@ static float L3_Y;
             [self drawSticks];
             [self hideL3R3]; // Full controls don't need these they have the sticks
             break;
-        case OnScreenControlsCustom:
+        case OnScreenControlsLevelCustom:
             
             [self setupComplexControls];    // Default postion for D-Pad set here
             [self setDPadCenter];    // Custom position for D-Pad set here

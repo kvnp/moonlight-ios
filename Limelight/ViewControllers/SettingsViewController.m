@@ -19,6 +19,7 @@
 @implementation SettingsViewController {
     NSInteger _bitrate;
     NSInteger _lastSelectedResolutionIndex;
+    bool justEnteredSettingsViewDoNotOpenOscLayoutTool;
 }
 
 @dynamic overrideUserInterfaceStyle;
@@ -199,6 +200,7 @@ BOOL isCustomResolution(CGSize res) {
 
 
 - (void)viewDidLoad {
+    justEnteredSettingsViewDoNotOpenOscLayoutTool = true;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(deviceOrientationDidChange) // handle orientation change since i made portrait mode available
                                                  name:UIDeviceOrientationDidChangeNotification
@@ -325,11 +327,6 @@ BOOL isCustomResolution(CGSize res) {
         [self.hdrSelector setSelectedSegmentIndex:currentSettings.enableHdr ? 1 : 0];
     }
     
-    // [self.touchModeSelector setSelectedSegmentIndex:currentSettings.absoluteTouchMode ? 1 : 0];
-    [self.touchModeSelector setSelectedSegmentIndex:currentSettings.touchMode.intValue]; //Load old touchMode setting
-    [self.touchModeSelector addTarget:self action:@selector(touchModeChanged) forControlEvents:UIControlEventValueChanged];
-    [self updateTouchModeLabel];
-    
     [self.statsOverlaySelector setSelectedSegmentIndex:currentSettings.statsOverlay ? 1 : 0];
     [self.btMouseSelector setSelectedSegmentIndex:currentSettings.btMouseSupport ? 1 : 0];
     [self.optimizeSettingsSelector setSelectedSegmentIndex:currentSettings.optimizeGames ? 1 : 0];
@@ -337,33 +334,17 @@ BOOL isCustomResolution(CGSize res) {
     [self.multiControllerSelector setSelectedSegmentIndex:currentSettings.multiController ? 1 : 0];
     [self.swapABXYButtonsSelector setSelectedSegmentIndex:currentSettings.swapABXYButtons ? 1 : 0];
     [self.audioOnPCSelector setSelectedSegmentIndex:currentSettings.playAudioOnPC ? 1 : 0];
-    NSInteger onscreenControls = [currentSettings.onscreenControls integerValue];
     _lastSelectedResolutionIndex = resolution;
     [self.resolutionSelector setSelectedSegmentIndex:resolution];
     [self.resolutionSelector addTarget:self action:@selector(newResolutionChosen) forControlEvents:UIControlEventValueChanged];
     [self.framerateSelector setSelectedSegmentIndex:framerate];
     [self.framerateSelector addTarget:self action:@selector(updateBitrate) forControlEvents:UIControlEventValueChanged];
-    [self.onscreenControlSelector setSelectedSegmentIndex:onscreenControls];
-    [self.onscreenControlSelector setEnabled: currentSettings.touchMode.intValue == RELATIVE_TOUCH];//enable/disable controller UI widget for the first time.
     [self.bitrateSlider setMinimumValue:0];
     [self.bitrateSlider setMaximumValue:(sizeof(bitrateTable) / sizeof(*bitrateTable)) - 1];
     [self.bitrateSlider setValue:[self getSliderValueForBitrate:_bitrate] animated:YES];
     [self.bitrateSlider addTarget:self action:@selector(bitrateSliderMoved) forControlEvents:UIControlEventValueChanged];
     [self updateBitrateText];
     [self updateResolutionDisplayViewText];
-    
-    //init keyboardToggle settings
-    if(currentSettings.touchMode.intValue == RELATIVE_TOUCH){
-        [self widget:self.keyboardToggleFingerNumSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] != RELATIVE_TOUCH];
-        [self.keyboardToggleFingerNumSlider setValue:3.0];  //force 3 finger tap to toggle keyboard in relative touch mode. This is for the 4 finger OSC layout tool gesture.
-        [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]];
-    }
-    else{
-        [self.keyboardToggleFingerNumSlider setValue:(CGFloat)currentSettings.keyboardToggleFingers.intValue animated:YES]; // Load old setting. old setting was converted to uint16_t before saving.
-        if (self.keyboardToggleFingerNumSlider.value > 10.5f) [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"Local Keyboard Toggle Disabled"]]; // Initiate label display. Allow higher required finger number to completely disable keyboard toggle
-        else [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]]; // Initiate label display
-    }
-    [self.keyboardToggleFingerNumSlider addTarget:self action:@selector(keyboardToggleFingerNumSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
     
     // lift streamview setting
     [self.liftStreamViewForKeyboardSelector setSelectedSegmentIndex:currentSettings.liftStreamViewForKeyboard ? 1 : 0];// Load old setting
@@ -373,31 +354,48 @@ BOOL isCustomResolution(CGSize res) {
     
     // swipe & exit setting
     [self.swipeExitScreenEdgeSelector setSelectedSegmentIndex:[self getSelectorIndexFromScreenEdge:(uint32_t)currentSettings.swipeExitScreenEdge.integerValue]]; // Load old setting
-    [self.swipeToExitDistanceSlider setValue:(CGFloat)currentSettings.swipeToExitDistance.floatValue animated:YES]; // Load old setting.
-    [self.swipeToExitDistanceUILabel setText:[LocalizationHelper localizedStringForKey:@"Swipe & Exit Distance: %.2f * screen-width", self.swipeToExitDistanceSlider.value]]; // Initiate label display
     [self.swipeToExitDistanceSlider addTarget:self action:@selector(swipeToExitDistanceSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
+    [self swipeToExitDistanceSliderMoved];
     
-    // pointer veloc setting
-    [self.pointerVelocityModeDividerSlider setValue:currentSettings.pointerVelocityModeDivider.floatValue * 100 animated:YES]; // Load old setting.
-    [self.pointerVelocityModeDividerUILabel setText:[LocalizationHelper localizedStringForKey:@"Touch Pointer Velocity: Scaled on %d%% of Right Screen", 100 - (uint8_t)self.pointerVelocityModeDividerSlider.value]]; // Initiate label display
-    [self.pointerVelocityModeDividerSlider addTarget:self action:@selector(pointerVelocityModeDividerSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
-    [self widget:self.pointerVelocityModeDividerSlider setEnabled: currentSettings.touchMode.intValue == PURE_NATIVE_TOUCH || currentSettings.touchMode.intValue == REGULAR_NATIVE_TOUCH]; // pointer velocity scaling works only in native touch mode.
 
-    // init pointer veloc setting
-    [self.touchPointerVelocityFactorSlider setValue:currentSettings.touchPointerVelocityFactor.floatValue * 100 animated:YES]; // Load old setting.
-    [self.touchPointerVelocityFactorUILabel setText:[LocalizationHelper localizedStringForKey: @"Touch Pointer Velocity: %d%%",  (uint16_t)self.touchPointerVelocityFactorSlider.value]]; // Initiate label display
-    [self.touchPointerVelocityFactorSlider addTarget:self action:@selector(touchPointerVelocityFactorSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
-    [self widget:self.touchPointerVelocityFactorSlider setEnabled: currentSettings.touchMode.intValue == PURE_NATIVE_TOUCH || currentSettings.touchMode.intValue == REGULAR_NATIVE_TOUCH]; // pointer velocity scaling works only in native touch mode.
     
-    // init relative touch mouse pointer veloc setting
+    //TouchMode & OSC Related Settings:
+    
+    // pointer veloc setting, will be enable/disabled by touchMode
+    [self.pointerVelocityModeDividerSlider setValue:currentSettings.pointerVelocityModeDivider.floatValue * 100 animated:YES]; // Load old setting.
+    [self.pointerVelocityModeDividerSlider addTarget:self action:@selector(pointerVelocityModeDividerSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
+    [self pointerVelocityModeDividerSliderMoved];
+
+    // init pointer veloc setting,  will be enable/disabled by touchMode
+    [self.touchPointerVelocityFactorSlider setValue:currentSettings.touchPointerVelocityFactor.floatValue * 100 animated:YES]; // Load old setting.
+    [self.touchPointerVelocityFactorSlider addTarget:self action:@selector(touchPointerVelocityFactorSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
+    [self touchPointerVelocityFactorSliderMoved];
+    
+    // init relative touch mouse pointer veloc setting,  will be enable/disabled by touchMode
     [self.mousePointerVelocityFactorSlider setValue:currentSettings.mousePointerVelocityFactor.floatValue * 100 animated:YES]; // Load old setting.
-    [self.mousePointerVelocityFactorUILabel setText:[LocalizationHelper localizedStringForKey: @"Mouse Pointer Velocity: %d%%",  (uint16_t)self.mousePointerVelocityFactorSlider.value]]; // Initiate label display
     [self.mousePointerVelocityFactorSlider addTarget:self action:@selector(mousePointerVelocityFactorSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
-    [self widget:self.mousePointerVelocityFactorSlider setEnabled: currentSettings.touchMode.intValue == RELATIVE_TOUCH]; // mouse velocity scaling works only in relative touch mode.
+    [self mousePointerVelocityFactorSliderMoved];
+    
+    
+    // this setting will be affected by onscreenControl & touchMode, must be loaded before them.
+    [self.keyboardToggleFingerNumSlider setValue:(CGFloat)currentSettings.keyboardToggleFingers.intValue animated:YES]; // Load old setting. old setting was converted to uint16_t before saving.
+    [self.keyboardToggleFingerNumSlider addTarget:self action:@selector(keyboardToggleFingerNumSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
+    [self keyboardToggleFingerNumSliderMoved];
+
+    // this setting will be affected touchMode, must be loaded before them.
+    NSInteger onscreenControlsLevel = [currentSettings.onscreenControls integerValue];
+    [self.onscreenControlSelector setSelectedSegmentIndex:onscreenControlsLevel];
+    [self.onscreenControlSelector addTarget:self action:@selector(onscreenControlChanged) forControlEvents:UIControlEventValueChanged];
+    [self onscreenControlChanged];
+    
+    
+    // [self.touchModeSelector setSelectedSegmentIndex:currentSettings.absoluteTouchMode ? 1 : 0];
+    [self.touchModeSelector setSelectedSegmentIndex:currentSettings.touchMode.intValue]; //Load old touchMode setting
+    [self.touchModeSelector addTarget:self action:@selector(touchModeChanged) forControlEvents:UIControlEventValueChanged];
+    [self touchModeChanged];
 
     
     // init CustomOSC stuff
-    [self.onscreenControlSelector addTarget:self action:@selector(onscreenControlChanged) forControlEvents:UIControlEventValueChanged];
     /* sets a reference to the correct 'LayoutOnScreenControlsViewController' depending on whether the user is on an iPhone or iPad */
     self.layoutOnScreenControlsVC = [[LayoutOnScreenControlsViewController alloc] init];
     BOOL isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
@@ -409,13 +407,6 @@ BOOL isCustomResolution(CGSize res) {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"iPad" bundle:nil];
         self.layoutOnScreenControlsVC = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
         self.layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationFullScreen;
-    }
-    if(currentSettings.onscreenControls.intValue == OnScreenControlsCustom && currentSettings.touchMode.intValue == RELATIVE_TOUCH) { //load OSC slider UI Lable to remind user:
-        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap 4 Fingers to Change OSC Layout in Stream View"]]; //keyboard is force set to 3 finger to make this working.
-        //if (self.layoutOnScreenControlsVC.isBeingPresented == NO)
-    }
-    else{
-        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"On-Screen Controls"]];
     }
 }
 
@@ -465,15 +456,22 @@ BOOL isCustomResolution(CGSize res) {
         self.layoutOnScreenControlsVC = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
         self.layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationFullScreen;
     }
-
-    if([self.onscreenControlSelector selectedSegmentIndex] == OnScreenControlsCustom && [self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH) {
+    
+    bool oscEnabled = ([self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == REGULAR_NATIVE_TOUCH) && [self.onscreenControlSelector selectedSegmentIndex] != OnScreenControlsLevelOff;
+    bool customOscEnabled = oscEnabled && [self.onscreenControlSelector selectedSegmentIndex] == OnScreenControlsLevelCustom;
+    [self widget:self.keyboardToggleFingerNumSlider setEnabled:!customOscEnabled];
+    if(customOscEnabled && !justEnteredSettingsViewDoNotOpenOscLayoutTool) {
+        [self.keyboardToggleFingerNumSlider setValue:3.0];
+        [self keyboardToggleFingerNumSliderMoved];
         [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap 4 Fingers to Change OSC Layout in Stream View"]];
         [self showCustomOSCTip];
+        justEnteredSettingsViewDoNotOpenOscLayoutTool = false;
         //if (self.layoutOnScreenControlsVC.isBeingPresented == NO)
     }
     else{
         [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"On-Screen Controls"]];
     }
+    justEnteredSettingsViewDoNotOpenOscLayoutTool = false;
 }
 
 - (void)invokeOscLayout{
@@ -523,22 +521,23 @@ BOOL isCustomResolution(CGSize res) {
 
 - (void) touchModeChanged {
     // Disable on-screen controls in non-relative touch mode
+    bool oscEnabled = ([self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == REGULAR_NATIVE_TOUCH) && [self.onscreenControlSelector selectedSegmentIndex] != OnScreenControlsLevelOff;
+    bool oscSelectorEnabled = [self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == REGULAR_NATIVE_TOUCH;
+    bool customOscEnabled = oscEnabled && [self.onscreenControlSelector selectedSegmentIndex] == OnScreenControlsLevelCustom;
+    bool isNativeTouch = [self.touchModeSelector selectedSegmentIndex] == PURE_NATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == REGULAR_NATIVE_TOUCH;
     
-    bool isNative = [self.touchModeSelector selectedSegmentIndex] == PURE_NATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == REGULAR_NATIVE_TOUCH;
+    [self.onscreenControlSelector setEnabled:oscSelectorEnabled];
     
-    [self.onscreenControlSelector setEnabled:[self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH];
-    
-    [self widget:self.pointerVelocityModeDividerSlider setEnabled:isNative]; // pointer velocity scaling works only in native touch mode.
-    [self widget:self.touchPointerVelocityFactorSlider setEnabled:isNative]; // pointer velocity scaling works only in native touch mode.
+    [self widget:self.pointerVelocityModeDividerSlider setEnabled:isNativeTouch]; // pointer velocity scaling works only in native touch mode.
+    [self widget:self.touchPointerVelocityFactorSlider setEnabled:isNativeTouch]; // pointer velocity scaling works only in native touch mode.
     [self widget:self.mousePointerVelocityFactorSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH]; // mouse velocity scaling works only in relative touch mode.
-    // number of touches required to toggle keyboard in relative touch mode will be fixed to 3.
-    [self widget:self.keyboardToggleFingerNumSlider setEnabled:[self.touchModeSelector selectedSegmentIndex] != RELATIVE_TOUCH];
-    if([self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH) {
+    
+    // number of touches required to toggle keyboard will be fixed to 3 when OSC is enabled.
+    [self widget:self.keyboardToggleFingerNumSlider setEnabled: !customOscEnabled];  // cancel OSC limitation for regular native touch,
+    // when CustomOSC is enabled:
+    if(customOscEnabled) {
         [self.keyboardToggleFingerNumSlider setValue:3.0];
         [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]];
-    }
-    
-    if([self.onscreenControlSelector selectedSegmentIndex] == OnScreenControlsCustom && [self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH) {
         [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap 4 Fingers to Change OSC Layout in Stream View"]];
         //if (self.layoutOnScreenControlsVC.isBeingPresented == NO)
     }

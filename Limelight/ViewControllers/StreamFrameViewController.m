@@ -144,7 +144,7 @@
     [self.view addGestureRecognizer:_exitSwipeRecognizer];
     
     
-    if(_settings.touchMode.intValue == RELATIVE_TOUCH && _settings.onscreenControls.intValue == OnScreenControlsCustom){
+    if((_settings.touchMode.intValue == RELATIVE_TOUCH || _settings.touchMode.intValue == REGULAR_NATIVE_TOUCH) && _settings.onscreenControls.intValue == OnScreenControlsLevelCustom){
         _oscLayoutTapRecoginizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(layoutOSC)];
         _oscLayoutTapRecoginizer.numberOfTouchesRequired = 4; //tap 4 fingers to invoke OSC rebase
         _oscLayoutTapRecoginizer.tapDownTimeThreshold = 1;
