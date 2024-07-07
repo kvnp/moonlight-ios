@@ -108,7 +108,10 @@
     [self profileRefresh];
 }
 
-
+- (void) viewDidAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self profileRefresh];
+}
 
 
 #pragma mark - Class Helper Functions
