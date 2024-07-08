@@ -271,16 +271,31 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     [onScreenControls show];
 #endif
 }
+
+- (void) setOnScreenControls{
+
+}
+
 - (void) disableOnScreenControls {
 #if !TARGET_OS_TV
     [onScreenControls setLevel:OnScreenControlsLevelOff];
 #endif
 }
 
+- (void) reloadOnScreenControlsRealtimeWith:(ControllerSupport*)controllerSupport
+                         andConfig:(StreamConfiguration*)streamConfig {
+
+    [self reloadOnScreenControlsWith:controllerSupport andConfig:streamConfig];
+    bool oscEnabled = (settings.touchMode.intValue == RELATIVE_TOUCH || settings.touchMode.intValue == REGULAR_NATIVE_TOUCH) && settings.onscreenControls.intValue != OnScreenControlsLevelOff;
+    if(oscEnabled) [self showOnScreenControls];
+    else [self disableOnScreenControls];
+}
+
+
 - (void) reloadOnScreenControlsWith:(ControllerSupport*)controllerSupport
                          andConfig:(StreamConfiguration*)streamConfig {
     onScreenControls = [[OnScreenControls alloc] initWithView:self controllerSup:controllerSupport streamConfig:streamConfig];
-    [onScreenControls setLevel:OnScreenControlsLevelCustom];
+    [onScreenControls setLevel:(OnScreenControlsLevel)settings.onscreenControls.intValue];
 }
 
 - (OnScreenControlsLevel) getCurrentOscState {

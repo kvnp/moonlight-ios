@@ -28,7 +28,10 @@
      interactionDelegate:(id<UserInteractionDelegate>)interactionDelegate
                   config:(StreamConfiguration*)streamConfig;
 - (void) showOnScreenControls;
+- (void) setOnScreenControls;
 - (void) disableOnScreenControls;
+- (void) reloadOnScreenControlsRealtimeWith:(ControllerSupport*)controllerSupport
+                          andConfig:(StreamConfiguration*)streamConfig;
 - (void) reloadOnScreenControlsWith:(ControllerSupport*)controllerSupport
                           andConfig:(StreamConfiguration*)streamConfig;
 - (CGSize) getVideoAreaSize;

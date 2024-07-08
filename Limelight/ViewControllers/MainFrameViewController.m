@@ -177,7 +177,7 @@ static NSMutableSet* hostList;
         AppListResponse* appListResp = [ConnectionHelper getAppListForHost:host];
         
         [self->_discMan resumeDiscoveryForHost:host];
-
+        
         if (![appListResp isStatusOk] || [appListResp getAppList] == nil) {
             Log(LOG_W, @"Failed to get applist: %@", appListResp.statusMessage);
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -200,7 +200,7 @@ static NSMutableSet* hostList;
         } else {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self updateApplist:[appListResp getAppList] forHost:host];
-
+                
                 if (host != self->_selectedHost) {
                     [self hideLoadingFrame: nil];
                     return;
@@ -218,7 +218,7 @@ static NSMutableSet* hostList;
 - (void) updateAppEntry:(TemporaryApp*)app forHost:(TemporaryHost*)host {
     DataManager* database = [[DataManager alloc] init];
     NSMutableSet* newHostAppList = [NSMutableSet setWithSet:host.appList];
-
+    
     for (TemporaryApp* savedApp in newHostAppList) {
         if ([app.id isEqualToString:savedApp.id]) {
             savedApp.name = app.name;
@@ -226,13 +226,13 @@ static NSMutableSet* hostList;
             savedApp.hidden = app.hidden;
             
             host.appList = newHostAppList;
-
+            
             [database updateAppsForExistingHost:host];
             return;
         }
     }
 }
-    
+
 - (void) updateApplist:(NSSet*) newList forHost:(TemporaryHost*)host {
     DataManager* database = [[DataManager alloc] init];
     NSMutableSet* newHostAppList = [NSMutableSet setWithSet:host.appList];
@@ -285,7 +285,7 @@ static NSMutableSet* hostList;
     } while (appWasRemoved);
     
     host.appList = newHostAppList;
-
+    
     [database updateAppsForExistingHost:host];
     
     // This host may be eligible for a shortcut now that the app list
@@ -397,7 +397,7 @@ static NSMutableSet* hostList;
                     }
                     
                     UIAlertController* applistAlert = [UIAlertController alertControllerWithTitle:[LocalizationHelper localizedStringForKey:@"Connection Failed"]
-                                                                            message:serverInfoResp.statusMessage
+                                                                                          message:serverInfoResp.statusMessage
                                                                                    preferredStyle:UIAlertControllerStyleAlert];
                     [Utils addHelpOptionToDialog:applistAlert];
                     [applistAlert addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Ok"] style:UIAlertActionStyleDefault handler:nil]];
@@ -443,11 +443,11 @@ static NSMutableSet* hostList;
 
 - (UIViewController*) activeViewController {
     UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
-
+    
     while (topController.presentedViewController) {
         topController = topController.presentedViewController;
     }
-
+    
     return topController;
 }
 
@@ -468,7 +468,7 @@ static NSMutableSet* hostList;
                 message = [LocalizationHelper localizedStringForKey:@"Online - Not Paired"];
             }
             break;
-        
+            
         case StateUnknown:
             message = [LocalizationHelper localizedStringForKey:@"Connecting"];
             break;
@@ -614,7 +614,11 @@ static NSMutableSet* hostList;
     _streamConfig.appID = app.id;
     _streamConfig.appName = app.name;
     _streamConfig.serverCert = app.host.serverCert;
-    
+    _streamConfig.serverCodecModeSupport = app.host.serverCodecModeSupport;
+    [self reloadStreamConfig];
+}
+
+- (void) reloadStreamConfig {
     DataManager* dataMan = [[DataManager alloc] init];
     TemporarySettings* streamSettings = [dataMan getSettings];
     
@@ -666,7 +670,6 @@ static NSMutableSet* hostList;
         _streamConfig.audioConfiguration = AUDIO_CONFIGURATION_STEREO;
     }
     
-    _streamConfig.serverCodecModeSupport = app.host.serverCodecModeSupport;
     
     switch (streamSettings.preferredCodec) {
         case CODEC_PREF_AV1:

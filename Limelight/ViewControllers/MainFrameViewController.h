@@ -22,6 +22,7 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *upButton;
 
 -(void)simulateSettingsButtonPress;
+-(void)reloadStreamConfig;
 #endif
 
 @end

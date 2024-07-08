@@ -59,8 +59,54 @@
 #endif
 }
 
-- (void)reConfigStreamView{
-    [_streamView setupStreamView:_controllerSupport interactionDelegate:self config:self.streamConfig];
+
+- (void)configOscLayoutTool{
+    [self.view removeGestureRecognizer:_oscLayoutTapRecoginizer];
+    if((_settings.touchMode.intValue == RELATIVE_TOUCH || _settings.touchMode.intValue == REGULAR_NATIVE_TOUCH) && _settings.onscreenControls.intValue == OnScreenControlsLevelCustom){
+        _oscLayoutTapRecoginizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(layoutOSC)];
+        _oscLayoutTapRecoginizer.numberOfTouchesRequired = 4; //tap 4 fingers to invoke OSC rebase
+        _oscLayoutTapRecoginizer.tapDownTimeThreshold = 1;
+        _oscLayoutTapRecoginizer.delaysTouchesBegan = NO;
+        _oscLayoutTapRecoginizer.delaysTouchesEnded = NO;
+        
+        [self.view addGestureRecognizer:_oscLayoutTapRecoginizer];
+        /* sets a reference to the correct 'LayoutOnScreenControlsViewController' depending on whether the user is on an iPhone or iPad */
+        _layoutOnScreenControlsVC = [[LayoutOnScreenControlsViewController alloc] init];
+        BOOL isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
+        if (isIPhone) {
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"iPhone" bundle:nil];
+            _layoutOnScreenControlsVC = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
+        }
+        else {
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"iPad" bundle:nil];
+            _layoutOnScreenControlsVC = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
+            _layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationFullScreen;
+        }
+        _layoutOnScreenControlsVC.view.backgroundColor = UIColor.clearColor;
+        _layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+    }
+}
+
+- (void)configExitGesture{
+    [self.view removeGestureRecognizer:_exitSwipeRecognizer];
+    _exitSwipeRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(expandSettingsView)];
+    _exitSwipeRecognizer.edges = _settings.swipeExitScreenEdge.intValue;
+    _exitSwipeRecognizer.normalizedThresholdDistance = _settings.swipeToExitDistance.floatValue;
+    _exitSwipeRecognizer.delaysTouchesBegan = NO;
+    _exitSwipeRecognizer.delaysTouchesEnded = NO;
+    [self.view addGestureRecognizer:_exitSwipeRecognizer];
+}
+
+
+- (void)reConfigStreamViewRealtime{
+    _settings = [[[DataManager alloc] init] getSettings];  //StreamFrameViewController retrieve the settings here.
+    [self configOscLayoutTool];
+    [self configExitGesture];
+    [self->_streamView disableOnScreenControls]; //don't know why but this must be called outside the streamview class, just put it here. execute in streamview class cause hang
+    [self.mainframeViewcontroller reloadStreamConfig]; // reload streamconfig
+    [_streamView setupStreamView:_controllerSupport interactionDelegate:self config:self.streamConfig]; //reinitiate setupStreamView process.
+    [self->_streamView reloadOnScreenControlsRealtimeWith:(ControllerSupport*)_controllerSupport
+                                        andConfig:(StreamConfiguration*)_streamConfig]; //reload OSC here.
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -70,7 +116,7 @@
 #if !TARGET_OS_TV
     [[self revealViewController] setPrimaryViewController:self];
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(reConfigStreamView) // //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
+                                             selector:@selector(reConfigStreamViewRealtime) // //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
                                                  name:@"SettingsViewClosed"
                                                object:nil];
 #endif
@@ -143,37 +189,8 @@
     [self.view addGestureRecognizer:_playPauseTapGestureRecognizer];
 
 #else
-    _exitSwipeRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(expandSettingsView)];
-    _exitSwipeRecognizer.edges = _settings.swipeExitScreenEdge.intValue;
-    _exitSwipeRecognizer.normalizedThresholdDistance = _settings.swipeToExitDistance.floatValue;
-    _exitSwipeRecognizer.delaysTouchesBegan = NO;
-    _exitSwipeRecognizer.delaysTouchesEnded = NO;
-    [self.view addGestureRecognizer:_exitSwipeRecognizer];
-    
-    
-    if((_settings.touchMode.intValue == RELATIVE_TOUCH || _settings.touchMode.intValue == REGULAR_NATIVE_TOUCH) && _settings.onscreenControls.intValue == OnScreenControlsLevelCustom){
-        _oscLayoutTapRecoginizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(layoutOSC)];
-        _oscLayoutTapRecoginizer.numberOfTouchesRequired = 4; //tap 4 fingers to invoke OSC rebase
-        _oscLayoutTapRecoginizer.tapDownTimeThreshold = 1;
-        _oscLayoutTapRecoginizer.delaysTouchesBegan = NO;
-        _oscLayoutTapRecoginizer.delaysTouchesEnded = NO;
-        [self.view addGestureRecognizer:_oscLayoutTapRecoginizer];
-        /* sets a reference to the correct 'LayoutOnScreenControlsViewController' depending on whether the user is on an iPhone or iPad */
-        _layoutOnScreenControlsVC = [[LayoutOnScreenControlsViewController alloc] init];
-        BOOL isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
-        if (isIPhone) {
-            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"iPhone" bundle:nil];
-            _layoutOnScreenControlsVC = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
-        }
-        else {
-            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"iPad" bundle:nil];
-            _layoutOnScreenControlsVC = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
-            _layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationFullScreen;
-        }
-        _layoutOnScreenControlsVC.view.backgroundColor = UIColor.clearColor;
-        _layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationOverCurrentContext;
-    }
-
+    [self configExitGesture]; // swipe & exit gesture configured here
+    [self configOscLayoutTool]; //_oscLayoutTapRecoginizer will be added or removed to the view here
 #endif
     
     _tipLabel = [[UILabel alloc] init];
@@ -263,6 +280,7 @@
 
 - (void)oscLayoutClosed{
     // Handle the callback
+    [self->_streamView disableOnScreenControls]; // add this to get realtime back menu working.
     [self->_streamView reloadOnScreenControlsWith:(ControllerSupport*)_controllerSupport
                                         andConfig:(StreamConfiguration*)_streamConfig];
     [self->_streamView showOnScreenControls];
