@@ -922,6 +922,7 @@ static NSMutableSet* hostList;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.destinationViewController isKindOfClass:[StreamFrameViewController class]]) {
         StreamFrameViewController* streamFrame = segue.destinationViewController;
+        streamFrame.mainframeViewcontroller = self;
         streamFrame.streamConfig = _streamConfig;
     }
 }

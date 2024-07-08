@@ -199,6 +199,11 @@ BOOL isCustomResolution(CGSize res) {
 }
 
 
+- (void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"SettingsViewClosed" object:self]; // notify other view that settings view just closed
+}
+
 - (void)viewDidLoad {
     justEnteredSettingsViewDoNotOpenOscLayoutTool = true;
     [[NSNotificationCenter defaultCenter] addObserver:self

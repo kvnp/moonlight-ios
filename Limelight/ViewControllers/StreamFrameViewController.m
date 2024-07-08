@@ -52,12 +52,15 @@
     UIScrollView *_scrollView;
     BOOL _userIsInteracting;
     CGSize _keyboardSize;
-    
 #if !TARGET_OS_TV
     CustomEdgeSwipeGestureRecognizer *_exitSwipeRecognizer;
     CustomTapGestureRecognizer *_oscLayoutTapRecoginizer;
     LayoutOnScreenControlsViewController *_layoutOnScreenControlsVC;
 #endif
+}
+
+- (void)reConfigStreamView{
+    [_streamView setupStreamView:_controllerSupport interactionDelegate:self config:self.streamConfig];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -66,6 +69,10 @@
     
 #if !TARGET_OS_TV
     [[self revealViewController] setPrimaryViewController:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reConfigStreamView) // //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
+                                                 name:@"SettingsViewClosed"
+                                               object:nil];
 #endif
 }
 
@@ -136,7 +143,7 @@
     [self.view addGestureRecognizer:_playPauseTapGestureRecognizer];
 
 #else
-    _exitSwipeRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(edgeSwiped)];
+    _exitSwipeRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(expandSettingsView)];
     _exitSwipeRecognizer.edges = _settings.swipeExitScreenEdge.intValue;
     _exitSwipeRecognizer.normalizedThresholdDistance = _settings.swipeToExitDistance.floatValue;
     _exitSwipeRecognizer.delaysTouchesBegan = NO;
@@ -410,6 +417,10 @@
     }
     
     [self returnToMainFrame];
+}
+
+- (void)expandSettingsView{
+    [self.mainframeViewcontroller simulateSettingsButtonPress];
 }
 
 - (void)edgeSwiped {
