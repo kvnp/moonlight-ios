@@ -10,6 +10,7 @@
 #import "StreamConfiguration.h"
 #import "StreamView.h"
 #import "LayoutOnScreenControlsViewController.h"
+#import "MainFrameViewController.h"
 
 #import <UIKit/UIKit.h>
 
@@ -22,6 +23,8 @@
 
 #endif
 @property (nonatomic) StreamConfiguration* streamConfig;
+@property (nonatomic, assign) MainFrameViewController *mainframeViewcontroller;
+
 
 -(void)updatePreferredDisplayMode:(BOOL)streamActive;
 

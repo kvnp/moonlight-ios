@@ -52,7 +52,6 @@
     UIScrollView *_scrollView;
     BOOL _userIsInteracting;
     CGSize _keyboardSize;
-    
 #if !TARGET_OS_TV
     CustomEdgeSwipeGestureRecognizer *_exitSwipeRecognizer;
     CustomTapGestureRecognizer *_oscLayoutTapRecoginizer;
@@ -136,7 +135,7 @@
     [self.view addGestureRecognizer:_playPauseTapGestureRecognizer];
 
 #else
-    _exitSwipeRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(edgeSwiped)];
+    _exitSwipeRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(expandSettingsView)];
     _exitSwipeRecognizer.edges = _settings.swipeExitScreenEdge.intValue;
     _exitSwipeRecognizer.normalizedThresholdDistance = _settings.swipeToExitDistance.floatValue;
     _exitSwipeRecognizer.delaysTouchesBegan = NO;
@@ -410,6 +409,10 @@
     }
     
     [self returnToMainFrame];
+}
+
+- (void)expandSettingsView{
+    [self.mainframeViewcontroller simulateSettingsButtonPress];
 }
 
 - (void)edgeSwiped {
