@@ -354,6 +354,7 @@ BOOL isCustomResolution(CGSize res) {
     
     // swipe & exit setting
     [self.swipeExitScreenEdgeSelector setSelectedSegmentIndex:[self getSelectorIndexFromScreenEdge:(uint32_t)currentSettings.swipeExitScreenEdge.integerValue]]; // Load old setting
+    [self.swipeToExitDistanceSlider setValue:currentSettings.swipeToExitDistance.floatValue];
     [self.swipeToExitDistanceSlider addTarget:self action:@selector(swipeToExitDistanceSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
     [self swipeToExitDistanceSliderMoved];
     
