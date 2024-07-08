@@ -44,7 +44,8 @@
 - (void) updateAppsForExistingHost:(TemporaryHost *)host;
 - (void) removeHost:(TemporaryHost*)host;
 - (void) removeApp:(TemporaryApp*)app;
-
+- (Settings*) retrieveSettings;
+- (void) saveData;
 - (TemporarySettings*) getSettings;
 
 - (void) updateUniqueId:(NSString*)uniqueId;

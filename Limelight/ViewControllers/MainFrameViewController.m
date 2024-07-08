@@ -28,6 +28,7 @@
 #import "ConnectionHelper.h"
 #import "LocalizationHelper.h"
 #import "CustomEdgeSwipeGestureRecognizer.h"
+#import "DataManager.h"
 
 #if !TARGET_OS_TV
 #import "SettingsViewController.h"
@@ -1075,10 +1076,26 @@ static NSMutableSet* hostList;
     
     
     //if([SettingsViewController isLandscapeNow] != _streamConfig.width > _streamConfig.height)
-        [self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
-        [self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
-
+    //[self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
+    //[self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
+    [self swapResolutionWidthHeightAccordingly];
 }
+
+-(void)swapResolutionWidthHeightAccordingly{
+    DataManager* dataMan = [[DataManager alloc] init];
+    Settings *currentSettings = [dataMan retrieveSettings];
+    CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
+    CGFloat screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
+    bool needSwap = ((currentSettings.width.floatValue - currentSettings.height.floatValue) * (screenWidthInPoints - screenHeightInPoints)) < 0;
+    NSLog(@"need to swap width & height: %d", needSwap);
+    if(needSwap){
+        CGFloat tmpLength = currentSettings.width.floatValue;
+        currentSettings.width = @(currentSettings.height.floatValue);
+        currentSettings.height = @(tmpLength);
+        [dataMan saveData];
+    }
+}
+
 
 #if TARGET_OS_TV
 -(void)handleCollectionViewLongPress:(UILongPressGestureRecognizer *)gestureRecognizer
@@ -1199,9 +1216,13 @@ static NSMutableSet* hostList;
                                              selector: @selector(handleEnterBackground)
                                                  name: UIApplicationWillResignActiveNotification
                                                object: nil];
-    [self simulateSettingsButtonPress]; //force reload resolution table in the setting
-    [self simulateSettingsButtonPress];
+    //[self simulateSettingsButtonPress]; //force reload resolution table in the setting
+    //[self simulateSettingsButtonPress];
+    [self swapResolutionWidthHeightAccordingly];
 }
+
+
+
 
 - (void)viewWillAppear:(BOOL)animated
 {
