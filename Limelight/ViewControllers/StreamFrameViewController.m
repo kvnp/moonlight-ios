@@ -107,6 +107,13 @@
     [_streamView setupStreamView:_controllerSupport interactionDelegate:self config:self.streamConfig]; //reinitiate setupStreamView process.
     [self->_streamView reloadOnScreenControlsRealtimeWith:(ControllerSupport*)_controllerSupport
                                         andConfig:(StreamConfiguration*)_streamConfig]; //reload OSC here.
+    
+    //reconfig statsOverlay
+    self->_statsUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f
+                                                               target:self
+                                                             selector:@selector(updateStatsOverlay)
+                                                             userInfo:nil
+                                                              repeats:_settings.statsOverlay];
 }
 
 
@@ -337,8 +344,13 @@
 #endif
 
 - (void)updateStatsOverlay {
+    if(!_settings.statsOverlay){
+        [_overlayView removeFromSuperview];
+        return; // add this for realtime streamview reconfig
+    }
+    else [self.view addSubview:_overlayView]; // don't know why but this is necessary for reactivating overlay.
+
     NSString* overlayText = [self->_streamMan getStatsOverlayText];
-    
     dispatch_async(dispatch_get_main_queue(), ^{
         [self updateOverlayText:overlayText];
     });
