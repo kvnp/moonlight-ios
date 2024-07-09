@@ -914,6 +914,7 @@ static NSMutableSet* hostList;
     [settingsViewController.optimizeSettingsSelector setEnabled:!self.settingsExpandedInStreamView];
     [settingsViewController.audioOnPCSelector setEnabled:!self.settingsExpandedInStreamView];
     [settingsViewController.codecSelector setEnabled:!self.settingsExpandedInStreamView];
+    [settingsViewController.hdrSelector setEnabled:!self.settingsExpandedInStreamView];
     [settingsViewController.framePacingSelector setEnabled:!self.settingsExpandedInStreamView];
     [settingsViewController.btMouseSelector setEnabled:!self.settingsExpandedInStreamView];
 

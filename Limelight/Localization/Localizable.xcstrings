@@ -76,6 +76,29 @@
         }
       }
     },
+    "%u ms (variance: %u ms)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%u ms (抖动: %u ms)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%u ms (抖动: %u ms)"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%u ms (抖动: %u ms)"
+          }
+        }
+      }
+    },
     "Add Host Manually" : {
       "extractionState" : "manual",
       "localizations" : {
