@@ -201,10 +201,46 @@ BOOL isCustomResolution(CGSize res) {
 
 - (void)viewDidDisappear:(BOOL)animated{
     [super viewDidDisappear:animated];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"SettingsViewClosed" object:self]; // notify other view that settings view just closed
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"SettingsViewClosedNotification" object:self]; // notify other view that settings view just closed
 }
 
+- (void)pushDownExistingWidgets{
+    // Calculate the height needed for the exit button
+    CGFloat exitButtonHeight = 50.0; // Adjust as needed
+    CGFloat topOffset = exitButtonHeight; // Space needed for the exit button
+    // Iterate through subviews of self.view and adjust their frames
+    for (UIView *subview in self.view.subviews) {
+            CGRect frame = subview.frame;
+            frame.origin.y += topOffset;
+            subview.frame = frame;
+    }
+}
+
+
+- (IBAction)exitButtonTapped:(id)sender {
+    [self->_mainFrameViewController simulateSettingsButtonPress];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"SessionDisconnectedBySettingsViewNotification" object:self];
+}
+
+
+- (void)addExitButtonOnTop{
+    UIButton *exitButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [exitButton setTitle:@"Exit" forState:UIControlStateNormal];
+    [exitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal]; // Set font color
+    exitButton.backgroundColor = [UIColor clearColor]; // Set background color
+    exitButton.titleLabel.font = [UIFont boldSystemFontOfSize:16.0]; // Set font size and style
+    exitButton.layer.cornerRadius = 8.0; // Optional: Round corners if desired
+    exitButton.clipsToBounds = YES; // Ensure rounded corners are applied properly
+    [exitButton addTarget:self action:@selector(exitButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:exitButton];
+    exitButton.frame = CGRectMake(0, 20, 200, 50); // Adjust Y and height as needed
+}
+
+
 - (void)viewDidLoad {
+    //[self pushDownExistingWidgets];
+    //[self addExitButtonOnTop];
+    
     justEnteredSettingsViewDoNotOpenOscLayoutTool = true;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(deviceOrientationDidChange) // handle orientation change since i made portrait mode available

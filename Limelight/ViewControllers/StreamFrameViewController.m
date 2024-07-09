@@ -97,17 +97,19 @@
     [self.view addGestureRecognizer:_exitSwipeRecognizer];
 }
 
-
+// key implementation of reconfiguring streamview after realtime setting menu is closed.
 - (void)reConfigStreamViewRealtime{
     _settings = [[[DataManager alloc] init] getSettings];  //StreamFrameViewController retrieve the settings here.
     [self configOscLayoutTool];
     [self configExitGesture];
     [self->_streamView disableOnScreenControls]; //don't know why but this must be called outside the streamview class, just put it here. execute in streamview class cause hang
-    [self.mainframeViewcontroller reloadStreamConfig]; // reload streamconfig
+    [self.mainFrameViewcontroller reloadStreamConfig]; // reload streamconfig
     [_streamView setupStreamView:_controllerSupport interactionDelegate:self config:self.streamConfig]; //reinitiate setupStreamView process.
     [self->_streamView reloadOnScreenControlsRealtimeWith:(ControllerSupport*)_controllerSupport
                                         andConfig:(StreamConfiguration*)_streamConfig]; //reload OSC here.
 }
+
+
 
 - (void)viewDidAppear:(BOOL)animated
 {
@@ -116,8 +118,13 @@
 #if !TARGET_OS_TV
     [[self revealViewController] setPrimaryViewController:self];
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(reConfigStreamViewRealtime) // //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
-                                                 name:@"SettingsViewClosed"
+                                             selector:@selector(reConfigStreamViewRealtime) // reconfig streamview when settings view is closed in stream view
+                                                 name:@"SettingsViewClosedNotification"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(sessionDisconnectedBySettingView) //quit session when exit button is press in setting view during streaming
+                                                 name:@"SessionDisconnectedBySettingsViewNotification"
                                                object:nil];
 #endif
 }
@@ -438,12 +445,13 @@
 }
 
 - (void)expandSettingsView{
-    [self.mainframeViewcontroller simulateSettingsButtonPress];
+    self.mainFrameViewcontroller.settingsExpandedInStreamView = true; //notify mainFrameViewContorller that this is a setting expansion in stream view, some settings shall be disabled.
+    [self.mainFrameViewcontroller simulateSettingsButtonPress];
 }
 
-- (void)edgeSwiped {
-    Log(LOG_I, @"User swiped to end stream");
-    
+- (void)sessionDisconnectedBySettingView {
+    Log(LOG_I, @"Settings view disconnect the session in stream view");
+    self.mainFrameViewcontroller.settingsExpandedInStreamView = false; // reset this flag to false
     [self returnToMainFrame];
 }
 

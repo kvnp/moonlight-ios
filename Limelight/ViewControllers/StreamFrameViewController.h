@@ -23,7 +23,7 @@
 
 #endif
 @property (nonatomic) StreamConfiguration* streamConfig;
-@property (nonatomic, assign) MainFrameViewController *mainframeViewcontroller;
+@property (nonatomic, assign) MainFrameViewController *mainFrameViewcontroller;
 
 
 -(void)updatePreferredDisplayMode:(BOOL)streamActive;

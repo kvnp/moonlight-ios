@@ -59,5 +59,6 @@
 
 - (void) saveSettings;
 + (bool) isLandscapeNow;
+- (void) widget:(UISlider*)widget setEnabled:(bool)enabled;
 
 @end

@@ -906,6 +906,17 @@ static NSMutableSet* hostList;
     // If we moved back to the center position, we should save the settings
     SettingsViewController* settingsViewController = (SettingsViewController*)[revealController rearViewController];
     settingsViewController.mainFrameViewController = self;
+    // enable / disable widgets acoordingly: in streamview, disable, outside of streamview, enable.
+    [settingsViewController.resolutionSelector setEnabled:!self.settingsExpandedInStreamView];
+    [settingsViewController.framerateSelector setEnabled:!self.settingsExpandedInStreamView];
+    [settingsViewController widget:settingsViewController.bitrateSlider setEnabled:!self.settingsExpandedInStreamView];
+    [settingsViewController.optimizeSettingsSelector setEnabled:!self.settingsExpandedInStreamView];
+    [settingsViewController.audioOnPCSelector setEnabled:!self.settingsExpandedInStreamView];
+    [settingsViewController.codecSelector setEnabled:!self.settingsExpandedInStreamView];
+    [settingsViewController.framePacingSelector setEnabled:!self.settingsExpandedInStreamView];
+    [settingsViewController.btMouseSelector setEnabled:!self.settingsExpandedInStreamView];
+
+    
     if (position == FrontViewPositionLeft) {
         [settingsViewController saveSettings];
         _settingsButton.enabled = YES; // make sure these 2 buttons are enabled after closing setting view.
@@ -925,7 +936,7 @@ static NSMutableSet* hostList;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.destinationViewController isKindOfClass:[StreamFrameViewController class]]) {
         StreamFrameViewController* streamFrame = segue.destinationViewController;
-        streamFrame.mainframeViewcontroller = self;
+        streamFrame.mainFrameViewcontroller = self;
         streamFrame.streamConfig = _streamConfig;
     }
 }
@@ -995,7 +1006,7 @@ static NSMutableSet* hostList;
     [self attachWaterMark];
 
 #if !TARGET_OS_TV
-    
+    _settingsExpandedInStreamView = false; // init this flag
     
     // Set the side bar button action. When it's tapped, it'll show the sidebar.
     [_settingsButton setTarget:self.revealViewController];
