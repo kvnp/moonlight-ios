@@ -897,8 +897,7 @@ static NSMutableSet* hostList;
     dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
     // Perform some task after the delay
     dispatch_after(delayTime, dispatch_get_main_queue(), ^{// Code to execute after the delay
-        if(CGRectGetWidth([[UIScreen mainScreen] bounds]) != self->recordedScreenWidth) [self simulateSettingsButtonPressOpen]; //device orientation change condition.
-        self->recordedScreenWidth = CGRectGetWidth([[UIScreen mainScreen] bounds]);
+        [self swapResolutionWidthHeightAccordingly];
     });
 }
 
