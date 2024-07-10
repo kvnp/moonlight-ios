@@ -106,6 +106,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
         case REGULAR_NATIVE_TOUCH:
             keyboardToggleRecognizer.immediateTriggering = false;
             if(settings.onscreenControls.intValue == OnScreenControlsLevelCustom) keyboardToggleRecognizer.numberOfTouchesRequired = 3; //fixing keyboard taps to 3, in order to invoke OSC rebase in stream view by 4-finger tap.
+
         case PURE_NATIVE_TOUCH:
             self->touchHandler = [[NativeTouchHandler alloc] initWithView:self andSettings:settings];break;
         case RELATIVE_TOUCH:
@@ -128,7 +129,8 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
         Log(LOG_I, @"On-screen controls disabled in non-relative touch mode");
         [onScreenControls setLevel:OnScreenControlsLevelOff];
     }
-    else if (level == OnScreenControlsLevelAuto) {
+    //else if (level == OnScreenControlsLevelAuto) {
+    else if (false) { // level auto cancelled in settings
         [controllerSupport initAutoOnScreenControlMode:onScreenControls];
     }
     else {

@@ -1628,37 +1628,7 @@
       }
     },
     "qSU-wh-tqA.segmentTitles[1]" : {
-      "comment" : "Class = \"UISegmentedControl\"; qSU-wh-tqA.segmentTitles[1] = \"Auto\"; ObjectID = \"qSU-wh-tqA\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Auto"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "自动"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "自动"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "自动"
-          }
-        }
-      }
-    },
-    "qSU-wh-tqA.segmentTitles[2]" : {
-      "comment" : "Class = \"UISegmentedControl\"; qSU-wh-tqA.segmentTitles[2] = \"Simple\"; ObjectID = \"qSU-wh-tqA\";",
+      "comment" : "Class = \"UISegmentedControl\"; qSU-wh-tqA.segmentTitles[1] = \"Simple\"; ObjectID = \"qSU-wh-tqA\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
@@ -1687,8 +1657,8 @@
         }
       }
     },
-    "qSU-wh-tqA.segmentTitles[3]" : {
-      "comment" : "Class = \"UISegmentedControl\"; qSU-wh-tqA.segmentTitles[3] = \"Full\"; ObjectID = \"qSU-wh-tqA\";",
+    "qSU-wh-tqA.segmentTitles[2]" : {
+      "comment" : "Class = \"UISegmentedControl\"; qSU-wh-tqA.segmentTitles[2] = \"Full\"; ObjectID = \"qSU-wh-tqA\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
@@ -1717,9 +1687,39 @@
         }
       }
     },
+    "qSU-wh-tqA.segmentTitles[3]" : {
+      "comment" : "Class = \"UISegmentedControl\"; qSU-wh-tqA.segmentTitles[3] = \"Custom\"; ObjectID = \"qSU-wh-tqA\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Custom"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义"
+          }
+        }
+      }
+    },
     "qSU-wh-tqA.segmentTitles[4]" : {
       "comment" : "Class = \"UISegmentedControl\"; qSU-wh-tqA.segmentTitles[4] = \"Custom\"; ObjectID = \"qSU-wh-tqA\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

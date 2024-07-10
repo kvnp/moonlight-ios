@@ -230,7 +230,6 @@ ICAgICAgICAgICAgIA
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <segments>
                                     <segment title="Off"/>
-                                    <segment title="Auto"/>
                                     <segment title="Simple"/>
                                     <segment title="Full"/>
                                     <segment title="Custom"/>

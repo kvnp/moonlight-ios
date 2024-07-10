@@ -20,11 +20,11 @@ static const float BUTTON_DIST = 20;
 
 typedef NS_ENUM(NSInteger, OnScreenControlsLevel) {
     OnScreenControlsLevelOff,
-    OnScreenControlsLevelAuto,
     OnScreenControlsLevelSimple,
     OnScreenControlsLevelFull,
     OnScreenControlsLevelCustom,
-    
+    OnScreenControlsLevelAuto, // move it here instead of delete , to ensure integrity of the codes
+
     // Internal levels selected by ControllerSupport
     OnScreenControlsLevelAutoGCGamepad,
     OnScreenControlsLevelAutoGCExtendedGamepad,
