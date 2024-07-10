@@ -99,6 +99,7 @@
 
 // key implementation of reconfiguring streamview after realtime setting menu is closed.
 - (void)reConfigStreamViewRealtime{
+    //[self.view removeGestureRecognizer:]
     _settings = [[[DataManager alloc] init] getSettings];  //StreamFrameViewController retrieve the settings here.
     [self configOscLayoutTool];
     [self configExitGesture];

@@ -52,6 +52,11 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     
     NSDictionary<NSString *, NSNumber *> *dictCodes;
     CustomTapGestureRecognizer *keyboardToggleRecognizer;
+    UIPanGestureRecognizer *discreteMouseWheelRecognizer;
+    UIPanGestureRecognizer *continuousMouseWheelRecognizer;
+#if defined(__IPHONE_16_1) || defined(__TVOS_16_1)
+    UIHoverGestureRecognizer *stylusHoverRecognizer;
+#endif
     CGFloat HeightViewLiftedTo;
 }
 
@@ -72,6 +77,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     [keyInputField setSpellCheckingType:UITextSpellCheckingTypeNo];
     [self addSubview:keyInputField];
     
+    [self removeGestureRecognizer:keyboardToggleRecognizer]; // for reconfig streamview in realtime
     isInputingText = false;
     keyboardToggleRecognizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleKeyboard)];
     keyboardToggleRecognizer.numberOfTouchesRequired = settings.keyboardToggleFingers.intValue; //will be changed accordinly by touch modes.
@@ -97,13 +103,15 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     
     
     switch (settings.touchMode.intValue) {
-        case PURE_NATIVE_TOUCH:
         case REGULAR_NATIVE_TOUCH:
+            keyboardToggleRecognizer.immediateTriggering = false;
+            if(settings.onscreenControls.intValue == OnScreenControlsLevelCustom) keyboardToggleRecognizer.numberOfTouchesRequired = 3; //fixing keyboard taps to 3, in order to invoke OSC rebase in stream view by 4-finger tap.
+        case PURE_NATIVE_TOUCH:
             self->touchHandler = [[NativeTouchHandler alloc] initWithView:self andSettings:settings];break;
         case RELATIVE_TOUCH:
             self->touchHandler = [[RelativeTouchHandler alloc] initWithView:self andSettings:settings];
             keyboardToggleRecognizer.immediateTriggering = false;
-            keyboardToggleRecognizer.numberOfTouchesRequired = 3; //fixing keyboard taps to 3, in order to invoke OSC rebase in stream view by 4-finger tap.
+            if(settings.onscreenControls.intValue == OnScreenControlsLevelCustom) keyboardToggleRecognizer.numberOfTouchesRequired = 3; //fixing keyboard taps to 3, in order to invoke OSC rebase in stream view by 4-finger tap.
             break;
         case ABSOLUTE_TOUCH:
             self->touchHandler = [[AbsoluteTouchHandler alloc] initWithView:self]; 
@@ -134,12 +142,14 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     if (@available(iOS 13.4, *)) {
         [self addInteraction:[[UIPointerInteraction alloc] initWithDelegate:self]];
         
+        [self removeGestureRecognizer:discreteMouseWheelRecognizer]; // for realtime reconfig stream view
         UIPanGestureRecognizer *discreteMouseWheelRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(mouseWheelMovedDiscrete:)];
         discreteMouseWheelRecognizer.maximumNumberOfTouches = 0;
         discreteMouseWheelRecognizer.allowedScrollTypesMask = UIScrollTypeMaskDiscrete;
         discreteMouseWheelRecognizer.allowedTouchTypes = @[@(UITouchTypeIndirectPointer)];
         [self addGestureRecognizer:discreteMouseWheelRecognizer];
         
+        [self removeGestureRecognizer:continuousMouseWheelRecognizer]; // for realtime reconfig stream view
         UIPanGestureRecognizer *continuousMouseWheelRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(mouseWheelMovedContinuous:)];
         continuousMouseWheelRecognizer.maximumNumberOfTouches = 0;
         continuousMouseWheelRecognizer.allowedScrollTypesMask = UIScrollTypeMaskContinuous;
@@ -149,6 +159,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     
 #if defined(__IPHONE_16_1) || defined(__TVOS_16_1)
     if (@available(iOS 16.1, *)) {
+        [self removeGestureRecognizer:stylusHoverRecognizer]; // for realtime reconfig streamview
         UIHoverGestureRecognizer *stylusHoverRecognizer = [[UIHoverGestureRecognizer alloc] initWithTarget:self action:@selector(sendStylusHoverEvent:)];
         stylusHoverRecognizer.allowedTouchTypes = @[@(UITouchTypePencil)];
         [self addGestureRecognizer:stylusHoverRecognizer];
