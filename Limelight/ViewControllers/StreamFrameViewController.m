@@ -97,12 +97,34 @@
     [self.view addGestureRecognizer:_exitSwipeRecognizer];
 }
 
+- (void)configZoomGesture{
+    [_scrollView removeFromSuperview];
+    if (_settings.touchMode.intValue == ABSOLUTE_TOUCH) {
+        _scrollView = [[UIScrollView alloc] initWithFrame:self.view.frame];
+#if !TARGET_OS_TV
+        [_scrollView.panGestureRecognizer setMinimumNumberOfTouches:2];
+        [_scrollView.panGestureRecognizer setMaximumNumberOfTouches:2]; // reduce competing with keyboardToggleRecognizer in StreamView.
+#endif
+        [_scrollView setShowsHorizontalScrollIndicator:NO];
+        [_scrollView setShowsVerticalScrollIndicator:NO];
+        [_scrollView setDelegate:self];
+        [_scrollView setMaximumZoomScale:10.0f];
+        
+        // Add StreamView inside a UIScrollView for absolute mode
+        [_scrollView addSubview:_streamView];
+        [self.view addSubview:_scrollView];
+        return;
+    }
+    [self.view addSubview:_streamView];
+}
+
 // key implementation of reconfiguring streamview after realtime setting menu is closed.
 - (void)reConfigStreamViewRealtime{
     //[self.view removeGestureRecognizer:]
     _settings = [[[DataManager alloc] init] getSettings];  //StreamFrameViewController retrieve the settings here.
     [self configOscLayoutTool];
     [self configExitGesture];
+    [self configZoomGesture];
     [self->_streamView disableOnScreenControls]; //don't know why but this must be called outside the streamview class, just put it here. execute in streamview class cause hang
     [self.mainFrameViewcontroller reloadStreamConfig]; // reload streamconfig
     [_streamView setupStreamView:_controllerSupport interactionDelegate:self config:self.streamConfig]; //reinitiate setupStreamView process.
