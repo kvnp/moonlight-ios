@@ -477,7 +477,7 @@ BOOL isCustomResolution(CGSize res) {
                                                        style:UIAlertActionStyleDefault
                                                      handler:^(UIAlertAction *action) {
                                                         // Continue execution after the alert is dismissed
-                                                        [self invokeOscLayout];
+                                                        if(!self->_mainFrameViewController.settingsExpandedInStreamView) [self invokeOscLayout]; //don't open osc layout tool immediately during streaming
                                                          NSLog(@"OK button tapped");
                                                      }];
     [alertController addAction:okAction];
