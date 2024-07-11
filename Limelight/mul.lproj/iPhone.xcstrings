@@ -859,6 +859,66 @@
         }
       }
     },
+    "FqF-bM-afQ.configuration.title" : {
+      "comment" : "Class = \"UIButton\"; configuration.title = \"Go Back to Stream View\"; ObjectID = \"FqF-bM-afQ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Go Back to Stream View"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返回串流"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返回串流"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返回串流"
+          }
+        }
+      }
+    },
+    "FqF-bM-afQ.normalTitle" : {
+      "comment" : "Class = \"UIButton\"; normalTitle = \"Button\"; ObjectID = \"FqF-bM-afQ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Button"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返回串流"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返回串流"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返回串流"
+          }
+        }
+      }
+    },
     "ghM-zc-sr6.title" : {
       "comment" : "Class = \"UIBarButtonItem\"; title = \"Delete\"; ObjectID = \"ghM-zc-sr6\";",
       "extractionState" : "extracted_with_value",

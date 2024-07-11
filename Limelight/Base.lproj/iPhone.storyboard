@@ -458,7 +458,7 @@ ICAgICAgICAgICAgIA
                                 <color key="selectedSegmentTintColor" red="0.6716768742" green="0.61711704730000005" blue="0.99902987480000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </segmentedControl>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CMK-cS-h9b">
-                                <rect key="frame" x="15" y="14" width="448" height="32"/>
+                                <rect key="frame" x="243" y="14" width="219" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="tinted" title="Exit">
@@ -468,6 +468,19 @@ ICAgICAgICAgICAgIA
                                 </buttonConfiguration>
                                 <connections>
                                     <action selector="exitButtonTapped:" destination="rYd-e6-cQU" eventType="touchUpInside" id="rCX-Xw-C85"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FqF-bM-afQ">
+                                <rect key="frame" x="16" y="13" width="219" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="tinted" title="Go Back to Stream View">
+                                    <fontDescription key="titleFontDescription" type="boldSystem" pointSize="17"/>
+                                    <color key="baseForegroundColor" red="0.95294117649999999" green="0.97647058819999999" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <color key="baseBackgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="goBackToStreamViewButtonTapped:" destination="rYd-e6-cQU" eventType="touchUpInside" id="9P0-Yw-T4W"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -482,6 +495,7 @@ ICAgICAgICAgICAgIA
                         <outlet property="codecSelector" destination="AbS-CW-fjP" id="ohH-Tc-UzM"/>
                         <outlet property="framePacingSelector" destination="d2a-Ka-H2c" id="Ocv-3E-lIm"/>
                         <outlet property="framerateSelector" destination="dLF-qJ-2nY" id="hE3-hk-iwa"/>
+                        <outlet property="goBackToStreamViewButton" destination="FqF-bM-afQ" id="Xoj-dC-gEa"/>
                         <outlet property="hdrSelector" destination="9xD-GL-9xq" id="5Rf-R7-5TO"/>
                         <outlet property="keyboardToggleFingerNumLabel" destination="PD9-1O-J34" id="EvS-vA-dJD"/>
                         <outlet property="keyboardToggleFingerNumSlider" destination="9rm-7X-TVH" id="SOR-7r-clv"/>
