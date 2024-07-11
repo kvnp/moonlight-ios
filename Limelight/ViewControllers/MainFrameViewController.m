@@ -916,6 +916,7 @@ static NSMutableSet* hostList;
     [settingsViewController.hdrSelector setEnabled:!self.settingsExpandedInStreamView];
     [settingsViewController.framePacingSelector setEnabled:!self.settingsExpandedInStreamView];
     [settingsViewController.btMouseSelector setEnabled:!self.settingsExpandedInStreamView];
+    [settingsViewController.goBackToStreamViewButton setEnabled:self.settingsExpandedInStreamView];
 
     if (position == FrontViewPositionLeft) {
         [settingsViewController saveSettings];

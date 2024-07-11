@@ -222,7 +222,12 @@ BOOL isCustomResolution(CGSize res) {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"SessionDisconnectedBySettingsViewNotification" object:self];
 }
 
+- (IBAction)goBackToStreamViewButtonTapped:(id)sender {
+    [self simulateSettingsButtonPress];
+}
 
+
+/*
 - (void)addExitButtonOnTop{
     UIButton *exitButton = [UIButton buttonWithType:UIButtonTypeSystem];
     [exitButton setTitle:@"Exit" forState:UIControlStateNormal];
@@ -234,7 +239,7 @@ BOOL isCustomResolution(CGSize res) {
     [exitButton addTarget:self action:@selector(exitButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:exitButton];
     exitButton.frame = CGRectMake(0, 20, 200, 50); // Adjust Y and height as needed
-}
+}*/
 
 
 - (void)viewDidLoad {

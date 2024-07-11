@@ -439,7 +439,7 @@ ICAgICAgICAgICAgICA
                                 <color key="selectedSegmentTintColor" red="0.6716768742" green="0.61711704730000005" blue="0.99902987480000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </segmentedControl>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yq8-Hq-UWQ">
-                                <rect key="frame" x="16" y="14" width="457" height="35"/>
+                                <rect key="frame" x="251" y="14" width="222" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="tinted" title="Exit">
@@ -449,7 +449,21 @@ ICAgICAgICAgICAgICA
                                     <color key="baseBackgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </buttonConfiguration>
                                 <connections>
-                                    <action selector="exitButtonTapped:" destination="BsV-3c-455" eventType="touchUpInside" id="Zj0-OS-Nuq"/>
+                                    <action selector="exitButtonTapped:" destination="BsV-3c-455" eventType="touchUpInside" id="pUr-cQ-HQK"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uSS-ev-IFe">
+                                <rect key="frame" x="16" y="14" width="222" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="tinted" title="Go Back to Stream View">
+                                    <backgroundConfiguration key="background"/>
+                                    <fontDescription key="titleFontDescription" type="system" pointSize="17"/>
+                                    <color key="baseForegroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <color key="baseBackgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="goBackToStreamViewButtonTapped:" destination="BsV-3c-455" eventType="touchUpInside" id="Xw6-oO-5Za"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -464,6 +478,7 @@ ICAgICAgICAgICAgICA
                         <outlet property="codecSelector" destination="aFy-0w-YPe" id="DlU-0l-gwz"/>
                         <outlet property="framePacingSelector" destination="7va-uJ-IfD" id="Tbv-s2-u2k"/>
                         <outlet property="framerateSelector" destination="lGK-vl-pdw" id="Kc8-Zv-hdm"/>
+                        <outlet property="goBackToStreamViewButton" destination="uSS-ev-IFe" id="2MV-Fl-nIz"/>
                         <outlet property="hdrSelector" destination="OA2-SA-bBO" id="uUL-mc-4We"/>
                         <outlet property="keyboardToggleFingerNumLabel" destination="nh6-cn-z23" id="ong-b0-2ST"/>
                         <outlet property="keyboardToggleFingerNumSlider" destination="4wJ-Gd-Dmp" id="fbp-o8-KRA"/>

@@ -1837,6 +1837,54 @@
         }
       }
     },
+    "uSS-ev-IFe.configuration.title" : {
+      "comment" : "Class = \"UIButton\"; configuration.title = \"Go Back to Stream View\"; ObjectID = \"uSS-ev-IFe\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Go Back to Stream View"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返回串流"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返回串流"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返回串流"
+          }
+        }
+      }
+    },
+    "uSS-ev-IFe.normalTitle" : {
+      "comment" : "Class = \"UIButton\"; normalTitle = \"Button\"; ObjectID = \"uSS-ev-IFe\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Button"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返回串流"
+          }
+        }
+      }
+    },
     "WDY-9o-6Hb.segmentTitles[0]" : {
       "comment" : "Class = \"UISegmentedControl\"; WDY-9o-6Hb.segmentTitles[0] = \"No\"; ObjectID = \"WDY-9o-6Hb\";",
       "extractionState" : "extracted_with_value",
