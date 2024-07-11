@@ -891,7 +891,7 @@ static NSMutableSet* hostList;
     }
 }
 
-- (void)handleOrientaionChange {
+- (void)handleOrientationChange {
     double delayInSeconds = 0.7;
     // Convert the delay into a dispatch_time_t value
     dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
@@ -1205,7 +1205,7 @@ static NSMutableSet* hostList;
     
 #if !TARGET_OS_TV
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleOrientaionChange) // //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
+                                             selector:@selector(handleOrientationChange) // //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
                                                  name:UIDeviceOrientationDidChangeNotification
                                                object:nil];
 
