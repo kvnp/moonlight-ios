@@ -892,6 +892,13 @@ static NSMutableSet* hostList;
     }
 }
 
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+    // Return the supported interface orientations based on the current state
+    NSLog(@"orchange test");
+    return  UIInterfaceOrientationMaskLandscape;
+}
+
+
 - (void)handleOrientationChange {
     double delayInSeconds = 0.7;
     // Convert the delay into a dispatch_time_t value
@@ -903,6 +910,9 @@ static NSMutableSet* hostList;
 }
 
 - (void)revealController:(SWRevealViewController *)revealController didMoveToPosition:(FrontViewPosition)position {
+    [self setNeedsUpdateOfSupportedInterfaceOrientations];
+
+    
     // If we moved back to the center position, we should save the settings
     SettingsViewController* settingsViewController = (SettingsViewController*)[revealController rearViewController];
     settingsViewController.mainFrameViewController = self;
@@ -1004,10 +1014,10 @@ static NSMutableSet* hostList;
 
 - (void)viewDidLoad
 {
-    [OrientationHelper updateOrientationToLandscape];
+    //[OrientationHelper updateOrientationToLandscape];
+    
     [super viewDidLoad];
     [self attachWaterMark];
-
 #if !TARGET_OS_TV
     _settingsExpandedInStreamView = false; // init this flag
     

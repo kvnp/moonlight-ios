@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "MainFrameViewController.h"
 
 @implementation AppDelegate
 
@@ -22,17 +23,22 @@ static NSString* DB_NAME = @"Moonlight_tvOS.bin";
 static NSString* DB_NAME = @"Limelight_iOS.sqlite";
 #endif
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-#if !TARGET_OS_TV
-    UIApplicationShortcutItem* shortcut = [launchOptions valueForKey:UIApplicationLaunchOptionsShortcutItemKey];
-    if (shortcut != nil) {
-        _pcUuidToLoad = (NSString*)[shortcut.userInfo objectForKey:@"UUID"];
-    }
-#endif
-    return YES;
-}
 
 #if !TARGET_OS_TV
+// orietation limitatioin test
+/*- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+    UIViewController *topController = window.rootViewController;
+    while (topController.presentedViewController) {
+        topController = topController.presentedViewController;
+    }
+    return [topController supportedInterfaceOrientations];
+}*/
+
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+        return UIInterfaceOrientationMaskLandscape;
+}
+
+
 - (void)application:(UIApplication *)application performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem completionHandler:(void (^)(BOOL succeeded))completionHandler {
     _pcUuidToLoad = (NSString*)[shortcutItem.userInfo objectForKey:@"UUID"];
     _shortcutCompletionHandler = completionHandler;
