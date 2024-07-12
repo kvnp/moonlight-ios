@@ -29,6 +29,7 @@
 #import "LocalizationHelper.h"
 #import "CustomEdgeSwipeGestureRecognizer.h"
 #import "DataManager.h"
+#import "Moonlight-Swift.h"
 
 #if !TARGET_OS_TV
 #import "SettingsViewController.h"
@@ -1003,6 +1004,7 @@ static NSMutableSet* hostList;
 
 - (void)viewDidLoad
 {
+    [OrientationHelper updateOrientationToLandscape];
     [super viewDidLoad];
     [self attachWaterMark];
 

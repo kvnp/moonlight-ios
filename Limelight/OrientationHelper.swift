@@ -10,8 +10,8 @@ import Foundation
 
 import UIKit
   
-class OrientationHelper {
-    static func updateOrientationToLandscape() {
+@objc class OrientationHelper: NSObject {
+    @objc static func updateOrientationToLandscape() {
         if #available(iOS 16.0, *) {
             // 调用此方法会使视图控制器重新评估其支持的方向集。
             UIApplication.shared.keyWindow?.rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
