@@ -1014,9 +1014,8 @@ static NSMutableSet* hostList;
 
 - (void)viewDidLoad
 {
-    //[OrientationHelper updateOrientationToLandscape];
-    
     [super viewDidLoad];
+    //[OrientationHelper updateOrientationToLandscape];
     [self attachWaterMark];
 #if !TARGET_OS_TV
     _settingsExpandedInStreamView = false; // init this flag
@@ -1076,7 +1075,21 @@ static NSMutableSet* hostList;
     _boxArtCache = [[NSCache alloc] init];
         
     hostScrollView = [[ComputerScrollView alloc] init];
-    hostScrollView.frame = CGRectMake(0, self.navigationController.navigationBar.frame.origin.y + self.navigationController.navigationBar.frame.size.height, self.view.frame.size.width, self.view.frame.size.height / 2);
+    
+    CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
+    CGFloat screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
+    
+    bool isLandscape = screenWidthInPoints > screenHeightInPoints;
+    NSLog(@"isLandscape1 %d", isLandscape);
+    CGFloat realViewFrameWidth = self.view.frame.size.width > self.view.frame.size.height ? self.view.frame.size.width : self.view.frame.size.height;
+    CGFloat realViewFrameHeight = self.view.frame.size.width < self.view.frame.size.height ? self.view.frame.size.width : self.view.frame.size.height;
+    if(!isLandscape) {
+        CGFloat tmpLength = realViewFrameWidth;
+        realViewFrameWidth = realViewFrameHeight;
+        realViewFrameHeight = tmpLength;
+    }
+    
+    hostScrollView.frame = CGRectMake(0, self.navigationController.navigationBar.frame.origin.y + self.navigationController.navigationBar.frame.size.height, realViewFrameWidth, realViewFrameHeight / 2);
     [hostScrollView setShowsHorizontalScrollIndicator:NO];
     hostScrollView.delaysContentTouches = NO;
     
