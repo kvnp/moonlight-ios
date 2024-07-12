@@ -35,7 +35,7 @@ static NSString* DB_NAME = @"Limelight_iOS.sqlite";
 }*/
 
 - (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
-        return UIInterfaceOrientationMaskLandscape;
+        return UIInterfaceOrientationMaskAll;
 }
 
 

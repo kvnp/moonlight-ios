@@ -300,7 +300,6 @@ static NSMutableSet* hostList;
     // when at the host selection view.
     [self.navigationController.view removeGestureRecognizer:_menuRecognizer];
 #endif
-    
     [_appManager stopRetrieving];
     _showHiddenApps = NO;
     _selectedHost = nil;
@@ -308,7 +307,8 @@ static NSMutableSet* hostList;
     
     [self updateTitle];
     [self disableUpButton];
-    
+    self.isInHostView = true; // setting flag
+    [self reloadScrollHostView]; // host view must be reloaded here
     [self.collectionView reloadData];
     [self.view addSubview:hostScrollView];
 }
@@ -347,6 +347,7 @@ static NSMutableSet* hostList;
     [self updateTitle];
     [self enableUpButton];
     [self disableNavigation];
+    self.isInHostView = false;
     
 #if TARGET_OS_TV
     // Intercept the menu key to go back to the host page
@@ -904,8 +905,12 @@ static NSMutableSet* hostList;
     // Convert the delay into a dispatch_time_t value
     dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
     // Perform some task after the delay
+    CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
+
     dispatch_after(delayTime, dispatch_get_main_queue(), ^{// Code to execute after the delay
         [self swapResolutionWidthHeightAccordingly];
+        if(self.isInHostView) [self reloadScrollHostView]; // here is a flag for judging whether to reload host view after orientation change.
+        self->recordedScreenWidth = screenWidthInPoints; // kind of obselete, but i keep this in the code.
     });
 }
 
@@ -1018,7 +1023,8 @@ static NSMutableSet* hostList;
     //[OrientationHelper updateOrientationToLandscape];
     [self attachWaterMark];
 #if !TARGET_OS_TV
-    _settingsExpandedInStreamView = false; // init this flag
+    self.settingsExpandedInStreamView = false; // init this flag
+    self.isInHostView = true;
     
     // Set the side bar button action. When it's tapped, it'll show the sidebar.
     [_settingsButton setTarget:self.revealViewController];
@@ -1073,12 +1079,27 @@ static NSMutableSet* hostList;
     }
     
     _boxArtCache = [[NSCache alloc] init];
-        
-    hostScrollView = [[ComputerScrollView alloc] init];
     
+    recordedScreenWidth = CGRectGetWidth([[UIScreen mainScreen] bounds]);
+    hostScrollView = [[ComputerScrollView alloc] init];
+    [self reloadScrollHostView];
+    
+    //if([SettingsViewController isLandscapeNow] != _streamConfig.width > _streamConfig.height)
+    //[self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
+    //[self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
+    [self swapResolutionWidthHeightAccordingly];
+}
+
+
+-(void)handleRealOrientationChange{
+    
+}
+
+-(void)reloadScrollHostView{
+    [hostScrollView removeFromSuperview];
     CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
     CGFloat screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
-    
+
     bool isLandscape = screenWidthInPoints > screenHeightInPoints;
     NSLog(@"isLandscape1 %d", isLandscape);
     CGFloat realViewFrameWidth = self.view.frame.size.width > self.view.frame.size.height ? self.view.frame.size.width : self.view.frame.size.height;
@@ -1088,22 +1109,22 @@ static NSMutableSet* hostList;
         realViewFrameWidth = realViewFrameHeight;
         realViewFrameHeight = tmpLength;
     }
-    
+
     hostScrollView.frame = CGRectMake(0, self.navigationController.navigationBar.frame.origin.y + self.navigationController.navigationBar.frame.size.height, realViewFrameWidth, realViewFrameHeight / 2);
     [hostScrollView setShowsHorizontalScrollIndicator:NO];
     hostScrollView.delaysContentTouches = NO;
-    
+
     self.collectionView.delaysContentTouches = NO;
     self.collectionView.allowsMultipleSelection = NO;
-#if !TARGET_OS_TV
+    #if !TARGET_OS_TV
     self.collectionView.multipleTouchEnabled = NO;
-#else
+    #else
     // This is the only way to get long press events on a UICollectionViewCell :(
     UILongPressGestureRecognizer* cellLongPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleCollectionViewLongPress:)];
     cellLongPress.delaysTouchesBegan = YES;
     [self.collectionView addGestureRecognizer:cellLongPress];
-#endif
-    
+    #endif
+
     [self retrieveSavedHosts];
     _discMan = [[DiscoveryManager alloc] initWithHosts:[hostList allObjects] andCallback:self];
         
@@ -1114,20 +1135,17 @@ static NSMutableSet* hostList;
         [self updateTitle];
         [self.view addSubview:hostScrollView];
     }
-    
-    
-    //if([SettingsViewController isLandscapeNow] != _streamConfig.width > _streamConfig.height)
-    //[self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
-    //[self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
-    [self swapResolutionWidthHeightAccordingly];
 }
+
+
+
 
 -(void)swapResolutionWidthHeightAccordingly{
     DataManager* dataMan = [[DataManager alloc] init];
     Settings *currentSettings = [dataMan retrieveSettings];
     CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
     CGFloat screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
-    bool needSwap = ((currentSettings.width.floatValue - currentSettings.height.floatValue) * (screenWidthInPoints - screenHeightInPoints)) < 0;
+    bool needSwap = ((currentSettings.width.floatValue - currentSettings.height.floatValue) * (screenWidthInPoints - screenHeightInPoints)) < 0; //update the current resolution accordingly
     NSLog(@"need to swap width & height: %d", needSwap);
     if(needSwap){
         CGFloat tmpLength = currentSettings.width.floatValue;
@@ -1235,7 +1253,8 @@ static NSMutableSet* hostList;
                                                object:nil];
 
     [[self revealViewController] setPrimaryViewController:self];
-    recordedScreenWidth = CGRectGetWidth([[UIScreen mainScreen] bounds]); // Get the screen's bounds (in points), for force expand setting view
+    recordedScreenWidth = CGRectGetWidth([[UIScreen mainScreen] bounds]); // Get the screen's bounds (in points), update recorded screen width
+    self.isInHostView = true;
 #endif
     
     [self.navigationController setNavigationBarHidden:NO animated:YES];
