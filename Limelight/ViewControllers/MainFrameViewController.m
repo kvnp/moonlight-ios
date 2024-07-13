@@ -29,7 +29,7 @@
 #import "LocalizationHelper.h"
 #import "CustomEdgeSwipeGestureRecognizer.h"
 #import "DataManager.h"
-#import "Moonlight-Swift.h"
+#import "Moonlight-Swift.h" // not used yet.
 
 #if !TARGET_OS_TV
 #import "SettingsViewController.h"

@@ -6,6 +6,8 @@
 //  Copyright © 2024 Moonlight Game Streaming Project. All rights reserved.
 //
 
+
+// this is just a test code in swift, methods here not being called by anyone yet.
 import Foundation
 
 import UIKit
