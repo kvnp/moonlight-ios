@@ -920,7 +920,6 @@ static NSMutableSet* hostList;
         // If we moved back to the center position, we should save the settings
     SettingsViewController* settingsViewController = (SettingsViewController*)[revealController rearViewController];
     settingsViewController.mainFrameViewController = self;
-    
     // enable / disable widgets acoordingly: in streamview, disable, outside of streamview, enable.
     [settingsViewController.resolutionSelector setEnabled:!self.settingsExpandedInStreamView];
     [settingsViewController.framerateSelector setEnabled:!self.settingsExpandedInStreamView];
