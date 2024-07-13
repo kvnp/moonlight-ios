@@ -53,13 +53,12 @@ StreamView *streamView;
     previousPoint = latestPoint;
     latestPoint = [touch locationInView:streamView];
     previousRelativePoint = latestRelativePoint;
-    if(nativeTouchHandler.XBoundaryReached || nativeTouchHandler.YBoundaryReached){   // reset 
+    if(nativeTouchHandler.BoundaryReached){   // reset
         previousRelativePoint.x = halfScreenWidthInPoints;
         previousRelativePoint.y = halfScreenHeightInPoints;
     }
     latestRelativePoint.x = previousRelativePoint.x + pointerVelocityFactor * (latestPoint.x - previousPoint.x);
     latestRelativePoint.y = previousRelativePoint.y + pointerVelocityFactor * (latestPoint.y - previousPoint.y);
-    
 }
 
 + (void)initContextWithView:(StreamView *)view andNativeTouchHandler:(NativeTouchHandler*)handler {

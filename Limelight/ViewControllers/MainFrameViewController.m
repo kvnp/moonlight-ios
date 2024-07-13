@@ -307,9 +307,9 @@ static NSMutableSet* hostList;
     
     [self updateTitle];
     [self disableUpButton];
+    [self.collectionView removeFromSuperview]; // necessary for new scroll host view reloading mechanism
+    [self.view setBackgroundColor:[UIColor darkGrayColor]];
     [self reloadScrollHostView]; // host view must be reloaded here
-    [self.collectionView reloadData];
-    [self.view addSubview:hostScrollView];
 }
 
 - (void) receivedAssetForApp:(TemporaryApp*)app {
@@ -344,6 +344,9 @@ static NSMutableSet* hostList;
     Log(LOG_D, @"Clicked host: %@", host.name);
     _selectedHost = host;
     [self updateTitle];
+    [self.collectionView reloadData]; //for new scroll host view reloading mechanism
+    [self.view addSubview:self.collectionView]; //for new scroll host view reloading mechanism
+    [self attachWaterMark];
     [self enableUpButton];
     [self disableNavigation];
     
@@ -881,8 +884,8 @@ static NSMutableSet* hostList;
 
 #if !TARGET_OS_TV
 // this method is deprecated
-- (void)simulateSettingsButtonPressOpen { //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
-    if (currentPosition == FrontViewPositionLeft && _settingsButton.target && [_settingsButton.target respondsToSelector:_settingsButton.action]) {
+- (void)simulateSettingsButtonPressClose { //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
+    if (currentPosition == FrontViewPositionRight && _settingsButton.target && [_settingsButton.target respondsToSelector:_settingsButton.action]) {
         [_settingsButton.target performSelector:_settingsButton.action withObject:_settingsButton];
     }
 }
@@ -895,6 +898,7 @@ static NSMutableSet* hostList;
 }
 
 - (void)handleOrientationChange {
+    if([self isIphone]) [self simulateSettingsButtonPressClose];
     double delayInSeconds = 0.7;
     // Convert the delay into a dispatch_time_t value
     dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
@@ -996,6 +1000,7 @@ static NSMutableSet* hostList;
 
 - (void)attachWaterMark {
     // Create and configure the label
+    [self->waterMark removeFromSuperview];
     self->waterMark = [[UILabel alloc] init];
     self->waterMark.translatesAutoresizingMaskIntoConstraints = NO;
     self->waterMark.text = [LocalizationHelper localizedStringForKey:@"Modified by: True砖家 on Bilibili"];
@@ -1019,6 +1024,10 @@ static NSMutableSet* hostList;
     ]];
 }
 
+- (bool)isIphone{
+    return ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
+}
+
 - (bool)isIPhonePortrait{
     bool isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
     CGFloat screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
@@ -1032,7 +1041,6 @@ static NSMutableSet* hostList;
 {
     [super viewDidLoad];
     //[OrientationHelper updateOrientationToLandscape];
-    [self attachWaterMark];
 #if !TARGET_OS_TV
     self.settingsExpandedInStreamView = false; // init this flag
     self.revealViewController.isStreaming = false; //init this flag for rvlVC
@@ -1094,7 +1102,8 @@ static NSMutableSet* hostList;
     //recordedScreenWidth = CGRectGetWidth([[UIScreen mainScreen] bounds]);
     hostScrollView = [[ComputerScrollView alloc] init];
     [self reloadScrollHostView];
-    
+    if ([hostList count] == 1) [self hostClicked:[hostList anyObject] view:nil]; //move auto click here from reloadScrollHostView, resolving select new host bug.
+
     //if([SettingsViewController isLandscapeNow] != _streamConfig.width > _streamConfig.height)
     //[self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
     //[self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
@@ -1138,17 +1147,9 @@ static NSMutableSet* hostList;
 
     [self retrieveSavedHosts];
     _discMan = [[DiscoveryManager alloc] initWithHosts:[hostList allObjects] andCallback:self];
-        
-    if ([hostList count] == 1) {
-        [self hostClicked:[hostList anyObject] view:nil];
-    }
-    else {
-        [self updateTitle];
-        [self.view addSubview:hostScrollView];
-    }
+    [self updateTitle];
+    [self.view addSubview:hostScrollView];
 }
-
-
 
 
 -(void)swapResolutionWidthHeightAccordingly{
@@ -1255,7 +1256,8 @@ static NSMutableSet* hostList;
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    [super viewDidAppear:animated];
+    [super viewDidAppear:NO];
+    //[self attachWaterMark];
     
 #if !TARGET_OS_TV
     [[NSNotificationCenter defaultCenter] addObserver:self

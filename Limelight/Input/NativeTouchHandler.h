@@ -14,8 +14,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NativeTouchHandler : UIResponder
-@property (nonatomic, assign) bool XBoundaryReached;
-@property (nonatomic, assign) bool YBoundaryReached;
+@property (nonatomic, assign) bool BoundaryReached;
 @property (nonatomic, assign) bool flipFlag;
 - (id)initWithView:(StreamView*)view andSettings:(TemporarySettings*)settings;
 
