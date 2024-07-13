@@ -24,6 +24,7 @@
 
 -(void)simulateSettingsButtonPress;
 -(void)reloadStreamConfig;
+-(bool)isIPhonePortrait;
 #endif
 
 @end

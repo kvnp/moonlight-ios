@@ -553,6 +553,7 @@ static CGFloat scaledValue( CGFloat v1, CGFloat min2, CGFloat max2, CGFloat min1
     const int kDirectionPanThreshold = 5;
     
     UITouch *touch = [touches anyObject];
+    
     CGPoint nowPoint = [touch locationInView:self.view];
     
     if (fabs(nowPoint.x - _beginPoint.x) > kDirectionPanThreshold) _dragging = YES;
@@ -729,7 +730,7 @@ const int FrontViewPositionNone = 0xff;
 }
 
 
-// tested on iOS17. this method does not call back on iOS14, so runtime orientation limitation not working for iOS14. Probably depends on iOS16 or higher.
+// tested on iOS17. this method does not call back on iOS14, runtime orientation limitation not working for iOS14. Probably depends on iOS16 or higher.
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations {
     // Return the supported interface orientations based on the current state
     NSLog(@"supportedInterfaceOrientations called back 666");
@@ -919,6 +920,7 @@ const int FrontViewPositionNone = 0xff;
         [_contentView.frontView addGestureRecognizer:_panGestureRecognizer];
     }
     return _panGestureRecognizer;
+    return nil;
 }
 
 
@@ -1265,7 +1267,6 @@ const int FrontViewPositionNone = 0xff;
     
     CGFloat baseLocation = [_contentView frontLocationForPosition:_panInitialFrontPosition];
     CGFloat xLocation = baseLocation + translation; // buggy on portrait mode??/
-    
     if ( xLocation < 0 )
     {
         if ( _rightViewController == nil ) xLocation = 0;

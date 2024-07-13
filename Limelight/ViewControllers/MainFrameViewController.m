@@ -880,6 +880,7 @@ static NSMutableSet* hostList;
 }
 
 #if !TARGET_OS_TV
+// this method is deprecated
 - (void)simulateSettingsButtonPressOpen { //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
     if (currentPosition == FrontViewPositionLeft && _settingsButton.target && [_settingsButton.target respondsToSelector:_settingsButton.action]) {
         [_settingsButton.target performSelector:_settingsButton.action withObject:_settingsButton];
@@ -887,6 +888,7 @@ static NSMutableSet* hostList;
 }
 
 - (void)simulateSettingsButtonPress { //simulate pressing the setting button, called from setting view controller.
+    //if([self isIPhonePortrait]) return; // disable settings view expanding in iphone portrait mode since it's buggy.
     if (_settingsButton.target && [_settingsButton.target respondsToSelector:_settingsButton.action]) {
         [_settingsButton.target performSelector:_settingsButton.action withObject:_settingsButton];
     }
@@ -901,6 +903,7 @@ static NSMutableSet* hostList;
 
     dispatch_after(delayTime, dispatch_get_main_queue(), ^{// Code to execute after the delay
         [self swapResolutionWidthHeightAccordingly];
+        [self.settingsButton setEnabled:![self isIPhonePortrait]]; //make sure settings button is disabled in iphone portrait mode.
         if([self->_upButton title] == nil) [self reloadScrollHostView]; // title of the _upButton is good flag for judging if we're on the Host selection view
         //self->recordedScreenWidth = screenWidthInPoints; // kind of obselete, but i keep this in the code.
     });
@@ -931,6 +934,7 @@ static NSMutableSet* hostList;
     [settingsViewController.framePacingSelector setEnabled:!self.settingsExpandedInStreamView];
     [settingsViewController.btMouseSelector setEnabled:!self.settingsExpandedInStreamView];
     [settingsViewController.goBackToStreamViewButton setEnabled:self.settingsExpandedInStreamView];
+    [settingsViewController.allowPortraitSelector setEnabled:!self.settingsExpandedInStreamView];
 
     if (position == FrontViewPositionLeft) {
         [settingsViewController saveSettings];
@@ -1015,6 +1019,14 @@ static NSMutableSet* hostList;
     ]];
 }
 
+- (bool)isIPhonePortrait{
+    bool isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
+    CGFloat screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
+    CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
+    bool isPortrait = screenHeightInPoints > screenWidthInPoints;
+//    return isIPhone && isPortrait;
+    return isPortrait;
+}
 
 - (void)viewDidLoad
 {
@@ -1035,7 +1047,11 @@ static NSMutableSet* hostList;
     [self disableUpButton];
     
     // Set the gesture
-    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    BOOL isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
+    CGFloat screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
+    CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
+    bool isPortrait = false;
+    if(![self isIPhonePortrait]) [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer]; // to prevent buggy settings view in iphone portrait mode;
     
     // Get callbacks associated with the viewController
     [self.revealViewController setDelegate:self];
@@ -1253,7 +1269,7 @@ static NSMutableSet* hostList;
     
     [[self revealViewController] setPrimaryViewController:self];
     self.revealViewController.isStreaming = false; // tell the revealViewController streaming is finished
-
+    [self.settingsButton setEnabled:![self isIPhonePortrait]]; //make sure settings button is disabled in iphone portrait mode.
     //recordedScreenWidth = CGRectGetWidth([[UIScreen mainScreen] bounds]); // Get the screen's bounds (in points), update recorded screen width
 #endif
     
@@ -1520,7 +1536,7 @@ static NSMutableSet* hostList;
     
     [cell.subviews.firstObject removeFromSuperview]; // Remove a view that was previously added
     [cell addSubview:appView];
-    
+    [self.settingsButton setEnabled:![self isIPhonePortrait]]; // update settings button after host is clicked & appview loaded
     // Shadow opacity is controlled inside UIAppView based on whether the app
     // is hidden or not during the update cycle.
     UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRect:cell.bounds];

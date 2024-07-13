@@ -89,7 +89,7 @@
 
 - (void)configExitGesture{
     [self.view removeGestureRecognizer:_exitSwipeRecognizer];
-    _exitSwipeRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(expandSettingsView)];
+    _exitSwipeRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(edgeSwiped)];
     _exitSwipeRecognizer.edges = _settings.swipeExitScreenEdge.intValue;
     _exitSwipeRecognizer.normalizedThresholdDistance = _settings.swipeToExitDistance.floatValue;
     _exitSwipeRecognizer.delaysTouchesBegan = NO;
@@ -482,6 +482,14 @@
 - (void)expandSettingsView{
     self.mainFrameViewcontroller.settingsExpandedInStreamView = true; //notify mainFrameViewContorller that this is a setting expansion in stream view, some settings shall be disabled.
     [self.mainFrameViewcontroller simulateSettingsButtonPress];
+}
+
+- (void)edgeSwiped{
+    if([self->_mainFrameViewcontroller isIPhonePortrait]){ // disable backmenu for iphone portrait mode;
+        [self returnToMainFrame]; //directly quit the session
+        return;
+    }
+    [self expandSettingsView];  // expand settings view in other cases;
 }
 
 - (void)sessionDisconnectedBySettingView {
