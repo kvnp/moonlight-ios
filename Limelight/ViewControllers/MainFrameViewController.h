@@ -21,7 +21,6 @@
 #if !TARGET_OS_TV
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *upButton;
 @property (nonatomic, assign) bool settingsExpandedInStreamView;
-@property (nonatomic, assign) bool isInHostView;
 
 -(void)simulateSettingsButtonPress;
 -(void)reloadStreamConfig;

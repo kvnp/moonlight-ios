@@ -27,6 +27,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 #import "SWRevealViewController.h"
+#import "DataManager.h"
 
 
 #pragma mark - StatusBar Helper Function
@@ -719,6 +720,36 @@ const int FrontViewPositionNone = 0xff;
 }
 
 
+- (UIInterfaceOrientationMask)getCurrentOrientation{
+    CGFloat screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
+    CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
+    //lock the orientation accordingly after streaming is started
+    if(screenWidthInPoints > screenHeightInPoints) return UIInterfaceOrientationMaskLandscape;
+    else return UIInterfaceOrientationMaskPortrait|UIInterfaceOrientationMaskPortraitUpsideDown;
+}
+
+
+// tested on iOS17. this method does not call back on iOS14, so runtime orientation limitation not working for iOS14. Probably depends on iOS16 or higher.
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+    // Return the supported interface orientations based on the current state
+    NSLog(@"supportedInterfaceOrientations called back 666");
+    //lock the orientation accordingly after streaming is started
+    DataManager* dataMan = [[DataManager alloc] init];
+    Settings *currentSettings = [dataMan retrieveSettings];
+    //Handle allow portrait on & off
+    if(currentSettings.allowPortrait){
+        if (self.isStreaming) return [self getCurrentOrientation];
+        else return UIInterfaceOrientationMaskAll;
+    }
+    else return UIInterfaceOrientationMaskLandscape;
+}
+
+
+
+- (void)viewDidLoad{
+    self.isStreaming = false; //init this flag
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -1233,7 +1264,7 @@ const int FrontViewPositionNone = 0xff;
     CGFloat translation = [recognizer translationInView:_contentView].x;
     
     CGFloat baseLocation = [_contentView frontLocationForPosition:_panInitialFrontPosition];
-    CGFloat xLocation = baseLocation + translation;
+    CGFloat xLocation = baseLocation + translation; // buggy on portrait mode??/
     
     if ( xLocation < 0 )
     {

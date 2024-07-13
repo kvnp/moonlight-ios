@@ -43,7 +43,7 @@
 
 @implementation MainFrameViewController {
     UILabel* waterMark;
-    CGFloat recordedScreenWidth;
+    //CGFloat recordedScreenWidth;
     CustomEdgeSwipeGestureRecognizer* _exitSwipeRecognizer;
     NSOperationQueue* _opQueue;
     TemporaryHost* _selectedHost;
@@ -307,7 +307,6 @@ static NSMutableSet* hostList;
     
     [self updateTitle];
     [self disableUpButton];
-    self.isInHostView = true; // setting flag
     [self reloadScrollHostView]; // host view must be reloaded here
     [self.collectionView reloadData];
     [self.view addSubview:hostScrollView];
@@ -347,7 +346,6 @@ static NSMutableSet* hostList;
     [self updateTitle];
     [self enableUpButton];
     [self disableNavigation];
-    self.isInHostView = false;
     
 #if TARGET_OS_TV
     // Intercept the menu key to go back to the host page
@@ -610,6 +608,7 @@ static NSMutableSet* hostList;
 }
 
 - (void) prepareToStreamApp:(TemporaryApp *)app {
+    self.revealViewController.isStreaming = true; // tell the revealViewController streaming is started.
     _streamConfig = [[StreamConfiguration alloc] init];
     _streamConfig.host = app.host.activeAddress;
     _streamConfig.httpsPort = app.host.httpsPort;
@@ -893,32 +892,32 @@ static NSMutableSet* hostList;
     }
 }
 
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
-    // Return the supported interface orientations based on the current state
-    NSLog(@"orchange test");
-    return  UIInterfaceOrientationMaskLandscape;
-}
-
-
 - (void)handleOrientationChange {
     double delayInSeconds = 0.7;
     // Convert the delay into a dispatch_time_t value
     dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
     // Perform some task after the delay
-    CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
+    //CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
 
     dispatch_after(delayTime, dispatch_get_main_queue(), ^{// Code to execute after the delay
         [self swapResolutionWidthHeightAccordingly];
-        if(self.isInHostView) [self reloadScrollHostView]; // here is a flag for judging whether to reload host view after orientation change.
-        self->recordedScreenWidth = screenWidthInPoints; // kind of obselete, but i keep this in the code.
+        if([self->_upButton title] == nil) [self reloadScrollHostView]; // title of the _upButton is good flag for judging if we're on the Host selection view
+        //self->recordedScreenWidth = screenWidthInPoints; // kind of obselete, but i keep this in the code.
     });
 }
 
-- (void)revealController:(SWRevealViewController *)revealController didMoveToPosition:(FrontViewPosition)position {
-    [self setNeedsUpdateOfSupportedInterfaceOrientations];
+// currently obselete:
+- (void) setNeedsUpdateAllowedOrientation{
+    if (@available(iOS 16.0, *)) {
+        [self setNeedsUpdateOfSupportedInterfaceOrientations];
+    } else {
+        // Fallback on earlier versions
+    }
+}
 
-    
-    // If we moved back to the center position, we should save the settings
+
+- (void)revealController:(SWRevealViewController *)revealController didMoveToPosition:(FrontViewPosition)position {
+        // If we moved back to the center position, we should save the settings
     SettingsViewController* settingsViewController = (SettingsViewController*)[revealController rearViewController];
     settingsViewController.mainFrameViewController = self;
     
@@ -936,6 +935,7 @@ static NSMutableSet* hostList;
 
     if (position == FrontViewPositionLeft) {
         [settingsViewController saveSettings];
+        [self setNeedsUpdateAllowedOrientation]; // handle allow portratit on & off
         _settingsButton.enabled = YES; // make sure these 2 buttons are enabled after closing setting view.
         _upButton.enabled = YES; // here is the select new host button
     }
@@ -1024,7 +1024,7 @@ static NSMutableSet* hostList;
     [self attachWaterMark];
 #if !TARGET_OS_TV
     self.settingsExpandedInStreamView = false; // init this flag
-    self.isInHostView = true;
+    self.revealViewController.isStreaming = false; //init this flag for rvlVC
     
     // Set the side bar button action. When it's tapped, it'll show the sidebar.
     [_settingsButton setTarget:self.revealViewController];
@@ -1080,7 +1080,7 @@ static NSMutableSet* hostList;
     
     _boxArtCache = [[NSCache alloc] init];
     
-    recordedScreenWidth = CGRectGetWidth([[UIScreen mainScreen] bounds]);
+    //recordedScreenWidth = CGRectGetWidth([[UIScreen mainScreen] bounds]);
     hostScrollView = [[ComputerScrollView alloc] init];
     [self reloadScrollHostView];
     
@@ -1100,8 +1100,8 @@ static NSMutableSet* hostList;
     CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
     CGFloat screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
 
+    // deal with scroll host view reload after device orientation change here:
     bool isLandscape = screenWidthInPoints > screenHeightInPoints;
-    NSLog(@"isLandscape1 %d", isLandscape);
     CGFloat realViewFrameWidth = self.view.frame.size.width > self.view.frame.size.height ? self.view.frame.size.width : self.view.frame.size.height;
     CGFloat realViewFrameHeight = self.view.frame.size.width < self.view.frame.size.height ? self.view.frame.size.width : self.view.frame.size.height;
     if(!isLandscape) {
@@ -1251,10 +1251,11 @@ static NSMutableSet* hostList;
                                              selector:@selector(handleOrientationChange) // //force expand settings view to update resolution table, and all setting includes current fullscreen resolution will be updated.
                                                  name:UIDeviceOrientationDidChangeNotification
                                                object:nil];
-
+    
     [[self revealViewController] setPrimaryViewController:self];
-    recordedScreenWidth = CGRectGetWidth([[UIScreen mainScreen] bounds]); // Get the screen's bounds (in points), update recorded screen width
-    self.isInHostView = true;
+    self.revealViewController.isStreaming = false; // tell the revealViewController streaming is finished
+
+    //recordedScreenWidth = CGRectGetWidth([[UIScreen mainScreen] bounds]); // Get the screen's bounds (in points), update recorded screen width
 #endif
     
     [self.navigationController setNavigationBarHidden:NO animated:YES];

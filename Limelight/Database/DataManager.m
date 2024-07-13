@@ -76,7 +76,8 @@
                   btMouseSupport:(BOOL)btMouseSupport
                // absoluteTouchMode:(BOOL)absoluteTouchMode
                        touchMode:(NSInteger)touchMode
-                    statsOverlay:(BOOL)statsOverlay {
+                    statsOverlay:(BOOL)statsOverlay 
+                   allowPortrait:(BOOL)allowPortrait{
     
     [_managedObjectContext performBlockAndWait:^{
         Settings* settingsToSave = [self retrieveSettings];
@@ -105,6 +106,7 @@
         // settingsToSave.absoluteTouchMode = absoluteTouchMode;
         settingsToSave.touchMode = [NSNumber numberWithInteger:(uint16_t)touchMode];
         settingsToSave.statsOverlay = statsOverlay;
+        settingsToSave.allowPortrait = allowPortrait;
         
         [self saveData];
     }];

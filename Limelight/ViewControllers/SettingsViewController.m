@@ -392,6 +392,9 @@ BOOL isCustomResolution(CGSize res) {
     [self updateBitrateText];
     [self updateResolutionDisplayViewText];
     
+    // allow portrait setting
+    [self.allowPortraitSelector setSelectedSegmentIndex:currentSettings.allowPortrait ? 1 : 0];
+    
     // lift streamview setting
     [self.liftStreamViewForKeyboardSelector setSelectedSegmentIndex:currentSettings.liftStreamViewForKeyboard ? 1 : 0];// Load old setting
     
@@ -882,6 +885,7 @@ BOOL isCustomResolution(CGSize res) {
     NSInteger touchMode = [self.touchModeSelector selectedSegmentIndex];
     BOOL statsOverlay = [self.statsOverlaySelector selectedSegmentIndex] == 1;
     BOOL enableHdr = [self.hdrSelector selectedSegmentIndex] == 1;
+    BOOL allowPortrait = [self.allowPortraitSelector selectedSegmentIndex] == 1;
     [dataMan saveSettingsWithBitrate:_bitrate
                            framerate:framerate
                               height:height
@@ -906,7 +910,8 @@ BOOL isCustomResolution(CGSize res) {
                       btMouseSupport:btMouseSupport
                    // absoluteTouchMode:absoluteTouchMode
                            touchMode:touchMode
-                        statsOverlay:statsOverlay];
+                        statsOverlay:statsOverlay
+                       allowPortrait:allowPortrait];
 }
 
 - (void)didReceiveMemoryWarning {

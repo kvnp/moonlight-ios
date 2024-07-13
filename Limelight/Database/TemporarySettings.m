@@ -94,6 +94,7 @@
     self.touchPointerVelocityFactor = settings.touchPointerVelocityFactor;
     self.mousePointerVelocityFactor = settings.mousePointerVelocityFactor;
     self.pointerVelocityModeDivider = settings.pointerVelocityModeDivider;
+    self.allowPortrait = settings.allowPortrait;
 #endif
     self.uniqueId = settings.uniqueId;
     

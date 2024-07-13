@@ -37,7 +37,8 @@
                   btMouseSupport:(BOOL)btMouseSupport
                // absoluteTouchMode:(BOOL)absoluteTouchMode
                        touchMode:(NSInteger)touchMode
-                    statsOverlay:(BOOL)statsOverlay;
+                    statsOverlay:(BOOL)statsOverlay
+                   allowPortrait:(BOOL)allowPortrait;
 
 - (NSArray*) getHosts;
 - (void) updateHost:(TemporaryHost*)host;

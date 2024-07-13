@@ -1627,6 +1627,66 @@
         }
       }
     },
+    "R9O-Tw-UD4.segmentTitles[0]" : {
+      "comment" : "Class = \"UISegmentedControl\"; R9O-Tw-UD4.segmentTitles[0] = \"No\"; ObjectID = \"R9O-Tw-UD4\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        }
+      }
+    },
+    "R9O-Tw-UD4.segmentTitles[1]" : {
+      "comment" : "Class = \"UISegmentedControl\"; R9O-Tw-UD4.segmentTitles[1] = \"Yes\"; ObjectID = \"R9O-Tw-UD4\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Yes"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用"
+          }
+        }
+      }
+    },
     "rdz-eg-2oR.segmentTitles[0]" : {
       "comment" : "Class = \"UISegmentedControl\"; rdz-eg-2oR.segmentTitles[0] = \"No\"; ObjectID = \"rdz-eg-2oR\";",
       "extractionState" : "extracted_with_value",
@@ -2025,6 +2085,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "当前布局:"
+          }
+        }
+      }
+    },
+    "Z9P-TN-kci.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Allow Portrait\"; ObjectID = \"Z9P-TN-kci\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Allow Portrait"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许竖屏"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许竖屏"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许竖屏"
           }
         }
       }

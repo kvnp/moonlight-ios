@@ -25,19 +25,24 @@ static NSString* DB_NAME = @"Limelight_iOS.sqlite";
 
 
 #if !TARGET_OS_TV
+
+/*
 // orietation limitatioin test
-/*- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
     UIViewController *topController = window.rootViewController;
     while (topController.presentedViewController) {
         topController = topController.presentedViewController;
     }
     return [topController supportedInterfaceOrientations];
-}*/
-
-- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
-        return UIInterfaceOrientationMaskAll;
 }
+*/
 
+/*
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+    NSLog(@"orientation limit");
+        return UIInterfaceOrientationMaskLandscape;
+}
+*/
 
 - (void)application:(UIApplication *)application performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem completionHandler:(void (^)(BOOL succeeded))completionHandler {
     _pcUuidToLoad = (NSString*)[shortcutItem.userInfo objectForKey:@"UUID"];
