@@ -1024,8 +1024,8 @@ static NSMutableSet* hostList;
     CGFloat screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
     CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
     bool isPortrait = screenHeightInPoints > screenWidthInPoints;
-//    return isIPhone && isPortrait;
-    return isPortrait;
+    return isIPhone && isPortrait;
+   // return isPortrait;
 }
 
 - (void)viewDidLoad
@@ -1047,10 +1047,6 @@ static NSMutableSet* hostList;
     [self disableUpButton];
     
     // Set the gesture
-    BOOL isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
-    CGFloat screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
-    CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
-    bool isPortrait = false;
     if(![self isIPhonePortrait]) [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer]; // to prevent buggy settings view in iphone portrait mode;
     
     // Get callbacks associated with the viewController
