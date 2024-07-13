@@ -396,7 +396,7 @@ BOOL isCustomResolution(CGSize res) {
     bool allowPortraitSelectorEnabled;
     if (@available(iOS 16.0, *)) allowPortraitSelectorEnabled = true; //probably need iOS 16.0 to make runtime orientation limitation woring
     else allowPortraitSelectorEnabled = false;
-    [self.allowPortraitSelector setEnabled:allowPortraitSelectorEnabled];
+    // [self.allowPortraitSelector setEnabled:allowPortraitSelectorEnabled]; //temporally enable this selector for test
     [self.allowPortraitSelector setSelectedSegmentIndex:currentSettings.allowPortrait ? 1 : 0];
     
     // lift streamview setting
