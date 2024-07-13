@@ -7,13 +7,13 @@
 //
 
 #import "StreamView.h"
+#import "NativeTouchHandler.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NativeTouchPointer : NSObject
 
-+ (void)initContextWithView:(StreamView *)view;
-
++ (void)initContextWithView:(StreamView *)view andNativeTouchHandler:(NativeTouchHandler*)handler;
 + (void)setPointerVelocityDivider:(CGFloat)dividerLocation;
 + (void)setPointerVelocityFactor:(CGFloat)velocityFactor;
 + (void)populatePointerObjIntoDict:(UITouch*)touch;

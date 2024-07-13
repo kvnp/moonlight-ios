@@ -44,8 +44,8 @@
 
     [NativeTouchPointer setPointerVelocityDivider:settings.pointerVelocityModeDivider.floatValue];
     [NativeTouchPointer setPointerVelocityFactor:settings.touchPointerVelocityFactor.floatValue];
-    [NativeTouchPointer initContextWithView:streamView];
-    
+    [NativeTouchPointer initContextWithView:self->streamView andNativeTouchHandler:self];
+    _flipFlag = true;
     return self;
 }
 
@@ -83,7 +83,15 @@
     else targetCoords = [touch locationInView:streamView];
     CGPoint location = [streamView adjustCoordinatesForVideoArea:targetCoords];
     CGSize videoSize = [streamView getVideoAreaSize];
-    LiSendTouchEvent(touchType,[self retrievePointerIdFromDict:touch],location.x / videoSize.width, location.y / videoSize.height,(touch.force / touch.maximumPossibleForce) / sin(touch.altitudeAngle),0.0f, 0.0f,[streamView getRotationFromAzimuthAngle:[touch azimuthAngleInView:streamView]]);
+    CGFloat normalizedX = location.x / videoSize.width;
+    CGFloat normalizedY = location.y / videoSize.height;
+    uint8_t pointerId = [self retrievePointerIdFromDict:touch];
+    
+    _XBoundaryReached = (normalizedX == 1.0f || normalizedX == 0.f);
+    _YBoundaryReached = (normalizedY == 1.0f || normalizedY == 0.f);
+    //if(_XBoundaryReached || _YBoundaryReached) LiSendTouchEvent(LI_TOUCH_EVENT_UP,pointerId, normalizedX, normalizedY, 0, 0, 0, 0);
+    if(_XBoundaryReached || _YBoundaryReached) LiSendTouchEvent(LI_TOUCH_EVENT_UP,pointerId, normalizedX, normalizedY, 0, 0, 0, 0);
+    else LiSendTouchEvent(touchType, pointerId, normalizedX, normalizedY,(touch.force / touch.maximumPossibleForce) / sin(touch.altitudeAngle),0.0f, 0.0f,[streamView getRotationFromAzimuthAngle:[touch azimuthAngleInView:streamView]]);
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {

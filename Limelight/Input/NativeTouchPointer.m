@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "NativeTouchPointer.h"
+#import "NativeTouchHandler.h"
 #include <Limelight.h>
 
 // native touch pointer ojbect that stores & manipulates touch coordinates
@@ -17,6 +18,9 @@ static NSMutableDictionary *pointerObjDict;
 static CGFloat pointerVelocityFactor;
 static CGFloat pointerVelocityDivider;
 static CGFloat pointerVelocityDividerLocationByPoints;
+static NativeTouchHandler* nativeTouchHandler;
+static CGFloat halfScreenHeightInPoints;
+static CGFloat halfScreenWidthInPoints;
 
 StreamView *streamView;
 
@@ -49,12 +53,20 @@ StreamView *streamView;
     previousPoint = latestPoint;
     latestPoint = [touch locationInView:streamView];
     previousRelativePoint = latestRelativePoint;
+    if(nativeTouchHandler.XBoundaryReached || nativeTouchHandler.YBoundaryReached){   // reset 
+        previousRelativePoint.x = halfScreenWidthInPoints;
+        previousRelativePoint.y = halfScreenHeightInPoints;
+    }
     latestRelativePoint.x = previousRelativePoint.x + pointerVelocityFactor * (latestPoint.x - previousPoint.x);
     latestRelativePoint.y = previousRelativePoint.y + pointerVelocityFactor * (latestPoint.y - previousPoint.y);
+    
 }
 
-+ (void)initContextWithView:(StreamView *)view{
++ (void)initContextWithView:(StreamView *)view andNativeTouchHandler:(NativeTouchHandler*)handler {
     streamView = view;
+    nativeTouchHandler = handler;
+    halfScreenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds])/2;
+    halfScreenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds])/2;
     pointerObjDict = [NSMutableDictionary dictionary];
     pointerVelocityDividerLocationByPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]) * pointerVelocityDivider;
     NSLog(@"pointerVelocityDivider:  %.2f", pointerVelocityDivider);
