@@ -898,17 +898,16 @@ static NSMutableSet* hostList;
 }
 
 - (void)handleOrientationChange {
-    if([self isIphone]) [self simulateSettingsButtonPressClose];
+    UIDeviceOrientation targetOrientation = [[UIDevice currentDevice] orientation];
+    if([self isIphone] && UIDeviceOrientationIsPortrait(targetOrientation)) [self simulateSettingsButtonPressClose]; // on iphone, force close settings views if target orietation is portrait.
     double delayInSeconds = 0.7;
     // Convert the delay into a dispatch_time_t value
     dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
     // Perform some task after the delay
-    //CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
-
     dispatch_after(delayTime, dispatch_get_main_queue(), ^{// Code to execute after the delay
         [self swapResolutionWidthHeightAccordingly];
         [self.settingsButton setEnabled:![self isIPhonePortrait]]; //make sure settings button is disabled in iphone portrait mode.
-        if([self->_upButton title] == nil) [self reloadScrollHostView]; // title of the _upButton is good flag for judging if we're on the Host selection view
+        if([self->_upButton title] == nil) [self reloadScrollHostView]; // title of the _upButton is a good flag for judging if we're on the Host selection view
         //self->recordedScreenWidth = screenWidthInPoints; // kind of obselete, but i keep this in the code.
     });
 }
