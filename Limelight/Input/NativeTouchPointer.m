@@ -60,7 +60,7 @@ StreamView *streamView;
 + (void)initContextWithView:(StreamView *)view {
     streamView = view;
     screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
-    fixedResetCoordX = screenWidthInPoints * 0.3;
+    fixedResetCoordX = screenWidthInPoints * 0.5;
     screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
     fixedResetCoordY = screenHeightInPoints * 0.4;
     pointerObjDict = [NSMutableDictionary dictionary];

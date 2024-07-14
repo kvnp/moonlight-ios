@@ -416,7 +416,7 @@ BOOL isCustomResolution(CGSize res) {
     //TouchMode & OSC Related Settings:
     
     // pointer veloc setting, will be enable/disabled by touchMode
-    [self.pointerVelocityModeDividerSlider setValue:currentSettings.pointerVelocityModeDivider.floatValue * 100 animated:YES]; // Load old setting.
+    [self.pointerVelocityModeDividerSlider setValue:[self map_SliderValue_fromVelocFactor:currentSettings.pointerVelocityModeDivider.floatValue] animated:YES]; // Load old setting.
     [self.pointerVelocityModeDividerSlider addTarget:self action:@selector(pointerVelocityModeDividerSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
     [self pointerVelocityModeDividerSliderMoved];
 
@@ -538,7 +538,24 @@ BOOL isCustomResolution(CGSize res) {
 }
 
 - (void) touchPointerVelocityFactorSliderMoved {
-    [self.touchPointerVelocityFactorUILabel setText:[LocalizationHelper localizedStringForKey: @"Touch Pointer Velocity: %d%%",  (uint16_t)self.touchPointerVelocityFactorSlider.value]]; // Update label display
+    [self.touchPointerVelocityFactorUILabel setText:[LocalizationHelper localizedStringForKey: @"Touch Pointer Velocity: %d%%",  [self map_velocFactorDisplay_fromSliderValue: self.touchPointerVelocityFactorSlider.value]]]; // Update label display
+}
+
+
+// veloc factor upto 700%
+- (uint16_t) map_velocFactorDisplay_fromSliderValue:(CGFloat)sliderValue{
+    uint16_t velocFactorDisplay = 0;
+    if(sliderValue > 200) velocFactorDisplay = 200 + ((uint16_t)sliderValue % 200) * 5;
+    else velocFactorDisplay = (uint16_t) sliderValue;
+    return velocFactorDisplay;
+}
+
+// veloc factor upto 700%
+- (CGFloat) map_SliderValue_fromVelocFactor:(CGFloat)velocFactor{
+    CGFloat sliderValue = 0.0f;
+    if(velocFactor < 2.0f) sliderValue = velocFactor * 100;
+    else sliderValue = (velocFactor - 2.0) * 100 / 5 + 200;
+    return sliderValue;
 }
 
 - (void) mousePointerVelocityFactorSliderMoved {
@@ -874,7 +891,7 @@ BOOL isCustomResolution(CGSize res) {
     CGFloat swipeToExitDistance = self.swipeToExitDistanceSlider.value;
     uint32_t swipeExitScreenEdge = [self getScreenEdgeFromSelector];
     CGFloat pointerVelocityModeDivider = (CGFloat)(uint8_t)self.pointerVelocityModeDividerSlider.value/100;
-    CGFloat touchPointerVelocityFactor =(CGFloat)(uint16_t)self.touchPointerVelocityFactorSlider.value/100;
+    CGFloat touchPointerVelocityFactor =(CGFloat)(uint16_t)[self map_velocFactorDisplay_fromSliderValue:self.touchPointerVelocityFactorSlider.value]/100;
     CGFloat mousePointerVelocityFactor =(CGFloat)(uint16_t)self.mousePointerVelocityFactorSlider.value/100;
     BOOL liftStreamViewForKeyboard = [self.liftStreamViewForKeyboardSelector selectedSegmentIndex] == 1;
     BOOL showKeyboardToolbar = [self.showKeyboardToolbarSelector selectedSegmentIndex] == 1;

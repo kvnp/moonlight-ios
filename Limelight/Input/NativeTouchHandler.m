@@ -89,7 +89,7 @@
     
     if([NativeTouchPointer getPointerObjFromDict:touch].boundaryReached){ // access whether the current pointer has reached the boundary.
         LiSendTouchEvent(LI_TOUCH_EVENT_UP, pointerId, normalizedX, normalizedY, 0, 0, 0, 0);  //event must sent from the lowest level directy by LiSendTouchEvent to simulate continous dragging to another point on screen
-        LiSendTouchEvent(LI_TOUCH_EVENT_DOWN, pointerId, 0.3, 0.4, 0, 0, 0, 0);
+        LiSendTouchEvent(LI_TOUCH_EVENT_DOWN, pointerId, 0.5, 0.4, 0, 0, 0, 0);
     }else LiSendTouchEvent(touchType, pointerId, normalizedX, normalizedY,(touch.force / touch.maximumPossibleForce) / sin(touch.altitudeAngle),0.0f, 0.0f,[streamView getRotationFromAzimuthAngle:[touch azimuthAngleInView:streamView]]);
 }
 
