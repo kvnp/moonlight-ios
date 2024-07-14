@@ -44,8 +44,7 @@
 
     [NativeTouchPointer setPointerVelocityDivider:settings.pointerVelocityModeDivider.floatValue];
     [NativeTouchPointer setPointerVelocityFactor:settings.touchPointerVelocityFactor.floatValue];
-    [NativeTouchPointer initContextWithView:self->streamView andNativeTouchHandler:self];
-    _flipFlag = true;
+    [NativeTouchPointer initContextWithView:self->streamView];
     return self;
 }
 
@@ -55,7 +54,7 @@
     uintptr_t memAddrValue = (uintptr_t)touch;
     unassignedPointerIds = [pointerIdPool mutableCopy]; //reset unassignedPointerIds
     [unassignedPointerIds minusSet:activePointerIds];
-    uint8_t pointerId = [[unassignedPointerIds anyObject] intValue];
+    uint8_t pointerId = [[unassignedPointerIds anyObject] unsignedIntValue];
     [pointerIdDict setObject:@(pointerId) forKey:@(memAddrValue)];
     [activePointerIds addObject:@(pointerId)];
 }
@@ -72,7 +71,7 @@
 
 // 从字典中获取UITouch事件对应的pointerId
 // called in method of sendTouchEvent
-- (uint32_t) retrievePointerIdFromDict:(UITouch*)touch{
+- (uint8_t) retrievePointerIdFromDict:(UITouch*)touch{
     return [[pointerIdDict objectForKey:@((uintptr_t)touch)] unsignedIntValue];
 }
 
@@ -87,13 +86,11 @@
     CGFloat normalizedY = location.y / videoSize.height;
     uint8_t pointerId = [self retrievePointerIdFromDict:touch];
     
-    _BoundaryReached = (normalizedX == 1.0f || normalizedX == 0.f ||  normalizedY == 1.0f || normalizedY == 0.f);
-    //if(_XBoundaryReached || _YBoundaryReached) LiSendTouchEvent(LI_TOUCH_EVENT_UP,pointerId, normalizedX, normalizedY, 0, 0, 0, 0);
-    if(_BoundaryReached){
-        LiSendTouchEvent(LI_TOUCH_EVENT_UP, pointerId, normalizedX, normalizedY, 0, 0, 0, 0);
-        LiSendTouchEvent(LI_TOUCH_EVENT_MOVE, pointerId, 0.5, 0.5, 0, 0, 0, 0);
-    }
-    else LiSendTouchEvent(touchType, pointerId, normalizedX, normalizedY,(touch.force / touch.maximumPossibleForce) / sin(touch.altitudeAngle),0.0f, 0.0f,[streamView getRotationFromAzimuthAngle:[touch azimuthAngleInView:streamView]]);
+    
+    if([NativeTouchPointer getPointerObjFromDict:touch].boundaryReached){ // access whether the current pointer has reached the boundary.
+        LiSendTouchEvent(LI_TOUCH_EVENT_UP, pointerId, normalizedX, normalizedY, 0, 0, 0, 0);  //event must sent from the lowest level directy by LiSendTouchEvent to simulate continous dragging to another point on screen
+        LiSendTouchEvent(LI_TOUCH_EVENT_DOWN, pointerId, 0.3, 0.4, 0, 0, 0, 0);
+    }else LiSendTouchEvent(touchType, pointerId, normalizedX, normalizedY,(touch.force / touch.maximumPossibleForce) / sin(touch.altitudeAngle),0.0f, 0.0f,[streamView getRotationFromAzimuthAngle:[touch azimuthAngleInView:streamView]]);
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -108,6 +105,7 @@
     for (UITouch* touch in touches){
         if(activateCoordSelector) [NativeTouchPointer updatePointerObjInDict:touch];
         [self sendTouchEvent:touch withTouchtype:LI_TOUCH_EVENT_MOVE];
+        [[NativeTouchPointer getPointerObjFromDict:touch] doesReachBoundary]; // execute the judging of doesReachBoundary for current pointer instance. (happens after the event is sent to Sunshine service)
     }
     return;
 }

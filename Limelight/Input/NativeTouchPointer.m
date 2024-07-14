@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "NativeTouchPointer.h"
-#import "NativeTouchHandler.h"
 #include <Limelight.h>
 
 // native touch pointer ojbect that stores & manipulates touch coordinates
@@ -18,9 +17,10 @@ static NSMutableDictionary *pointerObjDict;
 static CGFloat pointerVelocityFactor;
 static CGFloat pointerVelocityDivider;
 static CGFloat pointerVelocityDividerLocationByPoints;
-static NativeTouchHandler* nativeTouchHandler;
-static CGFloat halfScreenHeightInPoints;
-static CGFloat halfScreenWidthInPoints;
+static CGFloat screenHeightInPoints;
+static CGFloat screenWidthInPoints;
+static CGFloat fixedResetCoordX;
+static CGFloat fixedResetCoordY;
 
 StreamView *streamView;
 
@@ -32,15 +32,6 @@ StreamView *streamView;
     CGPoint previousRelativePoint;
 }
 
-+ (void)setPointerVelocityDivider:(CGFloat)dividerLocation{
-    pointerVelocityDivider = dividerLocation;
-}
-
-+ (void)setPointerVelocityFactor:(CGFloat)velocityFactor{
-    pointerVelocityFactor = velocityFactor;
-}
-
-
 - (instancetype)initWithTouch:(UITouch *)touch{
     self = [super init];
     self->initialPoint = [touch locationInView:streamView];
@@ -49,28 +40,43 @@ StreamView *streamView;
     return self;
 }
 
+- (bool)doesReachBoundary{
+    _boundaryReached = (pointerVelocityFactor > 1.0f) && (latestRelativePoint.x > screenWidthInPoints || latestRelativePoint.x < 0.0f ||  latestRelativePoint.y > screenHeightInPoints || latestRelativePoint.y < 0.0f); // boundary detection & coordinates reset to the central screen point for HK:StarTrail(needs a very high pointer velocity); // boundary detection & coordinates reset to the specific point for HK:StarTrail(needs a very high pointer velocity)
+    return _boundaryReached;
+}
+
 - (void)updatePointerCoords:(UITouch *)touch{
     previousPoint = latestPoint;
     latestPoint = [touch locationInView:streamView];
     previousRelativePoint = latestRelativePoint;
-    if(nativeTouchHandler.BoundaryReached){   // reset
-        previousRelativePoint.x = halfScreenWidthInPoints;
-        previousRelativePoint.y = halfScreenHeightInPoints;
+    if(_boundaryReached){// boundary detection & coordinates reset to the central screen point for HK:StarTrail(needs a very high pointer velocity); // boundary detection & coordinates reset to specific point for HK:StarTrail(needs a very high pointer velocity)
+        previousRelativePoint.x = fixedResetCoordX;
+        previousRelativePoint.y = fixedResetCoordY;
     }
     latestRelativePoint.x = previousRelativePoint.x + pointerVelocityFactor * (latestPoint.x - previousPoint.x);
     latestRelativePoint.y = previousRelativePoint.y + pointerVelocityFactor * (latestPoint.y - previousPoint.y);
 }
 
-+ (void)initContextWithView:(StreamView *)view andNativeTouchHandler:(NativeTouchHandler*)handler {
++ (void)initContextWithView:(StreamView *)view {
     streamView = view;
-    nativeTouchHandler = handler;
-    halfScreenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds])/2;
-    halfScreenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds])/2;
+    screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
+    fixedResetCoordX = screenWidthInPoints * 0.3;
+    screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
+    fixedResetCoordY = screenHeightInPoints * 0.4;
     pointerObjDict = [NSMutableDictionary dictionary];
     pointerVelocityDividerLocationByPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]) * pointerVelocityDivider;
     NSLog(@"pointerVelocityDivider:  %.2f", pointerVelocityDivider);
     NSLog(@"pointerVelocityDividerLocationByPoints:  %.2f", pointerVelocityDividerLocationByPoints);
 }
+
++ (void)setPointerVelocityDivider:(CGFloat)dividerLocation{
+    pointerVelocityDivider = dividerLocation;
+}
+
++ (void)setPointerVelocityFactor:(CGFloat)velocityFactor{
+    pointerVelocityFactor = velocityFactor;
+}
+
 
 + (void)populatePointerObjIntoDict:(UITouch*)touch{
     [pointerObjDict setObject:[[NativeTouchPointer alloc] initWithTouch:touch] forKey:@((uintptr_t)touch)];
@@ -82,8 +88,12 @@ StreamView *streamView;
     if(pointer != nil){
         [pointerObjDict removeObjectForKey:@(memAddrValue)];
     }
-
 }
+
++ (NativeTouchPointer* )getPointerObjFromDict:(UITouch*)touch{
+    return [pointerObjDict objectForKey:@((uintptr_t)touch)];
+}
+
 
 + (void)updatePointerObjInDict:(UITouch *)touch{
     [[pointerObjDict objectForKey:@((uintptr_t)touch)] updatePointerCoords:touch];
@@ -97,8 +107,6 @@ StreamView *streamView;
     }
     return [touch locationInView:streamView];
 }
-
-
 
 
 @end
