@@ -66,6 +66,7 @@ StreamView *streamView;
     pointerObjDict = [NSMutableDictionary dictionary];
     pointerVelocityDividerLocationByPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]) * pointerVelocityDivider;
     NSLog(@"pointerVelocityDivider:  %.2f", pointerVelocityDivider);
+    NSLog(@"pointerVelocityFactor:  %.2f", pointerVelocityFactor);
     NSLog(@"pointerVelocityDividerLocationByPoints:  %.2f", pointerVelocityDividerLocationByPoints);
 }
 
