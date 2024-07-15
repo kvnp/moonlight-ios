@@ -30,6 +30,7 @@ StreamView *streamView;
     CGPoint previousPoint;
     CGPoint latestRelativePoint;
     CGPoint previousRelativePoint;
+    bool useRelativeCoords;
 }
 
 - (instancetype)initWithTouch:(UITouch *)touch{
@@ -41,7 +42,8 @@ StreamView *streamView;
 }
 
 - (bool)doesReachBoundary{
-    _boundaryReached = (pointerVelocityFactor > 1.0f) && (latestRelativePoint.x > screenWidthInPoints || latestRelativePoint.x < 0.0f ||  latestRelativePoint.y > screenHeightInPoints || latestRelativePoint.y < 0.0f); // boundary detection & coordinates reset to the central screen point for HK:StarTrail(needs a very high pointer velocity); // boundary detection & coordinates reset to the specific point for HK:StarTrail(needs a very high pointer velocity)
+    _boundaryReached = (pointerVelocityFactor > 1.0f) && self->useRelativeCoords && (latestRelativePoint.x > screenWidthInPoints || latestRelativePoint.x < 0.0f ||  latestRelativePoint.y > screenHeightInPoints || latestRelativePoint.y < 0.0f); // boundary detection & coordinates reset to the central screen point for HK:StarTrail(needs a very high pointer velocity); // boundary detection & coordinates reset to the specific point for HK:StarTrail(needs a very high pointer velocity)
+        // must exclude touch pointer that uses native coords instead of relative ones.
     return _boundaryReached;
 }
 
@@ -60,7 +62,7 @@ StreamView *streamView;
 + (void)initContextWithView:(StreamView *)view {
     streamView = view;
     screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
-    fixedResetCoordX = screenWidthInPoints * 0.5;
+    fixedResetCoordX = screenWidthInPoints * 0.3;
     screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
     fixedResetCoordY = screenHeightInPoints * 0.4;
     pointerObjDict = [NSMutableDictionary dictionary];
@@ -104,9 +106,13 @@ StreamView *streamView;
 + (CGPoint)selectCoordsFor:(UITouch *)touch{
     NativeTouchPointer *pointer = [pointerObjDict objectForKey:@((uintptr_t)touch)];
     if((pointer -> initialPoint).x > pointerVelocityDividerLocationByPoints){  //if first contact coords locates on the right side of divider.
+        pointer -> useRelativeCoords = true;
         return pointer->latestRelativePoint;
     }
-    return [touch locationInView:streamView];
+    else{
+        pointer -> useRelativeCoords = false;
+        return[touch locationInView:streamView];
+    }
 }
 
 
