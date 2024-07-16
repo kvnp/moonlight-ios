@@ -41,17 +41,22 @@ StreamView *streamView;
     return self;
 }
 
-- (bool)doesReachBoundary{
-    _boundaryReached = (pointerVelocityFactor > 1.0f) && self->useRelativeCoords && (latestRelativePoint.x > screenWidthInPoints || latestRelativePoint.x < 0.0f ||  latestRelativePoint.y > screenHeightInPoints || latestRelativePoint.y < 0.0f); // boundary detection & coordinates reset to the central screen point for HK:StarTrail(needs a very high pointer velocity); // boundary detection & coordinates reset to the specific point for HK:StarTrail(needs a very high pointer velocity)
-        // must exclude touch pointer that uses native coords instead of relative ones.
-    return _boundaryReached;
+- (bool)doesNeedResetCoords{
+    bool boundaryReached = (latestRelativePoint.x > screenWidthInPoints || latestRelativePoint.x < 0.0f ||  latestRelativePoint.y > screenHeightInPoints || latestRelativePoint.y < 0.0f);
+    bool withinExcludedArea =  (initialPoint.x > screenWidthInPoints * (0.75) && initialPoint.x < screenWidthInPoints) && (initialPoint.y > screenHeightInPoints * (0.8) && initialPoint.y < screenHeightInPoints);
+    _needResetCoords = (pointerVelocityFactor > 1.0f) && self->useRelativeCoords && boundaryReached && !withinExcludedArea; 
+    // boundary detection & coordinates reset to the specific point for HK:StarTrail(needs a very high pointer velocity)
+    // must exclude touch pointer that uses native coords instead of relative ones.
+    // also exclude touch pointer created within  the bottom right corner
+    
+    return _needResetCoords;
 }
 
 - (void)updatePointerCoords:(UITouch *)touch{
     previousPoint = latestPoint;
     latestPoint = [touch locationInView:streamView];
     previousRelativePoint = latestRelativePoint;
-    if(_boundaryReached){// boundary detection & coordinates reset to the central screen point for HK:StarTrail(needs a very high pointer velocity); // boundary detection & coordinates reset to specific point for HK:StarTrail(needs a very high pointer velocity)
+    if(_needResetCoords){// boundary detection & coordinates reset to the central screen point for HK:StarTrail(needs a very high pointer velocity); // boundary detection & coordinates reset to specific point for HK:StarTrail(needs a very high pointer velocity)
         previousRelativePoint.x = fixedResetCoordX;
         previousRelativePoint.y = fixedResetCoordY;
     }

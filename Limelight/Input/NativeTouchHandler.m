@@ -86,8 +86,7 @@
     CGFloat normalizedY = location.y / videoSize.height;
     uint8_t pointerId = [self retrievePointerIdFromDict:touch];
     
-    
-    if([NativeTouchPointer getPointerObjFromDict:touch].boundaryReached){ // access whether the current pointer has reached the boundary.
+    if([NativeTouchPointer getPointerObjFromDict:touch].needResetCoords){ // access whether the current pointer has reached the boundary, and need a coord reset.
         LiSendTouchEvent(LI_TOUCH_EVENT_UP, pointerId, normalizedX, normalizedY, 0, 0, 0, 0);  //event must sent from the lowest level directy by LiSendTouchEvent to simulate continous dragging to another point on screen
         LiSendTouchEvent(LI_TOUCH_EVENT_DOWN, pointerId, 0.3, 0.4, 0, 0, 0, 0);
     }else LiSendTouchEvent(touchType, pointerId, normalizedX, normalizedY,(touch.force / touch.maximumPossibleForce) / sin(touch.altitudeAngle),0.0f, 0.0f,[streamView getRotationFromAzimuthAngle:[touch azimuthAngleInView:streamView]]);
@@ -105,7 +104,7 @@
     for (UITouch* touch in touches){
         if(activateCoordSelector) [NativeTouchPointer updatePointerObjInDict:touch];
         [self sendTouchEvent:touch withTouchtype:LI_TOUCH_EVENT_MOVE];
-        [[NativeTouchPointer getPointerObjFromDict:touch] doesReachBoundary]; // execute the judging of doesReachBoundary for current pointer instance. (happens after the event is sent to Sunshine service)
+        [[NativeTouchPointer getPointerObjFromDict:touch] doesNeedResetCoords]; // execute the judging of doesReachBoundary for current pointer instance. (happens after the event is sent to Sunshine service)
     }
     return;
 }
