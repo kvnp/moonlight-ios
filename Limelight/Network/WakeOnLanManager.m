@@ -47,12 +47,16 @@ static const int dynamicPorts[numDynamicPorts] = {
         // try all ip addresses
         if (i == 0 && host.localAddress != nil) {
             address = host.localAddress;
+            NSLog(@"localAddress in wakeHost: %@", host.localAddress);
         } else if (i == 1 && host.externalAddress != nil) {
             address = host.externalAddress;
+            NSLog(@"externalAddress in wakeHost: %@", address);
         } else if (i == 2 && host.address != nil) {
             address = host.address;
+            NSLog(@"Address in wakeHost: %@", address);
         } else if (i == 3 && host.ipv6Address != nil) {
             address = host.ipv6Address;
+            NSLog(@"ipv6Address in wakeHost: %@", address);
         } else if (i == 4) {
             address = @"255.255.255.255";
         } else {
@@ -64,6 +68,9 @@ static const int dynamicPorts[numDynamicPorts] = {
         NSString* rawAddress = [Utils addressPortStringToAddress:address];
         unsigned short basePort = [Utils addressPortStringToPort:address];
         
+        if(i==0) rawAddress = [self calculateBroadcastAddressForIP:rawAddress withSubnetMask:@"255.255.255.0"]; // force setting the address to the broadcast address of the current LAN IP segment in the first loop (localAddress loop)
+        NSLog(@"rawAddress in wakeHost: %@", rawAddress);
+
         memset(&hints, 0, sizeof(hints));
         hints.ai_family = AF_UNSPEC;
         hints.ai_flags = AI_ADDRCONFIG;
@@ -146,6 +153,33 @@ static const int dynamicPorts[numDynamicPorts] = {
     NSString* macString = [mac stringByReplacingOccurrencesOfString:@":" withString:@""];
     Log(LOG_D, @"MAC: %@", macString);
     return [Utils hexToBytes:macString];
+}
+
+
++ (NSString *)calculateBroadcastAddressForIP:(NSString *)ipAddress withSubnetMask:(NSString *)subnetMask {
+    struct in_addr ip;
+    struct in_addr mask;
+    struct in_addr broadcast;
+    
+    if (inet_pton(AF_INET, [ipAddress UTF8String], &ip) != 1) {
+        NSLog(@"Invalid IP address format");
+        return nil;
+    }
+    
+    if (inet_pton(AF_INET, [subnetMask UTF8String], &mask) != 1) {
+        NSLog(@"Invalid subnet mask format");
+        return nil;
+    }
+    
+    broadcast.s_addr = ip.s_addr | ~mask.s_addr;
+    
+    char broadcastAddress[INET_ADDRSTRLEN];
+    if (inet_ntop(AF_INET, &broadcast, broadcastAddress, INET_ADDRSTRLEN) == NULL) {
+        NSLog(@"Failed to convert broadcast address to string");
+        return nil;
+    }
+    
+    return [NSString stringWithUTF8String:broadcastAddress];
 }
 
 @end
