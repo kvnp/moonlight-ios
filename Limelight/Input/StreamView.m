@@ -297,7 +297,6 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 
 - (void) reloadOnScreenControlsRealtimeWith:(ControllerSupport*)controllerSupport
                          andConfig:(StreamConfiguration*)streamConfig {
-
     [self reloadOnScreenControlsWith:controllerSupport andConfig:streamConfig];
     bool oscEnabled = (settings.touchMode.intValue == RELATIVE_TOUCH || settings.touchMode.intValue == REGULAR_NATIVE_TOUCH) && settings.onscreenControls.intValue != OnScreenControlsLevelOff;
     if(oscEnabled) [self showOnScreenControls];
