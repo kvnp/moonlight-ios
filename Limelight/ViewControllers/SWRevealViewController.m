@@ -739,7 +739,7 @@ const int FrontViewPositionNone = 0xff;
     Settings *currentSettings = [dataMan retrieveSettings];
     //Handle allow portrait on & off
     if(currentSettings.allowPortrait){
-        if (self.isStreaming) return [self getCurrentOrientation];
+        if (self.isStreaming || self.mainFrameIsInHostView) return [self getCurrentOrientation]; //orientation change is not allowed in streaming or mainframe host view
         else return UIInterfaceOrientationMaskAll;
     }
     else return UIInterfaceOrientationMaskLandscape;

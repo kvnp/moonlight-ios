@@ -126,12 +126,16 @@ static NSMutableSet* hostList;
 - (void)disableUpButton {
 #if !TARGET_OS_TV
     [self->_upButton setTitle:nil];
+    self.revealViewController.mainFrameIsInHostView = true;  // to allow orientation change only in app view, tell top view controller the mainframe is not in host view
+    [self setNeedsUpdateAllowedOrientation];
 #endif
 }
 
 - (void)enableUpButton {
 #if !TARGET_OS_TV
     [self->_upButton setTitle: [LocalizationHelper localizedStringForKey: @"Select New Host"]];
+    self.revealViewController.mainFrameIsInHostView = false; // to allow orientation change only in app view, tell top view controller the mainframe is not in host view
+    [self setNeedsUpdateAllowedOrientation];
 #endif
 }
 
@@ -344,6 +348,8 @@ static NSMutableSet* hostList;
     Log(LOG_D, @"Clicked host: %@", host.name);
     _selectedHost = host;
     [self updateTitle];
+    //_appManager = [[AppAssetManager alloc] initWithCallback:self];
+    [self.collectionView setCollectionViewLayout:self.collectionViewLayout];
     [self.collectionView reloadData]; //for new scroll host view reloading mechanism
     [self.view addSubview:self.collectionView]; //for new scroll host view reloading mechanism
     [self attachWaterMark];
@@ -1043,6 +1049,7 @@ static NSMutableSet* hostList;
 #if !TARGET_OS_TV
     self.settingsExpandedInStreamView = false; // init this flag
     self.revealViewController.isStreaming = false; //init this flag for rvlVC
+    self.revealViewController.mainFrameIsInHostView = true;
     
     // Set the side bar button action. When it's tapped, it'll show the sidebar.
     [_settingsButton setTarget:self.revealViewController];
