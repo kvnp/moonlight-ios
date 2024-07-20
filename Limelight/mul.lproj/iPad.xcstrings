@@ -878,31 +878,31 @@
       }
     },
     "hAo-1k-oYF.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"Allow Portrait\"; ObjectID = \"hAo-1k-oYF\";",
+      "comment" : "Class = \"UILabel\"; text = \"Allow Portrait (Orientation Changes in App View Only)\"; ObjectID = \"hAo-1k-oYF\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Allow Portrait"
+            "value" : "Allow Portrait (Orientation Changes in App View Only)"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "允许竖屏"
+            "value" : "允许竖屏 (启用后只允许在应用视图中转屏)"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "允许竖屏"
+            "value" : "允许竖屏 (启用后只允许在应用视图中转屏)"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "允许竖屏"
+            "value" : "允许竖屏 (启用后只允许在应用视图中转屏)"
           }
         }
       }
