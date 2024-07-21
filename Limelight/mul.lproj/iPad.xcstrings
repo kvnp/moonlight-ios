@@ -890,19 +890,19 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "允许竖屏 (启用后只允许在应用视图中转屏)"
+            "value" : "允许竖屏 (启用后只允许在应用视图中90度转屏)"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "允许竖屏 (启用后只允许在应用视图中转屏)"
+            "value" : "允许竖屏 (启用后只允许在应用视图中90度转屏)"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "允许竖屏 (启用后只允许在应用视图中转屏)"
+            "value" : "允许竖屏 (启用后只允许在应用视图中90度转屏)"
           }
         }
       }

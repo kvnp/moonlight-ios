@@ -17,12 +17,11 @@ static NSMutableDictionary *pointerObjDict;
 static CGFloat pointerVelocityFactor;
 static CGFloat pointerVelocityDivider;
 static CGFloat pointerVelocityDividerLocationByPoints;
-static CGFloat screenHeightInPoints;
-static CGFloat screenWidthInPoints;
+static CGFloat streamViewHeight;
+static CGFloat streamViewWidth;
 static CGFloat fixedResetCoordX;
 static CGFloat fixedResetCoordY;
-
-StreamView *streamView;
+static StreamView* _streamView;
 
 @implementation NativeTouchPointer{
     CGPoint initialPoint;
@@ -35,15 +34,15 @@ StreamView *streamView;
 
 - (instancetype)initWithTouch:(UITouch *)touch{
     self = [super init];
-    self->initialPoint = [touch locationInView:streamView];
+    self->initialPoint = [touch locationInView:_streamView];
     self->latestPoint = self->initialPoint;
     self->latestRelativePoint = self->initialPoint;
     return self;
 }
 
 - (bool)doesNeedResetCoords{
-    bool boundaryReached = (latestRelativePoint.x > screenWidthInPoints || latestRelativePoint.x < 0.0f ||  latestRelativePoint.y > screenHeightInPoints || latestRelativePoint.y < 0.0f);
-    bool withinExcludedArea =  (initialPoint.x > screenWidthInPoints * (0.75) && initialPoint.x < screenWidthInPoints) && (initialPoint.y > screenHeightInPoints * (0.8) && initialPoint.y < screenHeightInPoints);
+    bool boundaryReached = (latestRelativePoint.x > streamViewWidth || latestRelativePoint.x < 0.0f ||  latestRelativePoint.y > streamViewHeight || latestRelativePoint.y < 0.0f);
+    bool withinExcludedArea =  (initialPoint.x > streamViewWidth * (0.75) && initialPoint.x < streamViewWidth) && (initialPoint.y > streamViewHeight * (0.8) && initialPoint.y < streamViewHeight);
     _needResetCoords = (pointerVelocityFactor > 1.0f) && self->useRelativeCoords && boundaryReached && !withinExcludedArea; 
     // boundary detection & coordinates reset to the specific point for HK:StarTrail(needs a very high pointer velocity)
     // must exclude touch pointer that uses native coords instead of relative ones.
@@ -54,7 +53,7 @@ StreamView *streamView;
 
 - (void)updatePointerCoords:(UITouch *)touch{
     previousPoint = latestPoint;
-    latestPoint = [touch locationInView:streamView];
+    latestPoint = [touch locationInView:_streamView];
     previousRelativePoint = latestRelativePoint;
     if(_needResetCoords){// boundary detection & coordinates reset to the central screen point for HK:StarTrail(needs a very high pointer velocity); // boundary detection & coordinates reset to specific point for HK:StarTrail(needs a very high pointer velocity)
         previousRelativePoint.x = fixedResetCoordX;
@@ -65,11 +64,12 @@ StreamView *streamView;
 }
 
 + (void)initContextWithView:(StreamView *)view {
-    streamView = view;
-    screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
-    fixedResetCoordX = screenWidthInPoints * 0.3;
-    screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
-    fixedResetCoordY = screenHeightInPoints * 0.4;
+    _streamView = view;
+    streamViewWidth = _streamView.frame.size.width;
+    fixedResetCoordX = streamViewWidth * 0.3;
+    streamViewHeight = _streamView.frame.size.height;
+    fixedResetCoordY = streamViewHeight * 0.4;
+    NSLog(@"stream wdith %f, stream height %f", streamViewWidth, streamViewHeight);
     pointerObjDict = [NSMutableDictionary dictionary];
     pointerVelocityDividerLocationByPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]) * pointerVelocityDivider;
     NSLog(@"pointerVelocityDivider:  %.2f", pointerVelocityDivider);
@@ -116,7 +116,7 @@ StreamView *streamView;
     }
     else{
         pointer -> useRelativeCoords = false;
-        return[touch locationInView:streamView];
+        return[touch locationInView:_streamView];
     }
 }
 
