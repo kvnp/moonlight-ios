@@ -253,6 +253,7 @@ BOOL isCustomResolution(CGSize res) {
                                                object:nil];
     
     // for iphones that can not reach mainFrame, to register a gesture to simuluate setting button press & exit from setting view.
+    /*
     _exitSwipeRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(simulateSettingsButtonPress)];
     _exitSwipeRecognizer.edges = UIRectEdgeLeft | UIRectEdgeRight;
     _exitSwipeRecognizer.normalizedThresholdDistance = 0;
@@ -261,6 +262,8 @@ BOOL isCustomResolution(CGSize res) {
     _exitSwipeRecognizer.delaysTouchesBegan = NO;
     _exitSwipeRecognizer.delaysTouchesEnded = NO;
     [self.view addGestureRecognizer:_exitSwipeRecognizer];
+     */
+    // replace by the goBackToStreamView Button.
     
     // Always run settings in dark mode because we want the light fonts
     if (@available(iOS 13.0, tvOS 13.0, *)) {
