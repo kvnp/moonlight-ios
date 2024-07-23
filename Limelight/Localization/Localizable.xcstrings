@@ -99,6 +99,17 @@
         }
       }
     },
+    "Add" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增"
+          }
+        }
+      }
+    },
     "Add Host Manually" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -731,6 +742,9 @@
           }
         }
       }
+    },
+    "Key" : {
+      "extractionState" : "manual"
     },
     "Launch App" : {
       "extractionState" : "manual",

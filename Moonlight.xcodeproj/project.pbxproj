@@ -23,6 +23,9 @@
 		8454AC662C31907F00F0A302 /* iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8454AC682C31907F00F0A302 /* iPad.storyboard */; };
 		8454AC6A2C319BDA00F0A302 /* iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8454AC6C2C319BDA00F0A302 /* iPhone.storyboard */; };
 		84591A512BE1625E006AAB10 /* CustomEdgeSwipeGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 84591A502BE1625E006AAB10 /* CustomEdgeSwipeGestureRecognizer.m */; };
+		84E1CDEC2C4F67D300547904 /* KeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E1CDEB2C4F67D300547904 /* KeyManager.swift */; };
+		84E1CDEF2C4F688E00547904 /* KeyManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E1CDEE2C4F688E00547904 /* KeyManagerViewController.swift */; };
+		84E1CDFA2C4FE83400547904 /* SwiftLocalizationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E1CDF92C4FE83400547904 /* SwiftLocalizationHelper.swift */; };
 		84FD0B512C31338D006B5BE5 /* LocalizationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 84FD0B502C31338D006B5BE5 /* LocalizationHelper.m */; };
 		84FD0B542C3134A6006B5BE5 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 84FD0B532C3134A6006B5BE5 /* Localizable.xcstrings */; };
 		98181BE92791277400E43572 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 98181BE82791275D00E43572 /* libSDL2.a */; };
@@ -150,6 +153,9 @@
 		8454AC6D2C319BDA00F0A302 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/iPhone.xcstrings; sourceTree = "<group>"; };
 		84591A4F2BE16240006AAB10 /* CustomEdgeSwipeGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomEdgeSwipeGestureRecognizer.h; sourceTree = "<group>"; };
 		84591A502BE1625E006AAB10 /* CustomEdgeSwipeGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomEdgeSwipeGestureRecognizer.m; sourceTree = "<group>"; };
+		84E1CDEB2C4F67D300547904 /* KeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManager.swift; sourceTree = "<group>"; };
+		84E1CDEE2C4F688E00547904 /* KeyManagerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManagerViewController.swift; sourceTree = "<group>"; };
+		84E1CDF92C4FE83400547904 /* SwiftLocalizationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftLocalizationHelper.swift; sourceTree = "<group>"; };
 		84FD0B4F2C313343006B5BE5 /* LocalizationHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalizationHelper.h; sourceTree = "<group>"; };
 		84FD0B502C31338D006B5BE5 /* LocalizationHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocalizationHelper.m; sourceTree = "<group>"; };
 		84FD0B532C3134A6006B5BE5 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
@@ -448,6 +454,7 @@
 				84FD0B4F2C313343006B5BE5 /* LocalizationHelper.h */,
 				84FD0B502C31338D006B5BE5 /* LocalizationHelper.m */,
 				84FD0B532C3134A6006B5BE5 /* Localizable.xcstrings */,
+				84E1CDF92C4FE83400547904 /* SwiftLocalizationHelper.swift */,
 			);
 			path = Localization;
 			sourceTree = "<group>";
@@ -615,6 +622,7 @@
 				9819CC21254F180F008A7C8E /* AbsoluteTouchHandler.m */,
 				988FCD3F293B091B003050E2 /* KeyboardInputField.h */,
 				988FCD40293B091B003050E2 /* KeyboardInputField.m */,
+				84E1CDEB2C4F67D300547904 /* KeyManager.swift */,
 			);
 			path = Input;
 			sourceTree = "<group>";
@@ -678,6 +686,7 @@
 				FBD3494F19FF2174002D2A60 /* SettingsViewController.m */,
 				FB4A23B61A9D3637004D2EF2 /* LoadingFrameViewController.h */,
 				FB4A23B71A9D3637004D2EF2 /* LoadingFrameViewController.m */,
+				84E1CDEE2C4F688E00547904 /* KeyManagerViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -1010,6 +1019,7 @@
 				FB9AFD321A7D867C00872C98 /* AppAssetRetriever.m in Sources */,
 				843E93BE2C41528700B1651F /* OrientationHelper.swift in Sources */,
 				FB4678FF1A565DAC00377732 /* WakeOnLanManager.m in Sources */,
+				84E1CDEC2C4F67D300547904 /* KeyManager.swift in Sources */,
 				FB53E1431BE5DC4400CD6ECE /* IdManager.m in Sources */,
 				9897B6A1221260EF00966419 /* Controller.m in Sources */,
 				84351B112C29ACCB00A77989 /* OSCProfilesManager.m in Sources */,
@@ -1035,6 +1045,7 @@
 				FB89463619F646E200339C8A /* StreamFrameViewController.m in Sources */,
 				9827E7A32514366900F25707 /* HapticContext.m in Sources */,
 				9832D1361BBCD5C50036EF48 /* TemporaryApp.m in Sources */,
+				84E1CDEF2C4F688E00547904 /* KeyManagerViewController.swift in Sources */,
 				84351B102C29ACCB00A77989 /* OSCProfile.m in Sources */,
 				84351B2C2C29AD6100A77989 /* OSCProfilesTableViewController.m in Sources */,
 				98D585701C0ED0E800F6CC00 /* TemporarySettings.m in Sources */,
@@ -1043,6 +1054,7 @@
 				FB89462E19F646E200339C8A /* PairManager.m in Sources */,
 				FB9AFD371A7E02DB00872C98 /* HttpRequest.m in Sources */,
 				FB4678ED1A50C40900377732 /* OnScreenControls.m in Sources */,
+				84E1CDFA2C4FE83400547904 /* SwiftLocalizationHelper.swift in Sources */,
 				FB290D0019B2C406004C83CF /* main.m in Sources */,
 				9896219723D15C7000211983 /* X1Kit.swift in Sources */,
 				FBD3494319FC9C04002D2A60 /* AppAssetManager.m in Sources */,

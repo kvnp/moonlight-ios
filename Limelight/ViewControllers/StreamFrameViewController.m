@@ -54,6 +54,7 @@
     CGSize _keyboardSize;
 #if !TARGET_OS_TV
     CustomEdgeSwipeGestureRecognizer *_exitSwipeRecognizer;
+    CustomEdgeSwipeGestureRecognizer *_keyManagerSwipeRecognizer;
     CustomTapGestureRecognizer *_oscLayoutTapRecoginizer;
     LayoutOnScreenControlsViewController *_layoutOnScreenControlsVC;
 #endif
@@ -87,7 +88,12 @@
     }
 }
 
-- (void)configExitGesture{
+- (void)presentKeyManagerViewController{
+    KeyManagerViewController* keyManViewController = [[KeyManagerViewController alloc] init];
+    [self presentViewController:keyManViewController animated:YES completion:nil];
+}
+
+- (void)configSwipeGestures{
     [self.view removeGestureRecognizer:_exitSwipeRecognizer];
     _exitSwipeRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(edgeSwiped)];
     _exitSwipeRecognizer.edges = _settings.swipeExitScreenEdge.intValue;
@@ -95,6 +101,15 @@
     _exitSwipeRecognizer.delaysTouchesBegan = NO;
     _exitSwipeRecognizer.delaysTouchesEnded = NO;
     [self.view addGestureRecognizer:_exitSwipeRecognizer];
+    
+    
+    [self.view removeGestureRecognizer:_keyManagerSwipeRecognizer];
+    _keyManagerSwipeRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(presentKeyManagerViewController)];
+    _keyManagerSwipeRecognizer.edges = UIRectEdgeRight;
+    _keyManagerSwipeRecognizer.normalizedThresholdDistance = _settings.swipeToExitDistance.floatValue;
+    _keyManagerSwipeRecognizer.delaysTouchesBegan = NO;
+    _keyManagerSwipeRecognizer.delaysTouchesEnded = NO;
+    [self.view addGestureRecognizer:_keyManagerSwipeRecognizer];
 }
 
 - (void)configZoomGesture{
@@ -123,7 +138,7 @@
     //[self.view removeGestureRecognizer:]
     _settings = [[[DataManager alloc] init] getSettings];  //StreamFrameViewController retrieve the settings here.
     [self configOscLayoutTool];
-    [self configExitGesture];
+    [self configSwipeGestures];
     [self configZoomGesture];
     [self->_streamView disableOnScreenControls]; //don't know why but this must be called outside the streamview class, just put it here. execute in streamview class cause hang
     [self.mainFrameViewcontroller reloadStreamConfig]; // reload streamconfig
@@ -227,7 +242,7 @@
     [self.view addGestureRecognizer:_playPauseTapGestureRecognizer];
 
 #else
-    [self configExitGesture]; // swipe & exit gesture configured here
+    [self configSwipeGestures]; // swipe & exit gesture configured here
     [self configOscLayoutTool]; //_oscLayoutTapRecoginizer will be added or removed to the view here
 #endif
     
