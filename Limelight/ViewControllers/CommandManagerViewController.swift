@@ -152,7 +152,15 @@ import UIKit
         let alert = UIAlertController(title: "New Command", message: "Enter a new command and alias", preferredStyle: .alert)
         alert.addTextField { $0.placeholder = "Command" }
         alert.addTextField { $0.placeholder = "Alias" }
-        
+        alert.textFields?[0].keyboardType = .asciiCapable
+        alert.textFields?[0].autocorrectionType = .no
+        alert.textFields?[0].spellCheckingType = .no
+        alert.textFields?[1].keyboardType = .asciiCapable
+        alert.textFields?[1].autocorrectionType = .no
+        alert.textFields?[1].spellCheckingType = .no
+
+
+
         let submitAction = UIAlertAction(title: "Add", style: .default) { [unowned alert] _ in
             let keyboardCmdString = alert.textFields?[0].text ?? ""
             let alias = alert.textFields?[1].text ?? keyboardCmdString
