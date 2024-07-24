@@ -258,11 +258,28 @@ import UIKit
             return nil
         }
         
-        for (index, key) in keyStrings.enumerated() {
-            print("Key \(index): \(key)")
+        var validKeyStrings: [String] = []
+        
+        for key in keyStrings {
+            if CommandManager.keyMappings.keys.contains(key) {
+                validKeyStrings.append(key)
+            } else {
+                print(" '\(key)' is not defined in key mappings")
+                return nil  //treat any illegal string as a whole
+            }
         }
         
-        return keyStrings
+        if validKeyStrings.isEmpty {
+            print("No valid key strings found in the matched string")
+            return nil
+        }
+        
+        for (index, key) in validKeyStrings.enumerated() {
+            print("Valid Key \(index): \(key)")
+        }
+        
+        return validKeyStrings
+
     }
     
     @objc public func addCommand(_ command: RemoteCommand) {
