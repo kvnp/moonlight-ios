@@ -244,13 +244,17 @@ import UIKit
         
         if !isEditingMode {
             // Call the dummy method for key-value sending implementation
-            dummyMethodForKeySending()
+            sendKeyboardCommand()
             dismiss(animated: false, completion: nil) // dimiss the view in sending mode
         }
     }
     
-    private func dummyMethodForKeySending() {
+    private func sendKeyboardCommand() {
         // Dummy implementation
         print("Sending key-value")
+        LiSendKeyboardEvent(CommandManager.keyMappings["WIN"]!,Int8(KEY_ACTION_DOWN), 0)
+        Thread.sleep(forTimeInterval: 0.05)
+        LiSendKeyboardEvent(CommandManager.keyMappings["WIN"]!,Int8(KEY_ACTION_UP), 0)
     }
 }
+
