@@ -10,31 +10,42 @@ import Foundation
 import UIKit
 
 // Define the RemoteCommand class
-@objc public class RemoteCommand: NSObject, NSCoding {
-    @objc public var keyboardCmdString: String
-    @objc public var alias: String
+@objc public class RemoteCommand: NSObject, NSSecureCoding {
+    // MARK: - NSSecureCoding
+
+    public static var supportsSecureCoding: Bool {
+        return true
+    }
     
+    // MARK: - Properties
+    
+    @objc var keyboardCmdString: String
+    @objc var alias: String
+    
+    // MARK: - Initialization
+
     init(keyboardCmdString: String, alias: String) {
         self.keyboardCmdString = keyboardCmdString
         self.alias = alias
     }
-    
-    // MARK: - NSCoding
-    
+
+    // MARK: - NSSecureCoding
+
     required public init?(coder: NSCoder) {
-        guard let keyboardCmdString = coder.decodeObject(forKey: "keyboardCmdString") as? String,
-              let alias = coder.decodeObject(forKey: "alias") as? String else {
+        guard let keyboardCmdString = coder.decodeObject(of: NSString.self, forKey: "keyboardCmdString") as String?,
+              let alias = coder.decodeObject(of: NSString.self, forKey: "alias") as String? else {
             return nil
         }
         self.keyboardCmdString = keyboardCmdString
         self.alias = alias
     }
-    
+
     public func encode(with coder: NSCoder) {
         coder.encode(keyboardCmdString, forKey: "keyboardCmdString")
         coder.encode(alias, forKey: "alias")
     }
 }
+
 
 // Define the CommandManager class
 @objc public class CommandManager: NSObject {
@@ -114,11 +125,24 @@ import UIKit
     }
     
     private func loadCommands() {
-        if let savedCommandsData = UserDefaults.standard.data(forKey: "savedCommands"),
-           let savedCommands = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(savedCommandsData) as? [RemoteCommand] {
-            commands = savedCommands
+        if let savedCommandsData = UserDefaults.standard.data(forKey: "savedCommands") {
+            do {
+                // Attempt to unarchive the data into an array of RemoteCommand
+                if let savedCommands = try NSKeyedUnarchiver.unarchivedObject(ofClasses: [NSArray.self, RemoteCommand.self], from: savedCommandsData) as? [RemoteCommand] {
+                    // Assign the unarchived commands to your property
+                    print(" Assign the unarchived commands to your property ")
+                    commands = savedCommands
+                } else {
+                    // Handle the case where the data could not be unarchived into the expected type
+                    print("Data could not be unarchived into [RemoteCommand]")
+                }
+            } catch {
+                // Handle any errors that occur during unarchiving
+                print("Failed to unarchive savedCommands with error: \(error)")
+            }
         }
     }
+
     
     private func saveCommands() {
         if let data = try? NSKeyedArchiver.archivedData(withRootObject: commands, requiringSecureCoding: false) {
