@@ -69,18 +69,15 @@ import UIKit
             print("Failed to create regex")
             return nil
         }
-        
         let range = NSRange(location: 0, length: input.utf16.count)
         guard let match = regex.firstMatch(in: input, options: [], range: range) else {
             print("No match found for input: \(input)")
             return nil
         }
-        
         print("Regex matched for input: \(input)")
         
         let matchedString = (input as NSString).substring(with: match.range(at: 0))
         let keyStrings = matchedString.split(separator: "+").map { String($0) }
-        
         guard !keyStrings.isEmpty else {
             print("No key strings found in the matched string")
             return nil

@@ -193,13 +193,14 @@ import UIKit
     
     @objc public func reloadTableView() {
         let previouslySelectedIndexPath = tableView.indexPathForSelectedRow
-        
+        tableView.layoutIfNeeded()
         tableView.reloadData()
-        
+
         if let indexPath = previouslySelectedIndexPath {
             // Make sure the indexPath is still valid and scroll to the selected indexPath
             if indexPath.row < tableView.numberOfRows(inSection: indexPath.section) {
-                tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+                print("scrollToRow")
+                tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle) // keep the entry of previous index selected.
             }
         }
     }
