@@ -146,12 +146,9 @@ import UIKit
         deleteButton.isEnabled = isEditingMode
         if(isEditingMode){ editButton.setTitle(SwiftLocalizationHelper.localizedString(forKey: "Done"), for: .normal) }
         else{ editButton.setTitle(SwiftLocalizationHelper.localizedString(forKey: "Edit"), for: .normal) }
-        
     }
     
     @objc private func addButtonTapped() {
-        //CommandManager.shared.promptForNewCommand()
-        
         let alert = UIAlertController(title: "New Command", message: "Enter a new command and alias", preferredStyle: .alert)
         alert.addTextField { $0.placeholder = "Command" }
         alert.addTextField { $0.placeholder = "Alias" }
@@ -195,7 +192,16 @@ import UIKit
     }
     
     @objc public func reloadTableView() {
+        let previouslySelectedIndexPath = tableView.indexPathForSelectedRow
+        
         tableView.reloadData()
+        
+        if let indexPath = previouslySelectedIndexPath {
+            // Make sure the indexPath is still valid and scroll to the selected indexPath
+            if indexPath.row < tableView.numberOfRows(inSection: indexPath.section) {
+                tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+            }
+        }
     }
     
     // UITableViewDataSource
@@ -239,7 +245,7 @@ import UIKit
         if !isEditingMode {
             // Call the dummy method for key-value sending implementation
             dummyMethodForKeySending()
-            dismiss(animated: false, completion: nil)
+            dismiss(animated: false, completion: nil) // dimiss the view in sending mode
         }
     }
     

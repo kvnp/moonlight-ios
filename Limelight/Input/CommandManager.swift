@@ -60,25 +60,43 @@ import UIKit
         return keyMappings
     }
     
+    // extractKeyStrings from keyboardCMDString
     @objc public func extractKeyStrings(from input: String) -> [String]? {
         let keys = keyMappings.keys.joined(separator: "|")
-        let pattern = "^((?:\(keys))(?:\\+\(keys))*)$"
+        let pattern = "^(?:(\(keys))(?:\\+(\(keys))*)*)$"
         
         guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else {
+            print("Failed to create regex")
             return nil
         }
         
         let range = NSRange(location: 0, length: input.utf16.count)
         guard let match = regex.firstMatch(in: input, options: [], range: range) else {
+            print("No match found for input: \(input)")
             return nil
         }
         
-        let matchedString = (input as NSString).substring(with: match.range(at: 1))
+        print("Regex matched for input: \(input)")
+        
+        let matchedString = (input as NSString).substring(with: match.range(at: 0))
         let keyStrings = matchedString.split(separator: "+").map { String($0) }
+        
+        guard !keyStrings.isEmpty else {
+            print("No key strings found in the matched string")
+            return nil
+        }
+        
+        for (index, key) in keyStrings.enumerated() {
+            print("Key \(index): \(key)")
+        }
+        
         return keyStrings
     }
     
     @objc public func addCommand(_ command: RemoteCommand) {
+        command.keyboardCmdString = command.keyboardCmdString.uppercased() // convert all letters to upper case
+        let keyStrings = extractKeyStrings(from: command.keyboardCmdString)
+        if (keyStrings == nil) {return}  // in case of non-keyboard command strings, return
         commands.append(command)
         saveCommands()
         viewController?.reloadTableView() // don't know why but this reload has to be called from the CommandManager, doesn't work by calling it in the viewcontroller, probably related with the dialog box.
