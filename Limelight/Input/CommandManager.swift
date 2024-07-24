@@ -40,8 +40,7 @@ import UIKit
 @objc public class CommandManager: NSObject {
     @objc public static let shared = CommandManager()
     
-    private var commands: [RemoteCommand] = []
-    private let keyMappings: [String: UInt16] = [
+    static let keyMappings: [String: UInt16] = [
         "CTRL": 0x11,
         "ALT": 0x12,
         "DEL": 0x2E,
@@ -49,6 +48,8 @@ import UIKit
         "F2": 0x71
     ]
     
+    private var commands: [RemoteCommand] = []
+
     public weak var viewController: CommandManagerViewController?
     
     private override init() {
@@ -57,12 +58,12 @@ import UIKit
     }
     
     @objc public func createTestKeyMappings() -> [String: UInt16] {
-        return keyMappings
+        return CommandManager.keyMappings
     }
     
     // extractKeyStrings from keyboardCMDString
     @objc public func extractKeyStrings(from input: String) -> [String]? {
-        let keys = keyMappings.keys.joined(separator: "|")
+        let keys = CommandManager.keyMappings.keys.joined(separator: "|")
         let pattern = "^(?:(\(keys))(?:\\+(\(keys))*)*)$"
         
         guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else {
@@ -78,6 +79,7 @@ import UIKit
         
         let matchedString = (input as NSString).substring(with: match.range(at: 0))
         let keyStrings = matchedString.split(separator: "+").map { String($0) }
+
         guard !keyStrings.isEmpty else {
             print("No key strings found in the matched string")
             return nil

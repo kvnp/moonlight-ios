@@ -199,7 +199,6 @@ import UIKit
         if let indexPath = previouslySelectedIndexPath {
             // Make sure the indexPath is still valid and scroll to the selected indexPath
             if indexPath.row < tableView.numberOfRows(inSection: indexPath.section) {
-                print("scrollToRow")
                 tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle) // keep the entry of previous index selected.
             }
         }
