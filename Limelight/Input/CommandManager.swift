@@ -105,6 +105,7 @@ import UIKit
     
     @objc public func addCommand(_ command: RemoteCommand) {
         command.keyboardCmdString = command.keyboardCmdString.uppercased() // convert all letters to upper case
+        if(command.alias.trimmingCharacters(in: .whitespacesAndNewlines).count == 0) {command.alias = command.keyboardCmdString} // copy cmd string as alias when alias is empty
         let keyStrings = extractKeyStrings(from: command.keyboardCmdString)
         if (keyStrings == nil) {return}  // in case of non-keyboard command strings, return
         commands.append(command)
