@@ -167,8 +167,8 @@ import UIKit
         
         if let selectedIndexPath = self.tableView.indexPathForSelectedRow {
             let selectedCommand = CommandManager.shared.getAllCommands()[selectedIndexPath.row]
-            alert.textFields?[0].text = selectedCommand.keyboardCmdString
-            alert.textFields?[1].text = selectedCommand.alias
+            alert.textFields?[0].text = selectedCommand.keyboardCmdString // load selected keyboard cmd string
+            //alert.textFields?[1].text = selectedCommand.alias
         }
         
         self.present(alert, animated: true)
