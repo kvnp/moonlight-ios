@@ -244,17 +244,25 @@ import UIKit
         
         if !isEditingMode {
             // Call the dummy method for key-value sending implementation
-            sendKeyboardCommand()
+            let command = CommandManager.shared.getAllCommands()[indexPath.row]
+            sendKeyboardCommand(command)
             dismiss(animated: false, completion: nil) // dimiss the view in sending mode
         }
     }
     
-    private func sendKeyboardCommand() {
+    private func sendKeyboardCommand(_ cmd: RemoteCommand) {
         // Dummy implementation
         print("Sending key-value")
-        LiSendKeyboardEvent(CommandManager.keyMappings["WIN"]!,Int8(KEY_ACTION_DOWN), 0)
-        Thread.sleep(forTimeInterval: 0.05)
-        LiSendKeyboardEvent(CommandManager.keyMappings["WIN"]!,Int8(KEY_ACTION_UP), 0)
+        
+        let keyboardCmdStrings = CommandManager.shared.extractKeyStrings(from: cmd.keyboardCmdString)
+        for keyStr in keyboardCmdStrings! {
+            LiSendKeyboardEvent(CommandManager.keyMappings[keyStr]!,Int8(KEY_ACTION_DOWN), 0)
+            print("keycode: \(CommandManager.keyMappings[keyStr] ?? 0xFF)")
+            Thread.sleep(forTimeInterval: 0.05)
+        }
+        for keyStr in keyboardCmdStrings! {
+            LiSendKeyboardEvent(CommandManager.keyMappings[keyStr]!,Int8(KEY_ACTION_UP), 0)
+        }
     }
 }
 
