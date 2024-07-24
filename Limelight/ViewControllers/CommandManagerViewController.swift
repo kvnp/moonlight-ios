@@ -8,7 +8,7 @@
 
 import UIKit
 
-@objc public class KeyManagerViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+@objc public class CommandManagerViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     public let tableView = UITableView()
     private let addButton = UIButton(type: .system)
@@ -18,7 +18,7 @@ import UIKit
     private let viewBackgroundColor = UIColor(white: 0.2, alpha: 1.0);
     private let highlightColor = UIColor(white: 0.3, alpha: 1.0);
     private let titleLabel = UILabel()
-
+    
     private var isEditingMode: Bool = false {
         didSet {
             updateEditingMode()
@@ -37,20 +37,20 @@ import UIKit
         // Register the cell class
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
-        KeyManager.shared.setupViewController(self)
+        CommandManager.shared.setupViewController(self)
     }
     
     override public func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setupConstraints()
     }
-
+    
     private func setupViews() {
         
         // Set corner radius
         view.layer.cornerRadius = 20  // Adjust the corner radius
         view.layer.masksToBounds = true
-
+        
         // Set up the title label
         titleLabel.text = SwiftLocalizationHelper.localizedString(forKey: "Send Special Keys")
         titleLabel.font = UIFont.boldSystemFont(ofSize: 24)  // Adjust font size as needed
@@ -71,7 +71,7 @@ import UIKit
         deleteButton.titleLabel?.font = UIFont.systemFont(ofSize: 20)
         editButton.titleLabel?.font = UIFont.systemFont(ofSize: 20)
         exitButton.titleLabel?.font = UIFont.systemFont(ofSize: 20)
-
+        
         // Add subviews
         view.addSubview(tableView)
         view.addSubview(addButton)
@@ -100,9 +100,9 @@ import UIKit
         editButton.translatesAutoresizingMaskIntoConstraints = false
         exitButton.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-
+        
         NSLayoutConstraint.activate([
-
+            
             // Set the width and height of the view
             view.widthAnchor.constraint(equalTo: view.superview!.widthAnchor, multiplier: 0.7),
             view.heightAnchor.constraint(equalTo: view.superview!.heightAnchor, multiplier: 0.75),
@@ -115,8 +115,8 @@ import UIKit
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-
-
+            
+            
             // TableView constraints
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
@@ -146,30 +146,44 @@ import UIKit
         deleteButton.isEnabled = isEditingMode
         if(isEditingMode){ editButton.setTitle(SwiftLocalizationHelper.localizedString(forKey: "Done"), for: .normal) }
         else{ editButton.setTitle(SwiftLocalizationHelper.localizedString(forKey: "Edit"), for: .normal) }
-            
+        
     }
     
     @objc private func addButtonTapped() {
-        let alertController = UIAlertController(title: SwiftLocalizationHelper.localizedString(forKey: "Add String"), message: nil, preferredStyle: .alert)
-        alertController.addTextField()
+        //CommandManager.shared.promptForNewCommand()
         
-        let addAction = UIAlertAction(title: SwiftLocalizationHelper.localizedString(forKey: "Add"), style: .default) { [weak self] _ in
-            if let newString = alertController.textFields?.first?.text, !newString.isEmpty {
-                KeyManager.shared.addString(newString)
-                self?.reloadTableView()
-            }
+        let alert = UIAlertController(title: "New Command", message: "Enter a new command and alias", preferredStyle: .alert)
+        alert.addTextField { $0.placeholder = "Command" }
+        alert.addTextField { $0.placeholder = "Alias" }
+        
+        let submitAction = UIAlertAction(title: "Add", style: .default) { [unowned alert] _ in
+            let keyboardCmdString = alert.textFields?[0].text ?? ""
+            let alias = alert.textFields?[1].text ?? keyboardCmdString
+            let newCommand = RemoteCommand(keyboardCmdString: keyboardCmdString, alias: alias)
+            CommandManager.shared.addCommand(newCommand)
+            //self.reloadTableView()
         }
-        let cancelAction = UIAlertAction(title: SwiftLocalizationHelper.localizedString(forKey: "Cancel"), style: .cancel, handler: nil)
-        alertController.addAction(addAction)
-        alertController.addAction(cancelAction)
-        present(alertController, animated: true, completion: nil)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        alert.addAction(submitAction)
+        alert.addAction(cancelAction)
+        
+        if let selectedIndexPath = self.tableView.indexPathForSelectedRow {
+            let selectedCommand = CommandManager.shared.getAllCommands()[selectedIndexPath.row]
+            alert.textFields?[0].text = selectedCommand.keyboardCmdString
+            alert.textFields?[1].text = selectedCommand.alias
+        }
+        
+        self.present(alert, animated: true)
     }
     
+    
     @objc private func deleteButtonTapped() {
-        if let selectedIndexPath = tableView.indexPathForSelectedRow {
-            KeyManager.shared.deleteString(at: selectedIndexPath.row)
-            reloadTableView()
+        guard let selectedIndexPath = tableView.indexPathForSelectedRow else {
+            return
         }
+        CommandManager.shared.deleteCommand(at: selectedIndexPath.row)
+        reloadTableView()
     }
     
     @objc private func editButtonTapped() {
@@ -186,7 +200,7 @@ import UIKit
     
     // UITableViewDataSource
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return KeyManager.shared.getAllStrings().count
+        return CommandManager.shared.getAllCommands().count
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -194,21 +208,20 @@ import UIKit
         // Configure cell appearance
         cell.backgroundColor = viewBackgroundColor // Set background color of the cell
         cell.textLabel?.textColor = UIColor.white // Set font color of the text
-
+        
         // Set selected background view
         let selectedBackgroundView = UIView()
         selectedBackgroundView.backgroundColor = highlightColor // Color for the selected state
         cell.selectedBackgroundView = selectedBackgroundView
-    
         
-        let keyStrings = KeyManager.shared.getAllStrings()
-        cell.textLabel?.text = keyStrings[indexPath.row]
+        
+        let command = CommandManager.shared.getAllCommands()[indexPath.row]
+        cell.textLabel?.text = command.alias
         return cell
     }
     
     // UITableViewDelegate
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         
         if let cell = tableView.cellForRow(at: indexPath) {
             // Set the cell background color to the flashing color
@@ -222,7 +235,7 @@ import UIKit
                 }
             }
         }
-
+        
         if !isEditingMode {
             // Call the dummy method for key-value sending implementation
             dummyMethodForKeySending()

@@ -54,7 +54,7 @@
     CGSize _keyboardSize;
 #if !TARGET_OS_TV
     CustomEdgeSwipeGestureRecognizer *_exitSwipeRecognizer;
-    CustomEdgeSwipeGestureRecognizer *_keyManagerSwipeRecognizer;
+    CustomEdgeSwipeGestureRecognizer *_commandManagerSwipeRecognizer;
     CustomTapGestureRecognizer *_oscLayoutTapRecoginizer;
     LayoutOnScreenControlsViewController *_layoutOnScreenControlsVC;
 #endif
@@ -88,9 +88,9 @@
     }
 }
 
-- (void)presentKeyManagerViewController{
-    KeyManagerViewController* keyManViewController = [[KeyManagerViewController alloc] init];
-    [self presentViewController:keyManViewController animated:YES completion:nil];
+- (void)presentCommandManagerViewController{
+    CommandManagerViewController* cmdManViewController = [[CommandManagerViewController alloc] init];
+    [self presentViewController:cmdManViewController animated:YES completion:nil];
 }
 
 - (void)configSwipeGestures{
@@ -103,13 +103,13 @@
     [self.view addGestureRecognizer:_exitSwipeRecognizer];
     
     
-    [self.view removeGestureRecognizer:_keyManagerSwipeRecognizer];
-    _keyManagerSwipeRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(presentKeyManagerViewController)];
-    _keyManagerSwipeRecognizer.edges = UIRectEdgeRight;
-    _keyManagerSwipeRecognizer.normalizedThresholdDistance = _settings.swipeToExitDistance.floatValue;
-    _keyManagerSwipeRecognizer.delaysTouchesBegan = NO;
-    _keyManagerSwipeRecognizer.delaysTouchesEnded = NO;
-    [self.view addGestureRecognizer:_keyManagerSwipeRecognizer];
+    [self.view removeGestureRecognizer:_commandManagerSwipeRecognizer];
+    _commandManagerSwipeRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(presentCommandManagerViewController)];
+    _commandManagerSwipeRecognizer.edges = UIRectEdgeRight;
+    _commandManagerSwipeRecognizer.normalizedThresholdDistance = _settings.swipeToExitDistance.floatValue;
+    _commandManagerSwipeRecognizer.delaysTouchesBegan = NO;
+    _commandManagerSwipeRecognizer.delaysTouchesEnded = NO;
+    [self.view addGestureRecognizer:_commandManagerSwipeRecognizer];
 }
 
 - (void)configZoomGesture{
