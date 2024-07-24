@@ -49,7 +49,7 @@ import UIKit
         "F2": 0x71
     ]
     
-    private weak var viewController: CommandManagerViewController?
+    public weak var viewController: CommandManagerViewController?
     
     private override init() {
         super.init()
@@ -81,7 +81,7 @@ import UIKit
     @objc public func addCommand(_ command: RemoteCommand) {
         commands.append(command)
         saveCommands()
-        viewController?.reloadTableView()
+        viewController?.reloadTableView() // don't know why but this reload has to be called from the CommandManager, doesn't work by calling it in the viewcontroller, probably related with the dialog box.
     }
     
     @objc public func deleteCommand(at index: Int) {
@@ -107,15 +107,5 @@ import UIKit
         if let data = try? NSKeyedArchiver.archivedData(withRootObject: commands, requiringSecureCoding: false) {
             UserDefaults.standard.set(data, forKey: "savedCommands")
         }
-    }
-    
-    @objc public func setupViewController(_ viewController: CommandManagerViewController) {
-        self.viewController = viewController
-        //let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(promptForNewCommand))
-        //viewController.navigationItem.rightBarButtonItem = addButton
-        //viewController.navigationItem.title = "Manage Commands"
-        
-        //viewController.tableView.delegate = viewController
-        //viewController.tableView.dataSource = viewController
     }
 }

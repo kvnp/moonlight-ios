@@ -36,8 +36,8 @@ import UIKit
         
         // Register the cell class
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        
-        CommandManager.shared.setupViewController(self)
+        //pass self to the CommandManager
+        CommandManager.shared.viewController = self
     }
     
     override public func viewDidLayoutSubviews() {
@@ -52,8 +52,8 @@ import UIKit
         view.layer.masksToBounds = true
         
         // Set up the title label
-        titleLabel.text = SwiftLocalizationHelper.localizedString(forKey: "Send Special Keys")
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 24)  // Adjust font size as needed
+        titleLabel.text = SwiftLocalizationHelper.localizedString(forKey: "Send Commands")
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 20)  // Adjust font size as needed
         titleLabel.textColor = UIColor.white  // Adjust color as needed
         titleLabel.textAlignment = .center
         view.addSubview(titleLabel)
@@ -105,14 +105,14 @@ import UIKit
             
             // Set the width and height of the view
             view.widthAnchor.constraint(equalTo: view.superview!.widthAnchor, multiplier: 0.7),
-            view.heightAnchor.constraint(equalTo: view.superview!.heightAnchor, multiplier: 0.75),
+            view.heightAnchor.constraint(equalTo: view.superview!.heightAnchor, multiplier: 0.9),
             
             // Center the view horizontally and vertically
             view.centerXAnchor.constraint(equalTo: view.superview!.centerXAnchor),
             view.centerYAnchor.constraint(equalTo: view.superview!.centerYAnchor),
             
             // ViewTitle constrains
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 13.5),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             
@@ -120,7 +120,7 @@ import UIKit
             // TableView constraints
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            tableView.topAnchor.constraint(equalTo: view.topAnchor, constant: 70),
+            tableView.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -60),
             
             // ExitButton constraints
@@ -161,7 +161,7 @@ import UIKit
             let alias = alert.textFields?[1].text ?? keyboardCmdString
             let newCommand = RemoteCommand(keyboardCmdString: keyboardCmdString, alias: alias)
             CommandManager.shared.addCommand(newCommand)
-            //self.reloadTableView()
+            //self.reloadTableView() // don't know why but this reload has to be called from the CommandManager, it doesn't work here.
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
