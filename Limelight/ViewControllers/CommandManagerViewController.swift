@@ -15,10 +15,12 @@ import UIKit
     private let deleteButton = UIButton(type: .system)
     private let editButton = UIButton(type: .system)
     private let exitButton = UIButton(type: .system)
+    private let pinButton = UIButton(type: .system)
     private let viewBackgroundColor = UIColor(white: 0.2, alpha: 1.0);
     private let highlightColor = UIColor(white: 0.3, alpha: 1.0);
     private let titleLabel = UILabel()
     
+    private var viewPinned: Bool = false
     private var isEditingMode: Bool = false {
         didSet {
             updateEditingMode()
@@ -67,23 +69,29 @@ import UIKit
         deleteButton.setTitle(SwiftLocalizationHelper.localizedString(forKey: "Delete"), for: .normal)
         editButton.setTitle(SwiftLocalizationHelper.localizedString(forKey: "Edit"), for: .normal)
         exitButton.setTitle(SwiftLocalizationHelper.localizedString(forKey: "Exit"), for: .normal)
+        pinButton.setTitle("📌", for: .normal)
         addButton.titleLabel?.font = UIFont.systemFont(ofSize: 20) // Adjust the size as needed
         deleteButton.titleLabel?.font = UIFont.systemFont(ofSize: 20)
         editButton.titleLabel?.font = UIFont.systemFont(ofSize: 20)
         exitButton.titleLabel?.font = UIFont.systemFont(ofSize: 20)
-        
+        pinButton.titleLabel?.font = UIFont.systemFont(ofSize: 20)
+
         // Add subviews
         view.addSubview(tableView)
         view.addSubview(addButton)
         view.addSubview(deleteButton)
         view.addSubview(editButton)
         view.addSubview(exitButton)
+        view.addSubview(pinButton)
         
         // Setup button targets
         addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
         editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
         exitButton.addTarget(self, action: #selector(exitButtonTapped), for: .touchUpInside)
+        pinButton.addTarget(self, action: #selector(pinButtonTapped), for: .touchUpInside)
+        pinButton.contentEdgeInsets = UIEdgeInsets(top: 7, left: 20, bottom: 7, right: 20)
+
     }
     
     private func setupConstraints() {
@@ -99,6 +107,7 @@ import UIKit
         deleteButton.translatesAutoresizingMaskIntoConstraints = false
         editButton.translatesAutoresizingMaskIntoConstraints = false
         exitButton.translatesAutoresizingMaskIntoConstraints = false
+        pinButton.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -138,14 +147,29 @@ import UIKit
             // DeleteButton constraints
             deleteButton.trailingAnchor.constraint(equalTo: addButton.leadingAnchor, constant: -50),
             deleteButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10),
+            
+            // DeleteButton constraints
+            pinButton.trailingAnchor.constraint(equalTo: deleteButton.leadingAnchor, constant: -50),
+            pinButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10),
         ])
     }
-    
+
+
     private func updateEditingMode() {
         addButton.isEnabled = isEditingMode
         deleteButton.isEnabled = isEditingMode
         if(isEditingMode){ editButton.setTitle(SwiftLocalizationHelper.localizedString(forKey: "Done"), for: .normal) }
         else{ editButton.setTitle(SwiftLocalizationHelper.localizedString(forKey: "Edit"), for: .normal) }
+    }
+    
+    @objc private func pinButtonTapped() {
+        viewPinned = !viewPinned
+        if viewPinned {
+            pinButton.backgroundColor = highlightColor
+        }
+        else{
+            pinButton.backgroundColor = viewBackgroundColor
+        }
     }
     
     @objc private func addButtonTapped() {
@@ -254,7 +278,7 @@ import UIKit
             // Call the dummy method for key-value sending implementation
             let command = CommandManager.shared.getAllCommands()[indexPath.row]
             sendKeyboardCommand(command)
-            dismiss(animated: false, completion: nil) // dimiss the view in sending mode
+            if !viewPinned { dismiss(animated: false, completion: nil) } // dimiss the view in sending mode & the view is not pinned
         }
     }
     
