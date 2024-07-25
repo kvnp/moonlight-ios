@@ -173,9 +173,9 @@ import UIKit
     }
     
     @objc private func addButtonTapped() {
-        let alert = UIAlertController(title: "New Command", message: "Enter a new command and alias", preferredStyle: .alert)
-        alert.addTextField { $0.placeholder = "Command" }
-        alert.addTextField { $0.placeholder = "Alias" }
+        let alert = UIAlertController(title: SwiftLocalizationHelper.localizedString(forKey: "New Command"), message: SwiftLocalizationHelper.localizedString(forKey: "Enter a new command and alias"), preferredStyle: .alert)
+        alert.addTextField { $0.placeholder = SwiftLocalizationHelper.localizedString(forKey:"Command") }
+        alert.addTextField { $0.placeholder = SwiftLocalizationHelper.localizedString(forKey: "Alias") }
         alert.textFields?[0].keyboardType = .asciiCapable
         alert.textFields?[0].autocorrectionType = .no
         alert.textFields?[0].spellCheckingType = .no
@@ -183,9 +183,7 @@ import UIKit
         alert.textFields?[1].autocorrectionType = .no
         alert.textFields?[1].spellCheckingType = .no
 
-
-
-        let submitAction = UIAlertAction(title: "Add", style: .default) { [unowned alert] _ in
+        let submitAction = UIAlertAction(title: SwiftLocalizationHelper.localizedString(forKey: "Add"), style: .default) { [unowned alert] _ in
             let keyboardCmdString = alert.textFields?[0].text ?? ""
             let alias = alert.textFields?[1].text ?? keyboardCmdString
             let newCommand = RemoteCommand(keyboardCmdString: keyboardCmdString, alias: alias)
@@ -193,14 +191,14 @@ import UIKit
             //self.reloadTableView() // don't know why but this reload has to be called from the CommandManager, it doesn't work here.
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        let cancelAction = UIAlertAction(title: SwiftLocalizationHelper.localizedString(forKey:"Cancel"), style: .cancel)
         alert.addAction(submitAction)
         alert.addAction(cancelAction)
         
         if let selectedIndexPath = self.tableView.indexPathForSelectedRow {
             let selectedCommand = CommandManager.shared.getAllCommands()[selectedIndexPath.row]
             alert.textFields?[0].text = selectedCommand.keyboardCmdString // load selected keyboard cmd string
-            //alert.textFields?[1].text = selectedCommand.alias
+            //alert.textFields?[1].text = selectedCommand.alias // leave the alias input field empty
         }
         
         self.present(alert, animated: true)
@@ -251,8 +249,7 @@ import UIKit
         let selectedBackgroundView = UIView()
         selectedBackgroundView.backgroundColor = highlightColor // Color for the selected state
         cell.selectedBackgroundView = selectedBackgroundView
-        
-        
+    
         let command = CommandManager.shared.getAllCommands()[indexPath.row]
         cell.textLabel?.text = command.alias
         return cell
@@ -275,7 +272,7 @@ import UIKit
         }
         
         if !isEditingMode {
-            // Call the dummy method for key-value sending implementation
+            // Sending keyboard command
             let command = CommandManager.shared.getAllCommands()[indexPath.row]
             sendKeyboardCommand(command)
             if !viewPinned { dismiss(animated: false, completion: nil) } // dimiss the view in sending mode & the view is not pinned
@@ -283,9 +280,7 @@ import UIKit
     }
     
     private func sendKeyboardCommand(_ cmd: RemoteCommand) {
-        // Dummy implementation
         print("Sending key-value")
-        
         let keyboardCmdStrings = CommandManager.shared.extractKeyStrings(from: cmd.keyboardCmdString)
         sendKeyDownEventWithDelay(keyboardCmdStrings: keyboardCmdStrings!)
     }
@@ -306,7 +301,7 @@ import UIKit
         }
         // 发送当前键的键盘按下事件
         LiSendKeyboardEvent(keyCode,Int8(KEY_ACTION_DOWN), 0)
-        // 使用 asyncAfter 在指定延迟后发送下一个键的键盘按下事件
+        // 使用 asyncAfter 在指定异步延迟后发送下一个键的键盘按下事件
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             self.sendKeyDownEventWithDelay(keyboardCmdStrings: keyboardCmdStrings, delay: delay, index: index+1) // 跳过当前键，继续下一个
         }
