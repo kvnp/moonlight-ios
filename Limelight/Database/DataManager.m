@@ -59,8 +59,8 @@
                      audioConfig:(NSInteger)audioConfig
                 onscreenControls:(NSInteger)onscreenControls
            keyboardToggleFingers:(NSInteger)keyboardToggleFingers
-             swipeExitScreenEdge:(NSInteger)swipeExitScreenEdge
-             swipeToExitDistance:(CGFloat)swipeToExitDistance
+             slideToSettingsScreenEdge:(NSInteger)slideToSettingsScreenEdge
+             slideToSettingsDistance:(CGFloat)slideToSettingsDistance
       pointerVelocityModeDivider:(CGFloat)pointerVelocityModeDivider
       touchPointerVelocityFactor:(CGFloat)touchPointerVelocityFactor
       mousePointerVelocityFactor:(CGFloat)mousePointerVelocityFactor
@@ -88,8 +88,8 @@
         settingsToSave.audioConfig = [NSNumber numberWithInteger:audioConfig];
         settingsToSave.onscreenControls = [NSNumber numberWithInteger:onscreenControls];
         settingsToSave.keyboardToggleFingers = [NSNumber numberWithInteger:(uint16_t)keyboardToggleFingers];
-        settingsToSave.swipeExitScreenEdge = [NSNumber numberWithInteger:(uint32_t)swipeExitScreenEdge];
-        settingsToSave.swipeToExitDistance = [NSNumber numberWithFloat:swipeToExitDistance];
+        settingsToSave.slideToSettingsScreenEdge = [NSNumber numberWithInteger:(uint32_t)slideToSettingsScreenEdge];
+        settingsToSave.slideToSettingsDistance = [NSNumber numberWithFloat:slideToSettingsDistance];
         settingsToSave.pointerVelocityModeDivider = [NSNumber numberWithFloat:pointerVelocityModeDivider];
         settingsToSave.touchPointerVelocityFactor = [NSNumber numberWithFloat:touchPointerVelocityFactor];
         settingsToSave.mousePointerVelocityFactor = [NSNumber numberWithFloat:mousePointerVelocityFactor];

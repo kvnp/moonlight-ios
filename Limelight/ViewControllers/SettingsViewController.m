@@ -252,19 +252,6 @@ BOOL isCustomResolution(CGSize res) {
                                                  name:UIDeviceOrientationDidChangeNotification
                                                object:nil];
     
-    // for iphones that can not reach mainFrame, to register a gesture to simuluate setting button press & exit from setting view.
-    /*
-    _exitSwipeRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(simulateSettingsButtonPress)];
-    _exitSwipeRecognizer.edges = UIRectEdgeLeft | UIRectEdgeRight;
-    _exitSwipeRecognizer.normalizedThresholdDistance = 0;
-    _exitSwipeRecognizer.edgeTolerancePoints = 5;
-    _exitSwipeRecognizer.immediateTriggering = true;
-    _exitSwipeRecognizer.delaysTouchesBegan = NO;
-    _exitSwipeRecognizer.delaysTouchesEnded = NO;
-    [self.view addGestureRecognizer:_exitSwipeRecognizer];
-     */
-    // replace by the goBackToStreamView Button.
-    
     // Always run settings in dark mode because we want the light fonts
     if (@available(iOS 13.0, tvOS 13.0, *)) {
         self.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
@@ -408,11 +395,15 @@ BOOL isCustomResolution(CGSize res) {
     // showkeyboard toolbar setting
     [self.showKeyboardToolbarSelector setSelectedSegmentIndex:currentSettings.showKeyboardToolbar ? 1 : 0];// Load old setting
     
-    // swipe & exit setting
-    [self.swipeExitScreenEdgeSelector setSelectedSegmentIndex:[self getSelectorIndexFromScreenEdge:(uint32_t)currentSettings.swipeExitScreenEdge.integerValue]]; // Load old setting
-    [self.swipeToExitDistanceSlider setValue:currentSettings.swipeToExitDistance.floatValue];
-    [self.swipeToExitDistanceSlider addTarget:self action:@selector(swipeToExitDistanceSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
-    [self swipeToExitDistanceSliderMoved];
+    //  slide to menu settings
+    [self.slideToSettingsScreenEdgeSelector setSelectedSegmentIndex:[self getSelectorIndexFromScreenEdge:(uint32_t)currentSettings.slideToSettingsScreenEdge.integerValue]]; // Load old setting
+    [self.cmdToolScreenEdgeSelector setEnabled:false];
+    [self.slideToSettingsScreenEdgeSelector addTarget:self action:@selector(slideToSettingsScreenEdgeChanged) forControlEvents:UIControlEventValueChanged];
+    [self slideToSettingsScreenEdgeChanged];
+
+    [self.slideToMenuDistanceSlider setValue:currentSettings.slideToSettingsDistance.floatValue];
+    [self.slideToMenuDistanceSlider addTarget:self action:@selector(slideToMenuDistanceSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
+    [self slideToMenuDistanceSliderMoved];
     
 
     
@@ -465,6 +456,11 @@ BOOL isCustomResolution(CGSize res) {
         self.layoutOnScreenControlsVC = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
         self.layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationFullScreen;
     }
+}
+
+- (void)slideToSettingsScreenEdgeChanged{
+    if([self.slideToSettingsScreenEdgeSelector selectedSegmentIndex] == 0) [self.cmdToolScreenEdgeSelector setSelectedSegmentIndex:1];
+    else [self.cmdToolScreenEdgeSelector setSelectedSegmentIndex:0];
 }
 
 
@@ -566,7 +562,7 @@ BOOL isCustomResolution(CGSize res) {
 }
 
 - (uint32_t) getScreenEdgeFromSelector {
-    switch (self.swipeExitScreenEdgeSelector.selectedSegmentIndex) {
+    switch (self.slideToSettingsScreenEdgeSelector.selectedSegmentIndex) {
         case 0: return UIRectEdgeLeft;
         case 1: return UIRectEdgeRight;
         case 2: return UIRectEdgeLeft|UIRectEdgeRight;
@@ -813,8 +809,8 @@ BOOL isCustomResolution(CGSize res) {
     else [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]]; // Initiate label display
 }
 
-- (void) swipeToExitDistanceSliderMoved{
-    [self.swipeToExitDistanceUILabel setText:[LocalizationHelper localizedStringForKey:@"Swipe & Exit Distance: %.2f * screen-width", self.swipeToExitDistanceSlider.value]];
+- (void) slideToMenuDistanceSliderMoved{
+    [self.slideToSettingsDistanceUILabel setText:[LocalizationHelper localizedStringForKey:@"Slide Distance for in-Stream Menu: %.2f * screen-width", self.slideToMenuDistanceSlider.value]];
 }
 
 - (void) bitrateSliderMoved {
@@ -891,8 +887,8 @@ BOOL isCustomResolution(CGSize res) {
     NSInteger onscreenControls = [self.onscreenControlSelector selectedSegmentIndex];
     NSInteger keyboardToggleFingers = (uint16_t)self.keyboardToggleFingerNumSlider.value;
     // NSLog(@"saveSettings keyboardToggleFingers  %d", (uint16_t)keyboardToggleFingers);
-    CGFloat swipeToExitDistance = self.swipeToExitDistanceSlider.value;
-    uint32_t swipeExitScreenEdge = [self getScreenEdgeFromSelector];
+    CGFloat slideToSettingsDistance = self.slideToMenuDistanceSlider.value;
+    uint32_t slideToSettingsScreenEdge = [self getScreenEdgeFromSelector];
     CGFloat pointerVelocityModeDivider = (CGFloat)(uint8_t)self.pointerVelocityModeDividerSlider.value/100;
     CGFloat touchPointerVelocityFactor =(CGFloat)(uint16_t)[self map_velocFactorDisplay_fromSliderValue:self.touchPointerVelocityFactorSlider.value]/100;
     CGFloat mousePointerVelocityFactor =(CGFloat)(uint16_t)self.mousePointerVelocityFactorSlider.value/100;
@@ -917,8 +913,8 @@ BOOL isCustomResolution(CGSize res) {
                          audioConfig:2 // Stereo
                     onscreenControls:onscreenControls
                keyboardToggleFingers:keyboardToggleFingers
-                 swipeExitScreenEdge:swipeExitScreenEdge
-                 swipeToExitDistance:swipeToExitDistance
+                 slideToSettingsScreenEdge:slideToSettingsScreenEdge
+                 slideToSettingsDistance:slideToSettingsDistance
           pointerVelocityModeDivider:pointerVelocityModeDivider
           touchPointerVelocityFactor:touchPointerVelocityFactor
           mousePointerVelocityFactor:mousePointerVelocityFactor

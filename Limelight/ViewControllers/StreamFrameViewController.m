@@ -53,8 +53,8 @@
     BOOL _userIsInteracting;
     CGSize _keyboardSize;
 #if !TARGET_OS_TV
-    CustomEdgeSwipeGestureRecognizer *_exitSwipeRecognizer;
-    CustomEdgeSwipeGestureRecognizer *_commandManagerSwipeRecognizer;
+    CustomEdgeSwipeGestureRecognizer *_slideToSettingsRecognizer;
+    CustomEdgeSwipeGestureRecognizer *_slideToCmdToolRecognizer;
     CustomTapGestureRecognizer *_oscLayoutTapRecoginizer;
     LayoutOnScreenControlsViewController *_layoutOnScreenControlsVC;
 #endif
@@ -94,22 +94,23 @@
 }
 
 - (void)configSwipeGestures{
-    [self.view removeGestureRecognizer:_exitSwipeRecognizer];
-    _exitSwipeRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(edgeSwiped)];
-    _exitSwipeRecognizer.edges = _settings.swipeExitScreenEdge.intValue;
-    _exitSwipeRecognizer.normalizedThresholdDistance = _settings.swipeToExitDistance.floatValue;
-    _exitSwipeRecognizer.delaysTouchesBegan = NO;
-    _exitSwipeRecognizer.delaysTouchesEnded = NO;
-    [self.view addGestureRecognizer:_exitSwipeRecognizer];
+    [self.view removeGestureRecognizer:_slideToSettingsRecognizer];
+    _slideToSettingsRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(edgeSwiped)];
+    _slideToSettingsRecognizer.edges = _settings.slideToSettingsScreenEdge.intValue;
+    _slideToSettingsRecognizer.normalizedThresholdDistance = _settings.slideToSettingsDistance.floatValue;
+    _slideToSettingsRecognizer.delaysTouchesBegan = NO;
+    _slideToSettingsRecognizer.delaysTouchesEnded = NO;
+    [self.view addGestureRecognizer:_slideToSettingsRecognizer];
     
     
-    [self.view removeGestureRecognizer:_commandManagerSwipeRecognizer];
-    _commandManagerSwipeRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(presentCommandManagerViewController)];
-    _commandManagerSwipeRecognizer.edges = UIRectEdgeRight;
-    _commandManagerSwipeRecognizer.normalizedThresholdDistance = _settings.swipeToExitDistance.floatValue;
-    _commandManagerSwipeRecognizer.delaysTouchesBegan = NO;
-    _commandManagerSwipeRecognizer.delaysTouchesEnded = NO;
-    [self.view addGestureRecognizer:_commandManagerSwipeRecognizer];
+    [self.view removeGestureRecognizer:_slideToCmdToolRecognizer];
+    _slideToCmdToolRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(presentCommandManagerViewController)];
+    if(_settings.slideToSettingsScreenEdge.intValue == UIRectEdgeLeft) _slideToCmdToolRecognizer.edges = UIRectEdgeRight;
+    else _slideToCmdToolRecognizer.edges = UIRectEdgeLeft;  // _commandManager triggered by sliding from another side.
+    _slideToCmdToolRecognizer.normalizedThresholdDistance = _settings.slideToSettingsDistance.floatValue;
+    _slideToCmdToolRecognizer.delaysTouchesBegan = NO;
+    _slideToCmdToolRecognizer.delaysTouchesEnded = NO;
+    [self.view addGestureRecognizer:_slideToCmdToolRecognizer];
 }
 
 - (void)configZoomGesture{

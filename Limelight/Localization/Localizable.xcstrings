@@ -2004,6 +2004,29 @@
         }
       }
     },
+    "Slide Distance for in-Stream Menu: %.2f * screen-width" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流中打开菜单滑动距离: %.2f x 屏幕宽度"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流中打开菜单滑动距离: %.2f x 屏幕宽度"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流中打开菜单滑动距离: %.2f x 屏幕宽度"
+          }
+        }
+      }
+    },
     "Slow connection to PC, Reduce your bitrate" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2046,29 +2069,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "成功发送唤醒请求. 主机唤醒需要一定时间. 如果主机未被唤醒, 请检查Wake-on-LAN设置"
-          }
-        }
-      }
-    },
-    "Swipe & Exit Distance: %.2f * screen-width" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "退出远程桌面的滑动距离: %.2f x 屏幕宽度"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "退出远程桌面的滑动距离: %.2f x 屏幕宽度"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "退出远程桌面的滑动距离: %.2f x 屏幕宽度"
           }
         }
       }

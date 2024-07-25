@@ -968,31 +968,31 @@
       }
     },
     "IvI-tw-APj.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"Swipe & Exit Session from:                                                          \"; ObjectID = \"IvI-tw-APj\";",
+      "comment" : "Class = \"UILabel\"; text = \"Open Settings in Stream View by Sliding from:                        \"; ObjectID = \"IvI-tw-APj\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Swipe & Exit Session from:                                                          "
+            "value" : "Open Settings in Stream View by Sliding from:                        "
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "从以下屏幕边缘滑动, 退出远程桌面:"
+            "state" : "needs_review",
+            "value" : "串流中从以下屏幕边缘滑动打开设置"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "从以下屏幕边缘滑动, 退出远程桌面:"
+            "state" : "needs_review",
+            "value" : "串流中从以下屏幕边缘滑动打开设置:"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "从以下屏幕边缘滑动, 退出远程桌面:"
+            "state" : "needs_review",
+            "value" : "串流中从以下屏幕边缘滑动打开设置"
           }
         }
       }
@@ -1335,7 +1335,7 @@
     },
     "Mm0-xf-9eh.segmentTitles[2]" : {
       "comment" : "Class = \"UISegmentedControl\"; Mm0-xf-9eh.segmentTitles[2] = \"Either\"; ObjectID = \"Mm0-xf-9eh\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1616,13 +1616,19 @@
       }
     },
     "pMN-6T-aYE.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"Swipe & Exit Distance: 0.5 * screen-width                               \"; ObjectID = \"pMN-6T-aYE\";",
+      "comment" : "Class = \"UILabel\"; text = \"Slide Distance for Stream View Menu: 0.5 * screen-width     \"; ObjectID = \"pMN-6T-aYE\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Swipe & Exit Distance: 0.5 * screen-width                               "
+            "value" : "Slide Distance for Stream View Menu: 0.5 * screen-width     "
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开串流菜单滑动距离: "
           }
         }
       }
@@ -2121,6 +2127,96 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "退出"
+          }
+        }
+      }
+    },
+    "yY7-Sf-Zes.segmentTitles[0]" : {
+      "comment" : "Class = \"UISegmentedControl\"; yY7-Sf-Zes.segmentTitles[0] = \"Left Screen Edge\"; ObjectID = \"yY7-Sf-Zes\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Left Screen Edge"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左边缘"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左边缘"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左边缘"
+          }
+        }
+      }
+    },
+    "yY7-Sf-Zes.segmentTitles[1]" : {
+      "comment" : "Class = \"UISegmentedControl\"; yY7-Sf-Zes.segmentTitles[1] = \"Right Screen Edge\"; ObjectID = \"yY7-Sf-Zes\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Right Screen Edge"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右边缘"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右边缘"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右边缘"
+          }
+        }
+      }
+    },
+    "Zp4-fA-IeL.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Open Command Tool in Stream View by Sliding from:\"; ObjectID = \"Zp4-fA-IeL\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open Command Tool in Stream View by Sliding from:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流中从以下屏幕边缘滑动打开命令工具"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流中从以下屏幕边缘滑动打开命令工具"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "串流中从以下屏幕边缘滑动打开命令工具"
           }
         }
       }

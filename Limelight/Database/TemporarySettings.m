@@ -87,8 +87,8 @@
     self.touchMode = settings.touchMode;
     self.statsOverlay = settings.statsOverlay;
     self.keyboardToggleFingers = settings.keyboardToggleFingers;
-    self.swipeExitScreenEdge = settings.swipeExitScreenEdge;
-    self.swipeToExitDistance = settings.swipeToExitDistance;
+    self.slideToSettingsScreenEdge = settings.slideToSettingsScreenEdge;
+    self.slideToSettingsDistance = settings.slideToSettingsDistance;
     self.liftStreamViewForKeyboard = settings.liftStreamViewForKeyboard;
     self.showKeyboardToolbar = settings.showKeyboardToolbar;
     self.touchPointerVelocityFactor = settings.touchPointerVelocityFactor;

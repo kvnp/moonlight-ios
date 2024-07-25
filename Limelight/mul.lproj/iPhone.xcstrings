@@ -183,7 +183,7 @@
     },
     "2Lx-OY-ZPu.segmentTitles[2]" : {
       "comment" : "Class = \"UISegmentedControl\"; 2Lx-OY-ZPu.segmentTitles[2] = \"Either\"; ObjectID = \"2Lx-OY-ZPu\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -392,31 +392,31 @@
       }
     },
     "8kV-xZ-73k.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"Swipe & Exit Session from:\"; ObjectID = \"8kV-xZ-73k\";",
+      "comment" : "Class = \"UILabel\"; text = \"Open Settings in Stream View by Sliding from:                 \"; ObjectID = \"8kV-xZ-73k\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Swipe & Exit Session from:"
+            "value" : "Open Settings in Stream View by Sliding from:                 "
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "从以下屏幕边缘滑动, 退出远程桌面:"
+            "value" : "串流中从以下屏幕边缘滑动打开设置"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "从以下屏幕边缘滑动, 退出远程桌面:"
+            "value" : "串流中从以下屏幕边缘滑动打开设置"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "从以下屏幕边缘滑动, 退出远程桌面:"
+            "value" : "串流中从以下屏幕边缘滑动打开设置"
           }
         }
       }
@@ -878,13 +878,13 @@
       }
     },
     "Ex1-zI-oAH.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"Swipe & Exit Distance: 0.5 * screen-width                 \"; ObjectID = \"Ex1-zI-oAH\";",
+      "comment" : "Class = \"UILabel\"; text = \"Slide Distance for Stream View Menu: 0.5 * screen-width \"; ObjectID = \"Ex1-zI-oAH\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Swipe & Exit Distance: 0.5 * screen-width                 "
+            "value" : "Slide Distance for Stream View Menu: 0.5 * screen-width "
           }
         }
       }
@@ -1807,6 +1807,36 @@
         }
       }
     },
+    "stX-s7-H2W.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Open Command Tool in Stream View by Sliding from:        \"; ObjectID = \"stX-s7-H2W\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open Command Tool in Stream View by Sliding from:        "
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流中从以下屏幕边缘滑动打开命令工具"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流中从以下屏幕边缘滑动打开命令工具"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流中从以下屏幕边缘滑动打开命令工具"
+          }
+        }
+      }
+    },
     "T6M-nz-TW0.text" : {
       "comment" : "Class = \"UILabel\"; text = \"Play Audio on PC\"; ObjectID = \"T6M-nz-TW0\";",
       "extractionState" : "extracted_with_value",
@@ -2145,6 +2175,66 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "允许竖屏 (启用后只允许在应用视图中90度转屏)"
+          }
+        }
+      }
+    },
+    "zDR-Ss-JPc.segmentTitles[0]" : {
+      "comment" : "Class = \"UISegmentedControl\"; zDR-Ss-JPc.segmentTitles[0] = \"Left Screen Edge\"; ObjectID = \"zDR-Ss-JPc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Left Screen Edge"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左边缘"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左边缘"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左边缘"
+          }
+        }
+      }
+    },
+    "zDR-Ss-JPc.segmentTitles[1]" : {
+      "comment" : "Class = \"UISegmentedControl\"; zDR-Ss-JPc.segmentTitles[1] = \"Right Screen Edge\"; ObjectID = \"zDR-Ss-JPc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Right Screen Edge"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右边缘"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右边缘"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右边缘"
           }
         }
       }

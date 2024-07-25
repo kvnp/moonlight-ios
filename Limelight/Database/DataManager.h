@@ -20,8 +20,8 @@
                      audioConfig:(NSInteger)audioConfig
                 onscreenControls:(NSInteger)onscreenControls
             keyboardToggleFingers:(NSInteger)keyboardToggleFingers
-             swipeExitScreenEdge:(NSInteger)swipeExitScreenEdge
-             swipeToExitDistance:(CGFloat)swipeToExitDistance
+             slideToSettingsScreenEdge:(NSInteger)slideToSettingsScreenEdge
+             slideToSettingsDistance:(CGFloat)slideToSettingsDistance
       pointerVelocityModeDivider:(CGFloat)pointerVelocityModeDivider
       touchPointerVelocityFactor:(CGFloat)touchPointerVelocityFactor
       mousePointerVelocityFactor:(CGFloat)mousePointerVelocityFactor

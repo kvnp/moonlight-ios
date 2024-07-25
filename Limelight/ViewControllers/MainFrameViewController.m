@@ -44,7 +44,6 @@
 @implementation MainFrameViewController {
     UILabel* waterMark;
     //CGFloat recordedScreenWidth;
-    CustomEdgeSwipeGestureRecognizer* _exitSwipeRecognizer;
     NSOperationQueue* _opQueue;
     TemporaryHost* _selectedHost;
     BOOL _showHiddenApps;

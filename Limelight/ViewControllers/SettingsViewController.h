@@ -36,9 +36,11 @@
 @property (strong, nonatomic) IBOutlet UISlider *keyboardToggleFingerNumSlider;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *liftStreamViewForKeyboardSelector;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *showKeyboardToolbarSelector;
-@property (strong, nonatomic) IBOutlet UISegmentedControl *swipeExitScreenEdgeSelector;
-@property (strong, nonatomic) IBOutlet UILabel *swipeToExitDistanceUILabel;
-@property (strong, nonatomic) IBOutlet UISlider *swipeToExitDistanceSlider;
+@property (strong, nonatomic) IBOutlet UISegmentedControl *slideToSettingsScreenEdgeSelector;
+@property (strong, nonatomic) IBOutlet UILabel *slideToSettingsScreenEdgeUILabel;
+@property (strong, nonatomic) IBOutlet UISegmentedControl *cmdToolScreenEdgeSelector;
+@property (strong, nonatomic) IBOutlet UILabel *slideToSettingsDistanceUILabel;
+@property (strong, nonatomic) IBOutlet UISlider *slideToMenuDistanceSlider;
 @property (strong, nonatomic) IBOutlet UISlider *pointerVelocityModeDividerSlider;
 @property (strong, nonatomic) IBOutlet UILabel *pointerVelocityModeDividerUILabel;
 @property (strong, nonatomic) IBOutlet UISlider *touchPointerVelocityFactorSlider;
@@ -49,7 +51,6 @@
 @property (strong, nonatomic) IBOutlet UIButton *goBackToStreamViewButton;
 @property (strong, nonatomic) LayoutOnScreenControlsViewController *layoutOnScreenControlsVC;
 @property (nonatomic, strong) MainFrameViewController *mainFrameViewController;
-@property (nonatomic, strong) CustomEdgeSwipeGestureRecognizer *exitSwipeRecognizer;
 
 
 #pragma clang diagnostic push
