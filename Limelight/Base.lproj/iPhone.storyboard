@@ -796,9 +796,9 @@ ICAgICAgICAgICAgIA
                                 </constraints>
                                 <items>
                                     <navigationItem title="OSC Layout Profiles" id="5pN-Sn-SCN">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="D9X-7p-9oc">
+                                        <barButtonItem key="leftBarButtonItem" title="Exit" id="D9X-7p-9oc">
                                             <connections>
-                                                <action selector="cancelTapped:" destination="0K8-kQ-xlN" id="Sam-Ct-kqC"/>
+                                                <action selector="exitTapped:" destination="0K8-kQ-xlN" id="Sam-Ct-kqC"/>
                                             </connections>
                                         </barButtonItem>
                                         <rightBarButtonItems>

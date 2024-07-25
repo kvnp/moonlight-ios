@@ -326,31 +326,31 @@
       }
     },
     "Bhn-IO-Wlt.title" : {
-      "comment" : "Class = \"UIBarButtonItem\"; title = \"Cancel\"; ObjectID = \"Bhn-IO-Wlt\";",
+      "comment" : "Class = \"UIBarButtonItem\"; title = \"Exit\"; ObjectID = \"Bhn-IO-Wlt\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Cancel"
+            "value" : "Exit"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消"
+            "state" : "needs_review",
+            "value" : "退出"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消"
+            "state" : "needs_review",
+            "value" : "退出"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消"
+            "state" : "needs_review",
+            "value" : "退出"
           }
         }
       }

@@ -151,7 +151,7 @@ const double NAV_BAR_HEIGHT = 50;
 }
 
 
-- (IBAction) cancelTapped:(id)sender {
+- (IBAction) exitTapped:(id)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 

@@ -799,6 +799,36 @@
         }
       }
     },
+    "D9X-7p-9oc.title" : {
+      "comment" : "Class = \"UIBarButtonItem\"; title = \"Exit\"; ObjectID = \"D9X-7p-9oc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Exit"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "退出"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "退出"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "退出"
+          }
+        }
+      }
+    },
     "dLF-qJ-2nY.segmentTitles[0]" : {
       "comment" : "Class = \"UISegmentedControl\"; dLF-qJ-2nY.segmentTitles[0] = \"30 FPS\"; ObjectID = \"dLF-qJ-2nY\";",
       "extractionState" : "extracted_with_value",
