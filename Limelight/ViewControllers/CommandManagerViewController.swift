@@ -65,7 +65,7 @@ import UIKit
         tableView.rowHeight = 60
         tableView.separatorColor = highlightColor
         // Configure buttons
-        addButton.setTitle(SwiftLocalizationHelper.localizedString(forKey: "Add"), for: .normal)
+        addButton.setTitle(SwiftLocalizationHelper.localizedString(forKey: "Add/Duplicate"), for: .normal)
         deleteButton.setTitle(SwiftLocalizationHelper.localizedString(forKey: "Delete"), for: .normal)
         editButton.setTitle(SwiftLocalizationHelper.localizedString(forKey: "Edit"), for: .normal)
         exitButton.setTitle(SwiftLocalizationHelper.localizedString(forKey: "Exit"), for: .normal)

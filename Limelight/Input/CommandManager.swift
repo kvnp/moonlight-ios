@@ -230,6 +230,20 @@ import UIKit
         loadCommands()
     }
     
+    @objc static func presetDefaultCommands() {
+        let defaults = UserDefaults.standard
+        if defaults.data(forKey: "savedCommands") == nil {  // save default entries if the data is empty.
+            let defaultCommands: [RemoteCommand] = [
+                RemoteCommand(keyboardCmdString: "CTRL+A", alias: "Select All"),
+                RemoteCommand(keyboardCmdString: "CTRL+C", alias: "Copy"),
+                RemoteCommand(keyboardCmdString: "CTRL+V", alias: "Paste")
+            ]
+            
+            let data = try? NSKeyedArchiver.archivedData(withRootObject: defaultCommands, requiringSecureCoding: false)
+            defaults.set(data, forKey: "savedCommands")
+        }
+    }
+
     @objc public func createTestKeyMappings() -> [String: Int16] {
         return CommandManager.keyMappings
     }

@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "MainFrameViewController.h"
+#import "Moonlight-Swift.h"
 
 @implementation AppDelegate
 
@@ -43,6 +44,13 @@ static NSString* DB_NAME = @"Limelight_iOS.sqlite";
         return UIInterfaceOrientationMaskLandscape;
 }
 */
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // Override point for customization after application launch.
+    [CommandManager presetDefaultCommands];
+    return YES;
+}
+
 
 - (void)application:(UIApplication *)application performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem completionHandler:(void (^)(BOOL succeeded))completionHandler {
     _pcUuidToLoad = (NSString*)[shortcutItem.userInfo objectForKey:@"UUID"];

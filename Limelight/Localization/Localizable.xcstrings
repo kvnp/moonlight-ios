@@ -145,6 +145,29 @@
         }
       }
     },
+    "Add/Duplicate" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增/复制"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增/复制"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增/复制"
+          }
+        }
+      }
+    },
     "Alias (optional)" : {
       "extractionState" : "manual",
       "localizations" : {
