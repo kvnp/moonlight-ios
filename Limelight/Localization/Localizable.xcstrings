@@ -122,6 +122,29 @@
         }
       }
     },
+    "Add / Duplicate" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增/复制"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增/复制"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增/复制"
+          }
+        }
+      }
+    },
     "Add Host Manually" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -141,29 +164,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "手动添加远程主机"
-          }
-        }
-      }
-    },
-    "Add/Duplicate" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新增/复制"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新增/复制"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新增/复制"
           }
         }
       }
