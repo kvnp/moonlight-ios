@@ -263,7 +263,7 @@ import UIKit
             // Set the cell background color to the flashing color
             // Animate the flash effect
             UIView.animate(withDuration: 0.1, animations: {
-                cell.selectedBackgroundView?.backgroundColor = self.viewBackgroundColor
+                cell.selectedBackgroundView?.backgroundColor = .clear
             }) { _ in
                 // Reset the cell background color after the animation
                 UIView.animate(withDuration: 0.1) {
