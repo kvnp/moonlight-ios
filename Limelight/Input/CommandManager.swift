@@ -232,11 +232,23 @@ import UIKit
     
     @objc static func presetDefaultCommands() {
         let defaults = UserDefaults.standard
+        //if true {  // save default entries if the data is empty.
         if defaults.data(forKey: "savedCommands") == nil {  // save default entries if the data is empty.
             let defaultCommands: [RemoteCommand] = [
-                RemoteCommand(keyboardCmdString: "CTRL+A", alias: "Select All"),
-                RemoteCommand(keyboardCmdString: "CTRL+C", alias: "Copy"),
-                RemoteCommand(keyboardCmdString: "CTRL+V", alias: "Paste")
+                RemoteCommand(keyboardCmdString: "WIN", alias: "WIN"),
+                RemoteCommand(keyboardCmdString: "F11", alias: "F11"),
+                RemoteCommand(keyboardCmdString: "ESC", alias: "ESC"),
+                RemoteCommand(keyboardCmdString: "CTRL+SHIFT+ESC", alias: "任务管理器(Task Manager)"),
+                RemoteCommand(keyboardCmdString: "ALT+F1", alias: "N卡截图(Nvidia Screenshot)"),
+                RemoteCommand(keyboardCmdString: "ALT+F9", alias: "N卡录屏(Nvidia Screen Recording)"),
+                RemoteCommand(keyboardCmdString: "ALT+F4", alias: "关闭窗口(ALT+F4)"),
+                RemoteCommand(keyboardCmdString: "CTRL+A", alias: "全选(Select All)"),
+                RemoteCommand(keyboardCmdString: "CTRL+C", alias: "复制(Copy)"),
+                RemoteCommand(keyboardCmdString: "CTRL+V", alias: "粘贴(Paste)"),
+                RemoteCommand(keyboardCmdString: "WIN+D", alias: "切换桌面(Switch to Desktop)"),
+                RemoteCommand(keyboardCmdString: "WIN+P", alias: "多显模式(Project)"),
+                RemoteCommand(keyboardCmdString: "WIN+G", alias: "Xbox Game Bar"),
+                RemoteCommand(keyboardCmdString: "SHIFT+TAB", alias: "Steam Overlay"),
             ]
             
             let data = try? NSKeyedArchiver.archivedData(withRootObject: defaultCommands, requiringSecureCoding: false)
