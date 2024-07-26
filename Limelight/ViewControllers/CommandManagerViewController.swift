@@ -175,7 +175,7 @@ import UIKit
     @objc private func addButtonTapped() {
         let alert = UIAlertController(title: SwiftLocalizationHelper.localizedString(forKey: "New Command"), message: SwiftLocalizationHelper.localizedString(forKey: "Enter a new command and alias"), preferredStyle: .alert)
         alert.addTextField { $0.placeholder = SwiftLocalizationHelper.localizedString(forKey:"Command") }
-        alert.addTextField { $0.placeholder = SwiftLocalizationHelper.localizedString(forKey: "Alias") }
+        alert.addTextField { $0.placeholder = SwiftLocalizationHelper.localizedString(forKey: "Alias (optional)") }
         alert.textFields?[0].keyboardType = .asciiCapable
         alert.textFields?[0].autocorrectionType = .no
         alert.textFields?[0].spellCheckingType = .no

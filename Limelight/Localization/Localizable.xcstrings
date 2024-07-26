@@ -145,25 +145,25 @@
         }
       }
     },
-    "Alias" : {
+    "Alias (optional)" : {
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "别名"
+            "value" : "别名 (允许留空)"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "别名"
+            "value" : "别名 (允许留空)"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "别名"
+            "value" : "别名 (允许留空)"
           }
         }
       }
