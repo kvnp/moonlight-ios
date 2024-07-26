@@ -16,8 +16,8 @@ import UIKit
     private let editButton = UIButton(type: .system)
     private let exitButton = UIButton(type: .system)
     private let pinButton = UIButton(type: .system)
-    private let viewBackgroundColor = UIColor(white: 0.2, alpha: 1.0);
-    private let highlightColor = UIColor(white: 0.3, alpha: 1.0);
+    private let viewBackgroundColor = UIColor(white: 0.2, alpha: 0.8);
+    private let highlightColor = UIColor(white: 0.39, alpha: 0.8);
     private let titleLabel = UILabel()
     
     private var viewPinned: Bool = false
@@ -113,8 +113,8 @@ import UIKit
         NSLayoutConstraint.activate([
             
             // Set the width and height of the view
-            view.widthAnchor.constraint(equalTo: view.superview!.widthAnchor, multiplier: 0.7),
-            view.heightAnchor.constraint(equalTo: view.superview!.heightAnchor, multiplier: 0.9),
+            view.widthAnchor.constraint(equalTo: view.superview!.widthAnchor, multiplier: 1),
+            view.heightAnchor.constraint(equalTo: view.superview!.heightAnchor, multiplier: 1),
             
             // Center the view horizontally and vertically
             view.centerXAnchor.constraint(equalTo: view.superview!.centerXAnchor),
@@ -242,8 +242,9 @@ import UIKit
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         // Configure cell appearance
-        cell.backgroundColor = viewBackgroundColor // Set background color of the cell
+        cell.backgroundColor = .clear // Set background color of the cell
         cell.textLabel?.textColor = UIColor.white // Set font color of the text
+        
         
         // Set selected background view
         let selectedBackgroundView = UIView()
