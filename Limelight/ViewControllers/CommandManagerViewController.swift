@@ -189,6 +189,9 @@ import UIKit
             let newCommand = RemoteCommand(keyboardCmdString: keyboardCmdString, alias: alias)
             CommandManager.shared.addCommand(newCommand)
             //self.reloadTableView() // don't know why but this reload has to be called from the CommandManager, it doesn't work here.
+            let lastRow = self.tableView.numberOfRows(inSection: 0) - 1  //for now there's only 1 section for the tableview, just use setion 0
+            let newEntryIndexPath = IndexPath(row: lastRow, section: 0)
+            self.tableView.selectRow(at: newEntryIndexPath, animated: true, scrollPosition: .middle) // shift the highlight to the newly added entry
         }
         
         let cancelAction = UIAlertAction(title: SwiftLocalizationHelper.localizedString(forKey:"Cancel"), style: .cancel)
@@ -209,8 +212,17 @@ import UIKit
         guard let selectedIndexPath = tableView.indexPathForSelectedRow else {
             return
         }
+        let previouslySelectedIndexPath = selectedIndexPath // memorize selected row before reloading tableview
+        
         CommandManager.shared.deleteCommand(at: selectedIndexPath.row)
         reloadTableView()
+        // target new entry after deletion
+        var targetRowAfterDel = previouslySelectedIndexPath.row - 1
+        if targetRowAfterDel < 0 { targetRowAfterDel = 0 }
+        let targetIndexPathAfterDel = IndexPath(row: targetRowAfterDel, section: previouslySelectedIndexPath.section)
+            if targetRowAfterDel < tableView.numberOfRows(inSection: previouslySelectedIndexPath.section) {
+                tableView.selectRow(at: targetIndexPathAfterDel, animated: true, scrollPosition: .middle) // shift highlight to the target entry after deletion
+            }
     }
     
     @objc private func editButtonTapped() {
@@ -222,16 +234,17 @@ import UIKit
     }
     
     @objc public func reloadTableView() {
-        let previouslySelectedIndexPath = tableView.indexPathForSelectedRow
         tableView.layoutIfNeeded()
         tableView.reloadData()
         
+        /*
+        let previouslySelectedIndexPath = tableView.indexPathForSelectedRow
         if let indexPath = previouslySelectedIndexPath {
             // Make sure the indexPath is still valid and scroll to the selected indexPath
             if indexPath.row < tableView.numberOfRows(inSection: indexPath.section) {
                 tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle) // keep the entry of previous index selected.
             }
-        }
+        } */
     }
     
     // UITableViewDataSource
