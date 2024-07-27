@@ -554,7 +554,7 @@ static NSMutableSet* hostList;
         }]];
     }
 #endif
-    [longClickAlert addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Remove Host"] style:UIAlertActionStyleDestructive handler:^(UIAlertAction* action) {
+    [longClickAlert addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Remove Host"] style:UIAlertActionStyleDestructive handler:^(UIAlertAction* action) {   // host removed here
         [self->_discMan removeHostFromDiscovery:host];
         DataManager* dataMan = [[DataManager alloc] init];
         [dataMan removeHost:host];
@@ -1108,9 +1108,41 @@ static NSMutableSet* hostList;
     
     //recordedScreenWidth = CGRectGetWidth([[UIScreen mainScreen] bounds]);
     hostScrollView = [[ComputerScrollView alloc] init];
-    [self reloadScrollHostView];
-    if ([hostList count] == 1) [self hostClicked:[hostList anyObject] view:nil]; //move auto click here from reloadScrollHostView, resolving select new host bug.
+    CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
+    CGFloat screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
 
+    // deal with scroll host view reload after device orientation change here:
+    bool isLandscape = screenWidthInPoints > screenHeightInPoints;
+    CGFloat realViewFrameWidth = self.view.frame.size.width > self.view.frame.size.height ? self.view.frame.size.width : self.view.frame.size.height;
+    CGFloat realViewFrameHeight = self.view.frame.size.width < self.view.frame.size.height ? self.view.frame.size.width : self.view.frame.size.height;
+    if(!isLandscape) {
+        CGFloat tmpLength = realViewFrameWidth;
+        realViewFrameWidth = realViewFrameHeight;
+        realViewFrameHeight = tmpLength;
+    }
+
+    // implementations for initializing hostScrollView from original moonlight-iOS
+    hostScrollView.frame = CGRectMake(0, self.navigationController.navigationBar.frame.origin.y + self.navigationController.navigationBar.frame.size.height, realViewFrameWidth, realViewFrameHeight / 2);
+    [hostScrollView setShowsHorizontalScrollIndicator:NO];
+    hostScrollView.delaysContentTouches = NO;
+
+    self.collectionView.delaysContentTouches = NO;
+    self.collectionView.allowsMultipleSelection = NO;
+    #if !TARGET_OS_TV
+    self.collectionView.multipleTouchEnabled = NO;
+    #else
+    // This is the only way to get long press events on a UICollectionViewCell :(
+    UILongPressGestureRecognizer* cellLongPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleCollectionViewLongPress:)];
+    cellLongPress.delaysTouchesBegan = YES;
+    [self.collectionView addGestureRecognizer:cellLongPress];
+    #endif
+
+    [self retrieveSavedHosts];
+    _discMan = [[DiscoveryManager alloc] initWithHosts:[hostList allObjects] andCallback:self];
+    [self updateTitle];
+    [self.view addSubview:hostScrollView];
+    
+    if ([hostList count] == 1) [self hostClicked:[hostList anyObject] view:nil]; // auto click for single host
     //if([SettingsViewController isLandscapeNow] != _streamConfig.width > _streamConfig.height)
     //[self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
     //[self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
@@ -1123,7 +1155,7 @@ static NSMutableSet* hostList;
 }
 
 -(void)reloadScrollHostView{
-    [hostScrollView removeFromSuperview];
+    [hostScrollView removeFromSuperview]; // mandatory for scroll view refresh after orientation change and clicking "select new host"
     CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
     CGFloat screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
 
@@ -1152,8 +1184,9 @@ static NSMutableSet* hostList;
     [self.collectionView addGestureRecognizer:cellLongPress];
     #endif
 
-    [self retrieveSavedHosts];
-    _discMan = [[DiscoveryManager alloc] initWithHosts:[hostList allObjects] andCallback:self];
+    // the reloadScrollHostView method cannnot copy what all viewDidLoad does for initializing the host scroll view, the following 2 lines of codes must be annotated, or there'll be issues with deleting hosts.
+    //[self retrieveSavedHosts];
+    //_discMan = [[DiscoveryManager alloc] initWithHosts:[hostList allObjects] andCallback:self];
     [self updateTitle];
     [self.view addSubview:hostScrollView];
 }
