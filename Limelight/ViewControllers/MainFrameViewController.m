@@ -1262,7 +1262,7 @@ static NSMutableSet* hostList;
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:NO];
-    //[self attachWaterMark];
+    [self attachWaterMark];
     
 #if !TARGET_OS_TV
     [[NSNotificationCenter defaultCenter] addObserver:self
