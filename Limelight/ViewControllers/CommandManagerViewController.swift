@@ -173,6 +173,7 @@ import UIKit
     }
     
     @objc private func addButtonTapped() {
+        let previouslySelectedIndexPath = tableView.indexPathForSelectedRow //memorize selected indexpath
         let alert = UIAlertController(title: SwiftLocalizationHelper.localizedString(forKey: "New Command"), message: SwiftLocalizationHelper.localizedString(forKey: "Enter a new command and alias"), preferredStyle: .alert)
         alert.addTextField { $0.placeholder = SwiftLocalizationHelper.localizedString(forKey:"Command") }
         alert.addTextField { $0.placeholder = SwiftLocalizationHelper.localizedString(forKey: "Alias (optional)") }
@@ -187,11 +188,18 @@ import UIKit
             let keyboardCmdString = alert.textFields?[0].text ?? ""
             let alias = alert.textFields?[1].text ?? keyboardCmdString
             let newCommand = RemoteCommand(keyboardCmdString: keyboardCmdString, alias: alias)
-            CommandManager.shared.addCommand(newCommand)
+            let addCommandSuceeded = CommandManager.shared.addCommand(newCommand)
             //self.reloadTableView() // don't know why but this reload has to be called from the CommandManager, it doesn't work here.
-            let lastRow = self.tableView.numberOfRows(inSection: 0) - 1  //for now there's only 1 section for the tableview, just use setion 0
-            let newEntryIndexPath = IndexPath(row: lastRow, section: 0)
-            self.tableView.selectRow(at: newEntryIndexPath, animated: true, scrollPosition: .middle) // shift the highlight to the newly added entry
+            
+            //if previouslySelectedIndexPath == nil { return }
+            if addCommandSuceeded {
+                let lastRow = self.tableView.numberOfRows(inSection: 0) - 1  //for now there's only 1 section for the tableview, just use setion 0
+                let newEntryIndexPath = IndexPath(row: lastRow, section: 0)
+                self.tableView.selectRow(at: newEntryIndexPath, animated: true, scrollPosition: .middle) // shift the highlight to the newly added entry
+            }
+            else {
+                self.tableView.selectRow(at: previouslySelectedIndexPath, animated: true, scrollPosition: .middle) // keep the highlight on the previous entry if failed to add command
+            }
         }
         
         let cancelAction = UIAlertAction(title: SwiftLocalizationHelper.localizedString(forKey:"Cancel"), style: .cancel)
