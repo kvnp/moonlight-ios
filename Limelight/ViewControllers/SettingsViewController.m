@@ -821,7 +821,8 @@ BOOL isCustomResolution(CGSize res) {
 
 - (void) updateBitrateText {
     // Display bitrate in Mbps
-    [self.bitrateLabel setText:[LocalizationHelper localizedStringForKey:@"Bitrate: %.1f Mbps", _bitrate / 1000.]];
+    if(_bitrate / 1000. > 50.0) [self.bitrateLabel setText:[LocalizationHelper localizedStringForKey:@"Bitrate: %.1f Mbps - Use High Bitrates with Caution!", _bitrate / 1000.]];
+    else [self.bitrateLabel setText:[LocalizationHelper localizedStringForKey:@"Bitrate: %.1f Mbps", _bitrate / 1000.]];
 }
 
 - (NSInteger) getChosenFrameRate {

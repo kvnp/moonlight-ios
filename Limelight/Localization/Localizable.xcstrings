@@ -214,6 +214,29 @@
         }
       }
     },
+    "Bitrate: %.1f Mbps - Use High Bitrates with Caution!" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流码率: %.1f Mbps - 码率偏高, 谨慎使用!"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流码率: %.1f Mbps - 码率偏高, 谨慎使用!"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流码率: %.1f Mbps - 码率偏高, 谨慎使用!"
+          }
+        }
+      }
+    },
     "Cancel" : {
       "extractionState" : "manual",
       "localizations" : {
