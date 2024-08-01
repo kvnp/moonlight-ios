@@ -878,30 +878,30 @@
       }
     },
     "hAo-1k-oYF.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"Allow Portrait (Orientation Changes in App View Only)\"; ObjectID = \"hAo-1k-oYF\";",
+      "comment" : "Class = \"UILabel\"; text = \"Allow Portrait (Orientation Changes in App View Only)         \"; ObjectID = \"hAo-1k-oYF\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Allow Portrait (Orientation Changes in App View Only)"
+            "value" : "Allow Portrait (Orientation Changes in App View Only)         "
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "允许竖屏 (启用后只允许在应用视图中90度转屏)"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "允许竖屏 (启用后只允许在应用视图中90度转屏)"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "允许竖屏 (启用后只允许在应用视图中90度转屏)"
           }
         }
@@ -2192,24 +2192,24 @@
       }
     },
     "Zp4-fA-IeL.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"Open Command Tool in Stream View by Sliding from:\"; ObjectID = \"Zp4-fA-IeL\";",
+      "comment" : "Class = \"UILabel\"; text = \"Open Command Tool in Stream View by Sliding from:          \"; ObjectID = \"Zp4-fA-IeL\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Open Command Tool in Stream View by Sliding from:"
+            "value" : "Open Command Tool in Stream View by Sliding from:          "
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "串流中从以下屏幕边缘滑动打开命令工具"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "串流中从以下屏幕边缘滑动打开命令工具"
           }
         },
