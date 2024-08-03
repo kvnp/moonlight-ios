@@ -21,6 +21,8 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
+static NSString* backdoorHostAddress;
+
 @implementation DiscoveryManager {
     NSMutableArray* _hostQueue;
     NSMutableSet* _pausedHosts;
@@ -86,7 +88,7 @@
 // the Add PC dialog. This is required to comply with Apple App Store
 // Guideline 4.2.7a.
 + (BOOL) isProhibitedAddress:(NSString*)address {
-#ifdef ENABLE_APP_STORE_RESTRICTIONS
+//#ifdef ENABLE_APP_STORE_RESTRICTIONS
     struct addrinfo hints;
     struct addrinfo* result;
     int err;
@@ -111,14 +113,25 @@
         return NO;
     }
     
-    // BOOL ret = ![DiscoveryManager isAddressLAN:((struct sockaddr_in*)result->ai_addr)->sin_addr.s_addr];
-    BOOL ret = NO; // Cancel LAN restriction for personnal use.
+    BOOL ret = ![DiscoveryManager isAddressLAN:((struct sockaddr_in*)result->ai_addr)->sin_addr.s_addr];
+    //BOOL ret = NO;
     freeaddrinfo(result);
+    
+    NSLog(@"backDoorHostAddress: %@", backdoorHostAddress);
+    if(ret){
+        if([address isEqualToString:backdoorHostAddress]) ret = NO;
+    }
+    backdoorHostAddress = nil;
+    NSLog(@"IP Check, is prohibited: %d", ret);
 
     return ret;
-#else
-    return NO;
-#endif
+//#else
+//    return NO;
+//#endif
+}
+
++ (void)setBackdoorHostAddress: (NSString* )address{
+    backdoorHostAddress = address;
 }
 
 - (ServerInfoResponse*) getServerInfoResponseForAddress:(NSString*)address {
