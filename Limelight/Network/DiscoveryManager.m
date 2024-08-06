@@ -124,7 +124,7 @@ static NSString* backdoorHostAddress;
     backdoorHostAddress = nil;
     NSLog(@"IP Check, is prohibited: %d", ret);
 
-    return ret;
+    return NO;
 //#else
 //    return NO;
 //#endif

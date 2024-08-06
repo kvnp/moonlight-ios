@@ -1014,7 +1014,7 @@ static NSMutableSet* hostList;
 
 - (void)attachWaterMark {
     // Create and configure the label
-    if(false){
+    if(true){
         [self->waterMark removeFromSuperview];
         self->waterMark = [[UILabel alloc] init];
         self->waterMark.translatesAutoresizingMaskIntoConstraints = NO;
