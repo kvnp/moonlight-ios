@@ -806,22 +806,27 @@ static float L3_Y;
             [_controllerSupport setButtonFlag:_controller flags:A_FLAG];
             _aTouch = touch;
             updated = true;
+            NSLog(@"Captured OSC A");
         } else if ([_bButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:B_FLAG];
             _bTouch = touch;
             updated = true;
+            NSLog(@"Captured OSC B");
         } else if ([_xButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:X_FLAG];
             _xTouch = touch;
             updated = true;
+            NSLog(@"Captured OSC X");
         } else if ([_yButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:Y_FLAG];
             _yTouch = touch;
             updated = true;
+            NSLog(@"Captured OSC Y");
         } else if ([_upButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:UP_FLAG];
             _dpadTouch = touch;
             updated = true;
+            NSLog(@"Captured OSC UP");
         } else if ([_downButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:DOWN_FLAG];
             _dpadTouch = touch;
@@ -830,41 +835,51 @@ static float L3_Y;
             [_controllerSupport setButtonFlag:_controller flags:LEFT_FLAG];
             _dpadTouch = touch;
             updated = true;
+            NSLog(@"Captured OSC LEFT");
         } else if ([_rightButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:RIGHT_FLAG];
             _dpadTouch = touch;
             updated = true;
+            NSLog(@"Captured OSC RIGHT");
         } else if ([_startButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:PLAY_FLAG];
             _startTouch = touch;
             updated = true;
+            NSLog(@"Captured OSC PLAY");
         } else if ([_selectButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:BACK_FLAG];
             _selectTouch = touch;
             updated = true;
+            NSLog(@"Captured OSC BACK");
         } else if ([_l1Button.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:LB_FLAG];
             _l1Touch = touch;
             updated = true;
+            NSLog(@"Captured OSC LB");
         } else if ([_r1Button.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:RB_FLAG];
             _r1Touch = touch;
             updated = true;
+            NSLog(@"Captured OSC RB");
         } else if ([_l2Button.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport updateLeftTrigger:_controller left:0xFF];
             _l2Touch = touch;
             updated = true;
+            NSLog(@"Captured OSC LeftTrigger");
         } else if ([_r2Button.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport updateRightTrigger:_controller right:0xFF];
             _r2Touch = touch;
             updated = true;
+            NSLog(@"Captured OSC RightTrigger");
         } else if ([_l3Button.presentationLayer hitTest:touchLocation]) {
             if (l3Set) {
                 [_controllerSupport clearButtonFlag:_controller flags:LS_CLK_FLAG];
                 _l3Button.borderWidth = 0.0f;
+                NSLog(@"Captured OSC LS_CLK");
             } else {
                 [_controllerSupport setButtonFlag:_controller flags:LS_CLK_FLAG];
                 _l3Button.borderWidth = 2.0f;
+                NSLog(@"Captured OSC LS_CLK2");
             }
             l3Set = !l3Set;
             _l3Touch = touch;
@@ -873,9 +888,11 @@ static float L3_Y;
             if (r3Set) {
                 [_controllerSupport clearButtonFlag:_controller flags:RS_CLK_FLAG];
                 _r3Button.borderWidth = 0.0f;
+                NSLog(@"Captured OSC RS_CLK");
             } else {
                 [_controllerSupport setButtonFlag:_controller flags:RS_CLK_FLAG];
                 _r3Button.borderWidth = 2.0f;
+                NSLog(@"Captured OSC RS_CLK2");
             }
             r3Set = !r3Set;
             _r3Touch = touch;
@@ -888,6 +905,8 @@ static float L3_Y;
                 if (l3TouchTime < STICK_CLICK_RATE) {
                     [_controllerSupport setButtonFlag:_controller flags:LS_CLK_FLAG];
                     updated = true;
+                    NSLog(@"Captured OSC LS_CLK3");
+
                 }
             }
             _lsTouch = touch;
@@ -900,6 +919,7 @@ static float L3_Y;
                 if (r3TouchTime < STICK_CLICK_RATE) {
                     [_controllerSupport setButtonFlag:_controller flags:RS_CLK_FLAG];
                     updated = true;
+                    NSLog(@"Captured OSC LS_CLK4");
                 }
             }
             _rsTouch = touch;
@@ -908,6 +928,7 @@ static float L3_Y;
         if (!updated && !stickTouch && [self isInDeadZone:touch]) {
             [_deadTouches addObject:touch];
             updated = true;
+            NSLog(@"blablablab updated true");
         }
     }
     if (updated) {
@@ -1004,24 +1025,31 @@ static float L3_Y;
     // Dynamically evaluate deadzones based on the controls
     // on screen at the time
     if (_leftButton.superlayer != nil && [self isDpadDeadZone:touch]) {
+        NSLog(@"DZ: leftButton");
         return true;
     }
     else if (_aButton.superlayer != nil && [self isAbxyDeadZone:touch]) {
+        NSLog(@"DZ: aButton");
         return true;
     }
     else if (_l2Button.superlayer != nil && [self isTriggerDeadZone:touch]) {
+        NSLog(@"DZ: l2Button");  // if this is a delete button, will cause issue of unable to touch
         return true;
     }
     else if (_l1Button.superlayer != nil && [self isBumperDeadZone:touch]) {
+        NSLog(@"DZ: l1Button");
         return true;
     }
     else if (_startButton.superlayer != nil && [self isStartSelectDeadZone:touch]) {
+        NSLog(@"DZ: startButton");
         return true;
     }
     else if (_l3Button.superlayer != nil && [self isL3R3DeadZone:touch]) {
+        NSLog(@"DZ: l3Button");
         return true;
     }
     else if (_leftStickBackground.superlayer != nil && [self isStickDeadZone:touch]) {
+        NSLog(@"DZ: leftStickBackground");
         return true;
     }
     
