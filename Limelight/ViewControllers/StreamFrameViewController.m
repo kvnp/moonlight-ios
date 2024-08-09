@@ -15,6 +15,7 @@
 #import "CustomEdgeSwipeGestureRecognizer.h"
 #import "CustomTapGestureRecognizer.h"
 #import "LocalizationHelper.h"
+#import "Moonlight-Swift.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -161,6 +162,31 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
+    
+    
+    
+    OnScreenKeyView *keyView = [[OnScreenKeyView alloc] initWithKeyString:@"WIN" keyLabel:@"WIN"];
+    keyView.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    // Add the KeyView to the view controller's view
+    [self.view addSubview:keyView];
+    
+    // Configure the KeyView's layout
+    
+    CGFloat xOffset = 50;
+    CGFloat yOffset = 550;
+    CGFloat spacing = 10.0;
+    
+    [keyView setKeyLocationWithXOffset:500 yOffset:(CGFloat)550];
+
+    
+    
+    
+    
+    
+    
+    
     
 #if !TARGET_OS_TV
     [[self revealViewController] setPrimaryViewController:self];

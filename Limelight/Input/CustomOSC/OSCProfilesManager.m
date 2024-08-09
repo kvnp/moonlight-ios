@@ -195,7 +195,7 @@
     NSMutableArray *buttonStatesEncoded = [[NSMutableArray alloc] init];
     for (CALayer *buttonLayer in buttonLayers) {
         
-        OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:buttonLayer.name  isHidden:buttonLayer.isHidden andPosition:buttonLayer.position];
+        OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:buttonLayer.name isKeyboardButton:NO isHidden:buttonLayer.isHidden andPosition:buttonLayer.position];
         NSData *buttonStateEncoded = [NSKeyedArchiver archivedDataWithRootObject:buttonState requiringSecureCoding:YES error:nil];
         [buttonStatesEncoded addObject: buttonStateEncoded];
     }
@@ -220,7 +220,7 @@
     NSMutableArray *buttonStatesEncoded = [[NSMutableArray alloc] init];
     for (CALayer *buttonLayer in buttonLayers) {
         
-        OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:buttonLayer.name  isHidden:buttonLayer.isHidden andPosition:buttonLayer.position];
+        OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:buttonLayer.name  isKeyboardButton:NO isHidden:buttonLayer.isHidden andPosition:buttonLayer.position];
         NSData *buttonStateEncoded = [NSKeyedArchiver archivedDataWithRootObject:buttonState requiringSecureCoding:YES error:nil];
         [buttonStatesEncoded addObject: buttonStateEncoded];
     }
