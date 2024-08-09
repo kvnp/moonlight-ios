@@ -463,19 +463,20 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 #if !TARGET_OS_TV
-    if (@available(iOS 13.4, *)) {
-        if (settings.touchMode.intValue == PURE_NATIVE_TOUCH) {
-            [touchHandler touchesBegan:touches withEvent:event];
-            return; //This is a native touch oriented fork, in pure native touch mode, this call back method deals with native touch only.
-        }
-        else{
-            for (UITouch* touch in touches) {
-                if (touch.type == UITouchTypePencil) {
-                    if ([self sendStylusEvent:touch]) return;
-                }
+    // if (@available(iOS 13.4, *)) {
+    // cancel restriction of native touch for iOS13.3 & lower
+    if (settings.touchMode.intValue == PURE_NATIVE_TOUCH) {
+        [touchHandler touchesBegan:touches withEvent:event];
+        return; //This is a native touch oriented fork, in pure native touch mode, this call back method deals with native touch only.
+    }
+    if (@available(iOS 13.4, *)) { // now only pencil events are restricted
+        for (UITouch* touch in touches) {
+            if (touch.type == UITouchTypePencil) {
+                if ([self sendStylusEvent:touch]) return;
             }
         }
     }
+    
 #endif
     if ([self handleMouseButtonEvent:BUTTON_ACTION_PRESS
                           forTouches:touches
@@ -622,43 +623,43 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
 #if !TARGET_OS_TV
-    if (@available(iOS 13.4, *)) {
-        if (settings.touchMode.intValue == PURE_NATIVE_TOUCH) {
-            [touchHandler touchesMoved:touches withEvent:event];
-            return; //This is a native touch oriented fork, in pure native touch mode, this call back method deals with native touch only.
-        }
-        else{
-            for (UITouch* touch in touches) {
-                if (touch.type == UITouchTypePencil) {
-                    if ([self sendStylusEvent:touch]) return;
-                }
-            }
-        }
-        UITouch *touch = [touches anyObject];
-        if (touch.type == UITouchTypeIndirectPointer) {
-            if (@available(iOS 14.0, *)) {
-                if ([GCMouse current] != nil) {
-                    // We'll handle this with GCMouse. Do nothing here.
-                    return;
-                }
-            }
-            
-            // We must handle this event to properly support
-            // drags while the middle, X1, or X2 mouse buttons are
-            // held down. For some reason, left and right buttons
-            // don't require this, but we do it anyway for them too.
-            // Cursor movement without a button held down is handled
-            // in pointerInteraction:regionForRequest:defaultRegion.
-            [self updateCursorLocation:[touch locationInView:self] isMouse:YES];
-            return;
-        }
-    }
-#endif
     
-    hasUserInteracted = YES;
-    
-    if (![onScreenControls handleTouchMovedEvent:touches]) {
+    if (settings.touchMode.intValue == PURE_NATIVE_TOUCH) {
         [touchHandler touchesMoved:touches withEvent:event];
+        return; //This is a native touch oriented fork, in pure native touch mode, this call back method deals with native touch only.
+    }
+    
+    
+    for (UITouch* touch in touches) {
+        if (touch.type == UITouchTypePencil) {
+            if ([self sendStylusEvent:touch]) return;
+        }
+        
+        if (@available(iOS 13.4, *)) {
+            UITouch *touch = [touches anyObject];
+            if (touch.type == UITouchTypeIndirectPointer) {
+                if (@available(iOS 14.0, *)) {
+                    if ([GCMouse current] != nil) {
+                        // We'll handle this with GCMouse. Do nothing here.
+                        return;
+                    }
+                }
+                // We must handle this event to properly support
+                // drags while the middle, X1, or X2 mouse buttons are
+                // held down. For some reason, left and right buttons
+                // don't require this, but we do it anyway for them too.
+                // Cursor movement without a button held down is handled
+                // in pointerInteraction:regionForRequest:defaultRegion.
+                [self updateCursorLocation:[touch locationInView:self] isMouse:YES];
+                return;
+            }
+        }
+        
+#endif
+        hasUserInteracted = YES;
+        if (![onScreenControls handleTouchMovedEvent:touches]) {
+            [touchHandler touchesMoved:touches withEvent:event];
+        }
     }
 }
 
@@ -702,19 +703,20 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
 #if !TARGET_OS_TV
-    if (@available(iOS 13.4, *)) {
-        if (settings.touchMode.intValue == PURE_NATIVE_TOUCH) {
-            [touchHandler touchesEnded:touches withEvent:event];
-            return; //This is a native touch oriented fork, in pure native touch mode, this call back method deals with native touch only.
-        }
-        else{
-            for (UITouch* touch in touches) {
-                if (touch.type == UITouchTypePencil) {
-                    if ([self sendStylusEvent:touch]) return;
-                }
+
+    if (settings.touchMode.intValue == PURE_NATIVE_TOUCH) {
+        [touchHandler touchesEnded:touches withEvent:event];
+        return; //This is a native touch oriented fork, in pure native touch mode, this call back method deals with native touch only.
+    }
+    
+    if (@available(iOS 13.4, *)){ //now only pencil events are restricted
+        for (UITouch* touch in touches) {
+            if (touch.type == UITouchTypePencil) {
+                if ([self sendStylusEvent:touch]) return;
             }
         }
     }
+
 #endif
     if ([self handleMouseButtonEvent:BUTTON_ACTION_RELEASE
                           forTouches:touches
@@ -735,13 +737,11 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
     [touchHandler touchesCancelled:touches withEvent:event];
 #if !TARGET_OS_TV
-    if (@available(iOS 13.4, *)) {
-        if (settings.touchMode.intValue == PURE_NATIVE_TOUCH) return; //This is a native touch oriented fork, in pure native touch mode, this call back method deals with native touch only.
-        else{
-            for (UITouch* touch in touches) {
-                if (touch.type == UITouchTypePencil) {
-                    if ([self sendStylusEvent:touch]) return;
-                }
+    if (settings.touchMode.intValue == PURE_NATIVE_TOUCH) return; //This is a native touch oriented fork, in pure native touch mode, this call back method deals with native touch only.
+    if (@available(iOS 13.4, *)){ //now only pencil events are restricted
+        for (UITouch* touch in touches) {
+            if (touch.type == UITouchTypePencil) {
+                if ([self sendStylusEvent:touch]) return;
             }
         }
     }

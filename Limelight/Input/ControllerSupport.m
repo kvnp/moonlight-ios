@@ -354,6 +354,9 @@ static const double MOUSE_SPEED_DIVISOR = 1.25;
                 rightStickY = MAX_MAGNITUDE(rightStickY, controller.mergedWithController.lastRightStickY);
             }
             
+            
+            
+            
             // Player 1 is always present for OSC
             LiSendMultiControllerEvent(_multiController ? controller.playerIndex : 0, [self getActiveGamepadMask],
                                        buttonFlags, leftTrigger, rightTrigger,
