@@ -10,11 +10,12 @@
 
 @implementation OnScreenButtonState
 
-- (id) initWithButtonName:(NSString*)name isHidden:(BOOL)isHidden andPosition:(CGPoint)position {
+- (id) initWithButtonName:(NSString*)name isKeyboardButton:(BOOL)isKeyboardButton isHidden:(BOOL)isHidden andPosition:(CGPoint)position {
     if ((self = [self init])) {
         self.name = name;
         self.isHidden = isHidden;
         self.position = position;
+        self.isKeyboardButton = isKeyboardButton;
     }
     
     return self;
@@ -26,6 +27,7 @@
 
 - (void) encodeWithCoder:(NSCoder*)encoder {
     [encoder encodeObject:self.name forKey:@"name"];
+    [encoder encodeBool:self.isKeyboardButton forKey:@"isKeyboardButton"];
     [encoder encodeBool:self.isHidden forKey:@"isHidden"];
     [encoder encodeCGPoint:self.position forKey:@"position"];
 }
@@ -33,6 +35,7 @@
 - (id) initWithCoder:(NSCoder*)decoder {
     if (self = [super init]) {
         self.name = [decoder decodeObjectForKey:@"name"];
+        self.isKeyboardButton = [decoder decodeBoolForKey:@"isKeyboardButton"];
         self.isHidden = [decoder decodeBoolForKey:@"isHidden"];
         self.position = [decoder decodeCGPointForKey:@"position"];
     }

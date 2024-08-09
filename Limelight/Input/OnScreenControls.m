@@ -457,7 +457,7 @@ static float L3_Y;
     // create A button
     _aButton.contents = (id) aButtonImage.CGImage;
     _aButton.frame = _swapABXY ? bButtonFrame : aButtonFrame;
-    [_view.layer addSublayer:_aButton];
+    [_view.layer addSublayer:_aButton];      // rendering OSC Button here
     
     // create B button
     _bButton.frame = _swapABXY ? aButtonFrame : bButtonFrame;

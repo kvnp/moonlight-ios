@@ -354,6 +354,8 @@ static const double MOUSE_SPEED_DIVISOR = 1.25;
                 rightStickY = MAX_MAGNITUDE(rightStickY, controller.mergedWithController.lastRightStickY);
             }
             
+            NSLog(@"gamepadMask: %@", [self binaryRepresentationOfInteger:buttonFlags]); // we got the pressed OSC buttons here.
+            
             // Player 1 is always present for OSC
             LiSendMultiControllerEvent(_multiController ? controller.playerIndex : 0, [self getActiveGamepadMask],
                                        buttonFlags, leftTrigger, rightTrigger,
@@ -369,6 +371,19 @@ static const double MOUSE_SPEED_DIVISOR = 1.25;
         });
     }
 }
+
+
+- (NSString *)binaryRepresentationOfInteger:(int)number {
+    NSMutableString *binaryString = [NSMutableString string];
+    int numBits = sizeof(number) * 8;
+
+    for (int i = numBits - 1; i >= 0; i--) {
+        [binaryString appendString:((number >> i) & 1) ? @"1" : @"0"];
+    }
+
+    return binaryString;
+}
+
 
 +(BOOL) hasKeyboardOrMouse {
     if (@available(iOS 14.0, tvOS 14.0, *)) {
