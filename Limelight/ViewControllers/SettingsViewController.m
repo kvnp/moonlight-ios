@@ -430,14 +430,15 @@ BOOL isCustomResolution(CGSize res) {
     [self.keyboardToggleFingerNumSlider addTarget:self action:@selector(keyboardToggleFingerNumSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
     [self keyboardToggleFingerNumSliderMoved];
 
-    // this setting will be affected touchMode, must be loaded before them.
+    // this setting will be affected by touchMode, must be loaded before them.
     NSInteger onscreenControlsLevel = [currentSettings.onscreenControls integerValue];
     [self.onscreenControlSelector setSelectedSegmentIndex:onscreenControlsLevel];
     [self.onscreenControlSelector addTarget:self action:@selector(onscreenControlChanged) forControlEvents:UIControlEventValueChanged];
     [self onscreenControlChanged];
-    
+    [self.oscVisualFeedbackSelector setSelectedSegmentIndex:currentSettings.oscVisualFeedback ? 1 : 0]; // load old setting of oscVisualFeedback
     
     // [self.touchModeSelector setSelectedSegmentIndex:currentSettings.absoluteTouchMode ? 1 : 0];
+    // this part will enable/disable oscSelector & the visual feedback selector
     [self.touchModeSelector setSelectedSegmentIndex:currentSettings.touchMode.intValue]; //Load old touchMode setting
     [self.touchModeSelector addTarget:self action:@selector(touchModeChanged) forControlEvents:UIControlEventValueChanged];
     [self touchModeChanged];
@@ -597,6 +598,7 @@ BOOL isCustomResolution(CGSize res) {
     bool isNativeTouch = [self.touchModeSelector selectedSegmentIndex] == PURE_NATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == REGULAR_NATIVE_TOUCH;
     
     [self.onscreenControlSelector setEnabled:oscSelectorEnabled];
+    [self.oscVisualFeedbackSelector setEnabled:oscSelectorEnabled]; // this selector stay aligned with oscSelector
     
     [self widget:self.pointerVelocityModeDividerSlider setEnabled:isNativeTouch]; // pointer velocity scaling works only in native touch mode.
     [self widget:self.touchPointerVelocityFactorSlider setEnabled:isNativeTouch]; // pointer velocity scaling works only in native touch mode.
@@ -893,6 +895,7 @@ BOOL isCustomResolution(CGSize res) {
     CGFloat pointerVelocityModeDivider = (CGFloat)(uint8_t)self.pointerVelocityModeDividerSlider.value/100;
     CGFloat touchPointerVelocityFactor =(CGFloat)(uint16_t)[self map_velocFactorDisplay_fromSliderValue:self.touchPointerVelocityFactorSlider.value]/100;
     CGFloat mousePointerVelocityFactor =(CGFloat)(uint16_t)self.mousePointerVelocityFactorSlider.value/100;
+    BOOL oscVisualFeedback = [self.oscVisualFeedbackSelector selectedSegmentIndex] == 1;
     BOOL liftStreamViewForKeyboard = [self.liftStreamViewForKeyboardSelector selectedSegmentIndex] == 1;
     BOOL showKeyboardToolbar = [self.showKeyboardToolbarSelector selectedSegmentIndex] == 1;
     BOOL optimizeGames = [self.optimizeSettingsSelector selectedSegmentIndex] == 1;
@@ -919,6 +922,7 @@ BOOL isCustomResolution(CGSize res) {
           pointerVelocityModeDivider:pointerVelocityModeDivider
           touchPointerVelocityFactor:touchPointerVelocityFactor
           mousePointerVelocityFactor:mousePointerVelocityFactor
+                   oscVisualFeedback:oscVisualFeedback
            liftStreamViewForKeyboard:liftStreamViewForKeyboard
                  showKeyboardToolbar:showKeyboardToolbar
                        optimizeGames:optimizeGames

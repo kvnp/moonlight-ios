@@ -211,6 +211,36 @@
         }
       }
     },
+    "2LZ-cX-teZ.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Turn on On-Screen Controls Visual Feedback                         \"; ObjectID = \"2LZ-cX-teZ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Turn on On-Screen Controls Visual Feedback                         "
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开屏显手柄视觉反馈"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开屏显手柄视觉反馈"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开屏显手柄视觉反馈"
+          }
+        }
+      }
+    },
     "2p1-r1-Gvf.text" : {
       "comment" : "Class = \"UILabel\"; text = \"Swap A/B and X/Y Buttons                                                         \"; ObjectID = \"2p1-r1-Gvf\";",
       "extractionState" : "extracted_with_value",
@@ -2115,6 +2145,66 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "帧间距控制"
+          }
+        }
+      }
+    },
+    "XbO-CV-orB.segmentTitles[0]" : {
+      "comment" : "Class = \"UISegmentedControl\"; XbO-CV-orB.segmentTitles[0] = \"No\"; ObjectID = \"XbO-CV-orB\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        }
+      }
+    },
+    "XbO-CV-orB.segmentTitles[1]" : {
+      "comment" : "Class = \"UISegmentedControl\"; XbO-CV-orB.segmentTitles[1] = \"Yes\"; ObjectID = \"XbO-CV-orB\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Yes"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用"
           }
         }
       }

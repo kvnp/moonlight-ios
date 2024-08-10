@@ -19,12 +19,13 @@
                            width:(NSInteger)width
                      audioConfig:(NSInteger)audioConfig
                 onscreenControls:(NSInteger)onscreenControls
-            keyboardToggleFingers:(NSInteger)keyboardToggleFingers
+           keyboardToggleFingers:(NSInteger)keyboardToggleFingers
              slideToSettingsScreenEdge:(NSInteger)slideToSettingsScreenEdge
              slideToSettingsDistance:(CGFloat)slideToSettingsDistance
       pointerVelocityModeDivider:(CGFloat)pointerVelocityModeDivider
       touchPointerVelocityFactor:(CGFloat)touchPointerVelocityFactor
       mousePointerVelocityFactor:(CGFloat)mousePointerVelocityFactor
+               oscVisualFeedback:(BOOL)oscVisualFeedback
        liftStreamViewForKeyboard:(BOOL)liftStreamViewForKeyboard
              showKeyboardToolbar:(BOOL)showKeyboardToolbar
                    optimizeGames:(BOOL)optimizeGames

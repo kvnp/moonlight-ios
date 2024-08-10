@@ -36,6 +36,7 @@
     CODEC_PREF_HEVC,
     CODEC_PREF_AV1,
 } preferredCodec;
+@property (nonatomic) BOOL oscVisualFeedback;
 @property (nonatomic) BOOL useFramePacing;
 @property (nonatomic) BOOL multiController;
 @property (nonatomic) BOOL swapABXYButtons;
@@ -49,7 +50,6 @@
 @property (nonatomic) BOOL liftStreamViewForKeyboard;
 @property (nonatomic) BOOL showKeyboardToolbar;
 @property (nonatomic) BOOL allowPortrait;
-
 
 - (id) initFromSettings:(Settings*)settings;
 
