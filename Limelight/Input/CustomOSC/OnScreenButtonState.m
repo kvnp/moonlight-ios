@@ -29,6 +29,7 @@
     [encoder encodeObject:self.name forKey:@"name"];
     [encoder encodeBool:self.isKeyboardButton forKey:@"isKeyboardButton"];
     [encoder encodeBool:self.isHidden forKey:@"isHidden"];
+    // [encoder encodeBool:self.hasValidPosition forKey:@"hasValidPosition"];
     [encoder encodeCGPoint:self.position forKey:@"position"];
 }
 
@@ -37,6 +38,7 @@
         self.name = [decoder decodeObjectForKey:@"name"];
         self.isKeyboardButton = [decoder decodeBoolForKey:@"isKeyboardButton"];
         self.isHidden = [decoder decodeBoolForKey:@"isHidden"];
+        // self.hasValidPosition = [decoder decodeBoolForKey:@"hasValidPosition"];
         self.position = [decoder decodeCGPointForKey:@"position"];
     }
     

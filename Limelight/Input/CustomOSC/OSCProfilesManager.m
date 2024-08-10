@@ -10,11 +10,14 @@
 
 @implementation OSCProfilesManager
 
+
+
 #pragma mark - Initializer
 
 + (OSCProfilesManager *) sharedManager {
     static OSCProfilesManager *_sharedManager = nil;
     static dispatch_once_t onceToken;
+    
     dispatch_once(&onceToken, ^{
         _sharedManager = [[self alloc] init];
     });
@@ -48,7 +51,6 @@
     NSMutableArray *profilesEncoded = [[NSMutableArray alloc] init];
     /* encode each profile and add them back into an array */
     for (OSCProfile *profile in profiles) {   //
-        
         NSData *profileEncoded = [NSKeyedArchiver archivedDataWithRootObject:profile requiringSecureCoding:YES error:nil];
         [profilesEncoded addObject:profileEncoded];
     }
@@ -192,10 +194,31 @@
 
 - (bool) updateSelectedProfileSucceedWithButtonLayers:(NSMutableArray *)buttonLayers {
     /* iterate through each OSC button the user sees on screen, create an 'OnScreenButtonState' object from each button, encode each object, and then add each object to an array */
+    /*
+    NSSet *validPositionButtonNames = [NSSet setWithObjects:
+        @"l2Button",
+        @"l1Button",
+        @"dPad",
+        @"selectButton",
+        @"leftStickBackground",
+        @"rightStickBackground",
+        @"r2Button",
+        @"r1Button",
+        @"aButton",
+        @"bButton",
+        @"xButton",
+        @"yButton",
+        @"startButton",
+        nil]; */
     NSMutableArray *buttonStatesEncoded = [[NSMutableArray alloc] init];
     for (CALayer *buttonLayer in buttonLayers) {
         
         OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:buttonLayer.name isKeyboardButton:NO isHidden:buttonLayer.isHidden andPosition:buttonLayer.position];
+        /* //-------------------------------------
+        NSLog(@"buttonName to be saved: %@", buttonState.name);
+        if([validPositionButtonNames containsObject:buttonState.name]) buttonState.hasValidPosition = true; // this is for setting up DZ for custom OSC buttons.
+        else buttonState.hasValidPosition = false;
+        //------------------------------------- */
         NSData *buttonStateEncoded = [NSKeyedArchiver archivedDataWithRootObject:buttonState requiringSecureCoding:YES error:nil];
         [buttonStatesEncoded addObject: buttonStateEncoded];
     }
@@ -217,10 +240,30 @@
 
 - (void) saveProfileWithName:(NSString*)name andButtonLayers:(NSMutableArray *)buttonLayers {
     /* iterate through each OSC button the user sees on screen, create an 'OnScreenButtonState' object from each button, encode each object, and then add each object to an array */
+    /*
+    NSSet *validPositionButtonNames = [NSSet setWithObjects:
+        @"l2Button",
+        @"l1Button",
+        @"dPad",
+        @"selectButton",
+        @"leftStickBackground",
+        @"rightStickBackground",
+        @"r2Button",
+        @"r1Button",
+        @"aButton",
+        @"bButton",
+        @"xButton",
+        @"yButton",
+        @"startButton",
+        nil]; */
     NSMutableArray *buttonStatesEncoded = [[NSMutableArray alloc] init];
     for (CALayer *buttonLayer in buttonLayers) {
-        
         OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:buttonLayer.name  isKeyboardButton:NO isHidden:buttonLayer.isHidden andPosition:buttonLayer.position];
+        /* //-------------------------------------
+        NSLog(@"buttonName to be saved: %@", buttonState.name);
+        if([validPositionButtonNames containsObject:buttonState.name]) buttonState.hasValidPosition = true; // this is for setting up DZ for custom OSC buttons.
+        else buttonState.hasValidPosition = false;
+        //------------------------------------- */
         NSData *buttonStateEncoded = [NSKeyedArchiver archivedDataWithRootObject:buttonState requiringSecureCoding:YES error:nil];
         [buttonStatesEncoded addObject: buttonStateEncoded];
     }

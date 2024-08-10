@@ -164,8 +164,8 @@
     [super viewDidAppear:animated];
     
     
-    
-    
+    // onscreen keyView test
+    /*
     OnScreenKeyView *keyView = [[OnScreenKeyView alloc] initWithKeyString:@"WIN" keyLabel:@"WIN"];
     keyView.translatesAutoresizingMaskIntoConstraints = NO;
     
@@ -179,7 +179,7 @@
     CGFloat spacing = 10.0;
     
     [keyView setKeyLocationWithXOffset:500 yOffset:(CGFloat)550];
-
+     */
     
     
     
