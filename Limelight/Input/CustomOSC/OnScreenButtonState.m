@@ -10,12 +10,13 @@
 
 @implementation OnScreenButtonState
 
-- (id) initWithButtonName:(NSString*)name isKeyboardButton:(BOOL)isKeyboardButton isHidden:(BOOL)isHidden andPosition:(CGPoint)position {
+
+- (id) initWithButtonName:(NSString*)name buttonType:(uint8_t)buttonType andPosition:(CGPoint)position {
     if ((self = [self init])) {
         self.name = name;
-        self.isHidden = isHidden;
+        //self.isHidden = isHidden;
         self.position = position;
-        self.isKeyboardButton = isKeyboardButton;
+        self.buttonType = buttonType;
     }
     
     return self;
@@ -27,19 +28,21 @@
 
 - (void) encodeWithCoder:(NSCoder*)encoder {
     [encoder encodeObject:self.name forKey:@"name"];
-    [encoder encodeBool:self.isKeyboardButton forKey:@"isKeyboardButton"];
-    [encoder encodeBool:self.isHidden forKey:@"isHidden"];
-    // [encoder encodeBool:self.hasValidPosition forKey:@"hasValidPosition"];
+    [encoder encodeObject:self.alias forKey:@"alias"];
+    [encoder encodeDouble:self.timestamp forKey:@"timestamp"];
+    [encoder encodeInt:self.buttonType forKey:@"buttonType"];
     [encoder encodeCGPoint:self.position forKey:@"position"];
+    [encoder encodeBool:self.isHidden forKey:@"isHidden"];
 }
 
 - (id) initWithCoder:(NSCoder*)decoder {
     if (self = [super init]) {
         self.name = [decoder decodeObjectForKey:@"name"];
-        self.isKeyboardButton = [decoder decodeBoolForKey:@"isKeyboardButton"];
-        self.isHidden = [decoder decodeBoolForKey:@"isHidden"];
-        // self.hasValidPosition = [decoder decodeBoolForKey:@"hasValidPosition"];
+        self.alias = [decoder decodeObjectForKey:@"alias"];
+        self.timestamp = [decoder decodeDoubleForKey:@"timestamp"];
+        self.buttonType = [decoder decodeIntForKey:@"buttonType"];
         self.position = [decoder decodeCGPointForKey:@"position"];
+        self.isHidden = [decoder decodeBoolForKey:@"isHidden"];
     }
     
     return self;

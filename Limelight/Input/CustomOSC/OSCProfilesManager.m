@@ -7,10 +7,13 @@
 //
 
 #import "OSCProfilesManager.h"
+#import "OnScreenButtonState.h"
+#import "Moonlight-Swift.h"
+#import "LayoutOnScreenControlsViewController.h"
 
 @implementation OSCProfilesManager
 
-
+static NSMutableDictionary *onScreenKeyViewsDict;
 
 #pragma mark - Initializer
 
@@ -26,6 +29,11 @@
 
 
 #pragma mark - Class Helper Methods
+
+
++ (void) setOnScreenKeyViewsDict:(NSMutableDictionary* )dict{
+    onScreenKeyViewsDict = dict;
+}
 
 /**
  * Returns the profile whose 'name' property has a value that is equal to the 'name' passed into the method
@@ -94,7 +102,6 @@
     NSMutableArray *profiles = [self getAllProfiles];
 
     for (OSCProfile *profile in profiles) { // set all profiles' 'isSelected' property to NO since the new profile we're saving over the old profile with will be the 'selected' profile
-        
         profile.isSelected = NO;
     }
     
@@ -192,7 +199,7 @@
 }
 
 
-- (bool) updateSelectedProfileSucceedWithButtonLayers:(NSMutableArray *)buttonLayers {
+- (bool) updateSelectedProfile:(NSMutableArray *) oscButtonLayers {
     /* iterate through each OSC button the user sees on screen, create an 'OnScreenButtonState' object from each button, encode each object, and then add each object to an array */
     /*
     NSSet *validPositionButtonNames = [NSSet setWithObjects:
@@ -211,9 +218,12 @@
         @"startButton",
         nil]; */
     NSMutableArray *buttonStatesEncoded = [[NSMutableArray alloc] init];
-    for (CALayer *buttonLayer in buttonLayers) {
+    for (CALayer *oscButtonLayer in oscButtonLayers) {
         
-        OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:buttonLayer.name isKeyboardButton:NO isHidden:buttonLayer.isHidden andPosition:buttonLayer.position];
+        OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:oscButtonLayer.name buttonType:GameControllerButton andPosition:oscButtonLayer.position];
+        // add hidden attr here
+        buttonState.isHidden = oscButtonLayer.isHidden;
+        
         /* //-------------------------------------
         NSLog(@"buttonName to be saved: %@", buttonState.name);
         if([validPositionButtonNames containsObject:buttonState.name]) buttonState.hasValidPosition = true; // this is for setting up DZ for custom OSC buttons.
@@ -222,6 +232,19 @@
         NSData *buttonStateEncoded = [NSKeyedArchiver archivedDataWithRootObject:buttonState requiringSecureCoding:YES error:nil];
         [buttonStatesEncoded addObject: buttonStateEncoded];
     }
+    
+    // save keyboard button as buttonstate
+    [onScreenKeyViewsDict enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) { // this dict is passed from the layout tool VC, as a static obj in this class.
+        OnScreenKeyView *keyView = value;
+        OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:keyView.keyString buttonType:KeyboardButton andPosition:keyView.frame.origin];
+        buttonState.alias = keyView.keyLabel;
+        buttonState.timestamp = keyView.timestamp;
+        NSData *buttonStateEncoded = [NSKeyedArchiver archivedDataWithRootObject:buttonState requiringSecureCoding:YES error:nil];
+        [buttonStatesEncoded addObject: buttonStateEncoded];
+    }];
+    
+    
+    
     if([self getIndexOfSelectedProfile]==0) return false;
     OSCProfile *newProfile = [[OSCProfile alloc] initWithName:[self getSelectedProfile].name
                             buttonStates:buttonStatesEncoded isSelected:YES];        // create a new 'OSCProfile'. Set the array of encoded button states created above to the 'buttonStates' property of the new profile, along with a 'name'. Set 'isSelected' argument to YES which will set this saved profile as the one that will show up in the game stream view
@@ -258,7 +281,9 @@
         nil]; */
     NSMutableArray *buttonStatesEncoded = [[NSMutableArray alloc] init];
     for (CALayer *buttonLayer in buttonLayers) {
-        OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:buttonLayer.name  isKeyboardButton:NO isHidden:buttonLayer.isHidden andPosition:buttonLayer.position];
+        OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:buttonLayer.name buttonType:GameControllerButton andPosition:buttonLayer.position];
+        // add hidden attr here
+        buttonState.isHidden = buttonLayer.isHidden;
         /* //-------------------------------------
         NSLog(@"buttonName to be saved: %@", buttonState.name);
         if([validPositionButtonNames containsObject:buttonState.name]) buttonState.hasValidPosition = true; // this is for setting up DZ for custom OSC buttons.

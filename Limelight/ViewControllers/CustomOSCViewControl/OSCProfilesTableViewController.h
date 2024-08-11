@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (nonatomic, copy) void (^didDismissOSCProfilesTVC)(void);
+@property (nonatomic, copy) void (^needToUpdateOscLayoutTVC)(void);
 @property (nonatomic, assign) NSMutableArray *currentOSCButtonLayers;
 
 @end

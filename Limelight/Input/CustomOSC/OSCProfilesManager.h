@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 + (OSCProfilesManager *) sharedManager;
++ (void) setOnScreenKeyViewsDict:(NSMutableDictionary* )dict;
 
 #pragma mark - Getters
 /**
@@ -50,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void) saveProfileWithName:(NSString*)name andButtonLayers:(NSMutableArray *)buttonLayers;
 
-- (bool) updateSelectedProfileSucceedWithButtonLayers:(NSMutableArray *)buttonLayers;
+- (bool) updateSelectedProfile:(NSMutableArray *) oscButtonLayers;
 /**
  * Delete current selected profile.
  */
