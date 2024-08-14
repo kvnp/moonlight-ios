@@ -385,6 +385,18 @@
         }
       }
     },
+    "bMH-Yb-sb6.normalTitle" : {
+      "comment" : "Class = \"UIButton\"; normalTitle = \"+\"; ObjectID = \"bMH-Yb-sb6\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "+"
+          }
+        }
+      }
+    },
     "byH-Qz-Nbw.segmentTitles[0]" : {
       "comment" : "Class = \"UISegmentedControl\"; byH-Qz-Nbw.segmentTitles[0] = \"No\"; ObjectID = \"byH-Qz-Nbw\";",
       "extractionState" : "extracted_with_value",

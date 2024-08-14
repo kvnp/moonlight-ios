@@ -669,7 +669,7 @@ ICAgICAgICAgICAgICA
                             <view alpha="0.75" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fZU-G0-fgM" userLabel="Toolbar Root View" customClass="ToolBarContainerView">
                                 <rect key="frame" x="0.0" y="24" width="834" height="50"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="70" translatesAutoresizingMaskIntoConstraints="NO" id="YLK-IE-ajS">
+                                    <stackView autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" spacing="70" translatesAutoresizingMaskIntoConstraints="NO" id="YLK-IE-ajS">
                                         <rect key="frame" x="152" y="0.0" width="530" height="50"/>
                                         <subviews>
                                             <button opaque="NO" tag="20" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qJs-n8-eV7" userLabel="Trash">
@@ -685,7 +685,7 @@ ICAgICAgICAgICAgICA
                                                     <action selector="trashCanTapped:" destination="xSZ-i2-Jts" eventType="touchUpInside" id="6s3-Wc-6us"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F7X-l4-cl3" userLabel="Undo">
+                                            <button autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F7X-l4-cl3" userLabel="Undo">
                                                 <rect key="frame" x="120" y="0.0" width="50" height="50"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="50" id="9OY-7z-dfc"/>
@@ -700,25 +700,27 @@ ICAgICAgICAgICAgICA
                                             </button>
                                             <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EPu-dl-Tv8">
                                                 <rect key="frame" x="240" y="0.0" width="50" height="50"/>
+                                                <subviews>
+                                                    <button autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uda-zt-xrG" userLabel="Save">
+                                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="50" id="TEB-dw-YGo"/>
+                                                            <constraint firstAttribute="height" constant="50" id="z50-CE-W0m"/>
+                                                        </constraints>
+                                                        <color key="tintColor" red="0.6705882353" green="0.61568627450000002" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                        <state key="normal" image="SquareAndArrowDown"/>
+                                                        <connections>
+                                                            <action selector="saveTapped:" destination="xSZ-i2-Jts" eventType="touchUpInside" id="bUV-Ja-Htd"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="50" id="G6V-W8-Ech"/>
                                                 </constraints>
                                             </stackView>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uda-zt-xrG" userLabel="Save">
-                                                <rect key="frame" x="360" y="0.0" width="50" height="50"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="50" id="TEB-dw-YGo"/>
-                                                    <constraint firstAttribute="height" constant="50" id="z50-CE-W0m"/>
-                                                </constraints>
-                                                <color key="tintColor" red="0.6705882353" green="0.61568627450000002" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                <state key="normal" image="SquareAndArrowDown"/>
-                                                <connections>
-                                                    <action selector="saveTapped:" destination="xSZ-i2-Jts" eventType="touchUpInside" id="bUV-Ja-Htd"/>
-                                                </connections>
-                                            </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1EQ-sU-0bc" userLabel="Load">
-                                                <rect key="frame" x="480" y="0.0" width="50" height="50"/>
+                                                <rect key="frame" x="360" y="0.0" width="50" height="50"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="50" id="0Up-sg-4RI"/>
                                                     <constraint firstAttribute="width" constant="50" id="EBU-5l-gEs"/>
@@ -728,6 +730,20 @@ ICAgICAgICAgICAgICA
                                                 <state key="normal" image="SquaresArrowUp"/>
                                                 <connections>
                                                     <action selector="loadTapped:" destination="xSZ-i2-Jts" eventType="touchUpInside" id="84k-1w-sd2"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bMH-Yb-sb6" userLabel="Add">
+                                                <rect key="frame" x="480" y="0.0" width="50" height="50"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="50" id="hGO-XD-eLY"/>
+                                                    <constraint firstAttribute="width" constant="50" id="rWU-3E-f4u"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="53"/>
+                                                <color key="tintColor" red="0.6705882353" green="0.61568627450000002" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <state key="normal" title="+"/>
+                                                <connections>
+                                                    <action selector="addTapped:" destination="xSZ-i2-Jts" eventType="touchUpInside" id="7dP-Lk-Mdj"/>
                                                 </connections>
                                             </button>
                                         </subviews>
@@ -797,6 +813,8 @@ ICAgICAgICAgICAgICA
                             <constraint firstItem="fZU-G0-fgM" firstAttribute="top" secondItem="O1f-cu-KVo" secondAttribute="bottom" id="Ppb-J1-lXg" userLabel="Toolbar Top Constraint iPad"/>
                         </constraints>
                     </view>
+                    <toolbarItems/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="chevronImageView" destination="iVZ-Fd-dY7" id="403-Nj-wRx"/>
                         <outlet property="chevronView" destination="hKp-ds-86I" id="Og9-aT-zNH"/>

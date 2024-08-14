@@ -22,7 +22,6 @@ const double NAV_BAR_HEIGHT = 50;
 
 @implementation OSCProfilesTableViewController {
     OSCProfilesManager *profilesManager;
-    LayoutOnScreenControlsViewController *parentLayoutOSCViewController;
 }
 
 @synthesize tableView;
@@ -139,9 +138,11 @@ const double NAV_BAR_HEIGHT = 50;
     //[self dismissViewControllerAnimated:YES completion:nil];
     //[selfparentLayoutOSCViewController]
     [self.tableView reloadData]; // table view will be refreshed by calling reloadData
-    if (self.didDismissOSCProfilesTVC) {    // tells the presenting view controller to lay out the on screen buttons according to the selected profile's instructions
-        self.didDismissOSCProfilesTVC();
+    
+    if (self.needToUpdateOscLayoutTVC) {    // tells the presenting view controller to lay out the on screen buttons according to the selected profile's instructions
+        self.needToUpdateOscLayoutTVC();
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"OscLayoutProfileSelctedInTableView" object:self]; // notify other view that oscLayoutManager is closing
 }
 
 - (IBAction) deleteTapped:(id)sender{// delete can be executed simply by calling this 2 methods.

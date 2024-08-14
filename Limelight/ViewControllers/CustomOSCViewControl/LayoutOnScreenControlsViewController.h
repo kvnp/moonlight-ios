@@ -11,6 +11,7 @@
 #import "ToolBarContainerView.h"
 #import "OSCProfilesManager.h"
 #import "OSCProfilesTableViewController.h"
+#import "Moonlight-Swift.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,8 +20,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface LayoutOnScreenControlsViewController : UIViewController 
 - (void)profileRefresh;
+- (void)reloadOnScreenKeyboardButtons;
 
 @property LayoutOnScreenControls *layoutOSC;    // object that contains a view which contains the on screen controller buttons that allows the user to drag and positions each button on the screen using touch
+@property (nonatomic) NSMutableDictionary* onScreenKeyViewsDict;
+
 @property int OSCSegmentSelected;
 
 @property (weak, nonatomic) IBOutlet UIButton *trashCanButton;

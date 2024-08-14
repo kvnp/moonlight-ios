@@ -162,7 +162,10 @@
         }
         
         /* save the name, position, and visibility of button being touched in array in case user wants to undo the change later */
-        OnScreenButtonState *onScreenButtonState = [[OnScreenButtonState alloc] initWithButtonName:layerBeingDragged.name isKeyboardButton:NO isHidden:layerBeingDragged.isHidden andPosition:layerBeingDragged.position];
+        OnScreenButtonState *onScreenButtonState = [[OnScreenButtonState alloc] initWithButtonName:layerBeingDragged.name buttonType:GameControllerButton andPosition:layerBeingDragged.position];
+        // add hidden attr here
+        onScreenButtonState.isHidden = layerBeingDragged.isHidden;
+        
         [layoutChanges addObject:onScreenButtonState];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"OSCLayoutChanged" object:self]; // lets the view controller know whether to fade the undo button in or out depending on whether there are any further OSC layout changes the user is allowed to undo
         

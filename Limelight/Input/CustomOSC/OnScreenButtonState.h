@@ -20,12 +20,19 @@ NS_ASSUME_NONNULL_BEGIN
 @interface OnScreenButtonState : NSObject  <NSCoding, NSSecureCoding>
 
 @property NSString *name;
+@property NSString *alias;
 @property CGPoint position;
 @property (nonatomic, assign) BOOL isHidden;
-@property (nonatomic, assign) BOOL isKeyboardButton;
+@property (nonatomic, assign) uint8_t buttonType;
+@property (nonatomic, assign) NSTimeInterval timestamp;
 // @property (nonatomic, assign) BOOL hasValidPosition;
 
-- (id) initWithButtonName:(NSString*)name isKeyboardButton:(BOOL)isKeyboardButton isHidden:(BOOL)isHidden andPosition:(CGPoint)position;
+typedef NS_ENUM(NSInteger, OnScreenButtonType) {
+    GameControllerButton,
+    KeyboardButton
+};
+
+- (id) initWithButtonName:(NSString*)name buttonType:(uint8_t)buttonType andPosition:(CGPoint)position;
 
 + (BOOL) supportsSecureCoding;
 - (void) encodeWithCoder:(NSCoder*)encoder;

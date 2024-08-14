@@ -12,6 +12,7 @@
 #import "OnScreenControls.h"
 #import "OSCProfilesManager.h"
 #import "LocalizationHelper.h"
+#import "Moonlight-Swift.h"
 
 @interface LayoutOnScreenControlsViewController ()
 
@@ -34,14 +35,59 @@
 
 
 - (void) viewWillDisappear:(BOOL)animated{
+    OnScreenKeyView.editMode = false;
     [super viewWillDisappear:animated];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"OscLayoutCloseNotification" object:self];
 }
 
+- (void) reloadOnScreenKeyboardButtons {
+    /*
+    [self.onScreenKeyViewsDict enumerateKeysAndObjectsUsingBlock:^(id timeIntervalKey, id keyView, BOOL *stop) {
+        [keyView removeFromSuperview];
+    }];*/
+    
+    for (UIView *subview in self.view.subviews) {
+        // 检查子视图是否是特定类型的实例
+        if ([subview isKindOfClass:[OnScreenKeyView class]]) {
+            // 如果是，就添加到将要被移除的数组中
+            [subview removeFromSuperview];
+        }
+    }
+    
+    [self.onScreenKeyViewsDict removeAllObjects];
+    
+    NSLog(@"reload os Key here");
+    
+    // _activeCustomOscButtonPositionDict will be updated every time when the osc profile is reloaded
+    OSCProfile *oscProfile = [profilesManager getSelectedProfile]; //returns the currently selected OSCProfile
+    for (NSData *buttonStateEncoded in oscProfile.buttonStates) {
+        OnScreenButtonState* buttonState = [NSKeyedUnarchiver unarchivedObjectOfClass:[OnScreenButtonState class] fromData:buttonStateEncoded error:nil];
+        if(buttonState.buttonType == KeyboardButton){
+            OnScreenKeyView* keyView = [[OnScreenKeyView alloc] initWithKeyString:buttonState.name keyLabel:buttonState.alias]; //reconstruct keyView
+            keyView.translatesAutoresizingMaskIntoConstraints = NO; // weird but this is mandatory, or you will find no key views added to the right place
+            keyView.timestamp = buttonState.timestamp; // will be set as key in in the dict.
+            // Add the KeyView to the view controller's view
+            [self.view addSubview:keyView];
+            [keyView setKeyLocationWithXOffset:buttonState.position.x yOffset:buttonState.position.y];
+            
+            [self.onScreenKeyViewsDict setObject:keyView forKey:@(keyView.timestamp)];
+        }
+    }
+        
+    //////////////////
+    /*
+    [self.onScreenKeyViewsDict enumerateKeysAndObjectsUsingBlock:^(id timeIntervalKey, id keyView, BOOL *stop) {
+        [self.view addSubview:keyView];
+    }];*/
+    
+}
+
+
 - (void) viewDidLoad {
     [super viewDidLoad];
-    
     profilesManager = [OSCProfilesManager sharedManager];
+    self.onScreenKeyViewsDict = [[NSMutableDictionary alloc] init]; // will be revised to read persisted data , somewhere else
+    [OSCProfilesManager setOnScreenKeyViewsDict:self.onScreenKeyViewsDict];   // pass the keyboard button dict to profiles manager
 
     isToolbarHidden = NO;   // keeps track if the toolbar is hidden up above the screen so that we know whether to hide or show it when the user taps the toolbar's hide/show button
             
@@ -80,6 +126,14 @@
                                                  name:@"OscLayoutTableViewCloseNotification"
                                                object:nil];
     
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reloadOnScreenKeyboardButtons)
+                                                 name:@"OscLayoutProfileSelctedInTableView"   // This is a special notification for reloading the on screen keyboard buttons. which can't be executed by _oscProfilesTableViewController.needToUpdateOscLayoutTVC code block, and has to be triggered by a notification
+                                               object:nil];
+
+    
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(OSCLayoutChanged) name:@"OSCLayoutChanged" object:nil];    // used to notifiy this view controller that the user made a change to the OSC layout so that the VC can either fade in or out its 'Undo button' which will signify to the user whether there are any OSC layout changes to undo
     
     /* This will animate the toolbar with a subtle up and down motion intended to telegraph to the user that they can hide the toolbar if they wish*/
@@ -108,7 +162,10 @@
     [self profileRefresh];
 }
 
+
+
 - (void) viewDidAppear:(BOOL)animated {
+    OnScreenKeyView.editMode = true;
     [super viewWillAppear:animated];
     [self profileRefresh];
 }
@@ -224,10 +281,23 @@
     }
 }
 
+- (IBAction) addTapped:(id)sender{
+    OnScreenKeyView* keyView = [[OnScreenKeyView alloc] initWithKeyString:@"ALT" keyLabel:@"test"];
+    keyView.translatesAutoresizingMaskIntoConstraints = NO; // weird but this is mandatory, or you will find no key views added to the right place
+    
+    keyView.timestamp = CACurrentMediaTime(); // will be set as key in in the dict.
+    [self.onScreenKeyViewsDict setObject:keyView forKey:@(keyView.timestamp)];
+    // Add the KeyView to the view controller's view
+    [self.view addSubview:keyView];
+    [keyView setKeyLocationWithXOffset:50 yOffset:50];
+}
+
+
+
 /* show pop up notification that lets users choose to save the current OSC layout configuration as a profile they can load when they want. User can also choose to cancel out of this pop up */
 - (IBAction) saveTapped:(id)sender {
     
-    if([self->profilesManager updateSelectedProfileSucceedWithButtonLayers:self.layoutOSC.OSCButtonLayers]){
+    if([self->profilesManager updateSelectedProfile:self.layoutOSC.OSCButtonLayers]){
         UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [LocalizationHelper localizedStringForKey:@"Current profile updated successfully"] preferredStyle:UIAlertControllerStyleAlert];
         [savedAlertController addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Ok"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         }]];
@@ -298,17 +368,17 @@
     self->_oscProfilesTableViewController = [storyboard instantiateViewControllerWithIdentifier:@"OSCProfilesTableViewController"];
     
     //this part is just for registration, will not be immediately executed.
-    self->_oscProfilesTableViewController.didDismissOSCProfilesTVC = ^() {   // a block that will be called when the modally presented 'OSCProfilesTableViewController' VC is dismissed. By the time the 'OSCProfilesTableViewController' VC is dismissed the user would have potentially selected a different OSC profile with a different layout and they want to see this layout on this 'LayoutOnScreenControlsViewController.' This block of code will load the profile and then hide/show and move each OSC button to their appropriate position
+    self->_oscProfilesTableViewController.needToUpdateOscLayoutTVC = ^() {   // a block that will be called when the modally presented 'OSCProfilesTableViewController' VC is dismissed. By the time the 'OSCProfilesTableViewController' VC is dismissed the user would have potentially selected a different OSC profile with a different layout and they want to see this layout on this 'LayoutOnScreenControlsViewController.' This block of code will load the profile and then hide/show and move each OSC button to their appropriate position
         [self.layoutOSC updateControls];  // creates and saves a 'Default' OSC profile or loads the one the user selected on the previous screen
         [self addInnerAnalogSticksToOuterAnalogLayers];
         [self.layoutOSC.layoutChanges removeAllObjects];  // since a new OSC profile is being loaded, this will remove all previous layout changes made from the array
         [self OSCLayoutChanged];    // fades the 'Undo Button' out
         self->_oscProfilesTableViewController.currentOSCButtonLayers = self.layoutOSC.OSCButtonLayers; //pass updated OSCLayout to OSCProfileTableView again
+        //[self reloadOnScreenKeyboardButtons];
     };
     
     [self.oscProfilesTableViewController profileViewRefresh]; // execute this will make sure OSCLayout is updated from persisted profile, not any cache.
-
-    
+    [self reloadOnScreenKeyboardButtons];
 
     // [self presentViewController:vc animated:YES completion:nil];
 }
@@ -327,7 +397,7 @@
     
     _oscProfilesTableViewController = [storyboard instantiateViewControllerWithIdentifier:@"OSCProfilesTableViewController"] ;
     
-    _oscProfilesTableViewController.didDismissOSCProfilesTVC = ^() {   // a block that will be called when the modally presented 'OSCProfilesTableViewController' VC is dismissed. By the time the 'OSCProfilesTableViewController' VC is dismissed the user would have potentially selected a different OSC ofile with a different layout and they want to see this layout on this 'LayoutOnScreenControlsViewController.' This block of code will load the profile and then hide/show and move each OSC button to their appropriate position
+    _oscProfilesTableViewController.needToUpdateOscLayoutTVC = ^() {   // a block that will be called when the modally presented 'OSCProfilesTableViewController' VC is dismissed. By the time the 'OSCProfilesTableViewController' VC is dismissed the user would have potentially selected a different OSC ofile with a different layout and they want to see this layout on this 'LayoutOnScreenControlsViewController.' This block of code will load the profile and then hide/show and move each OSC button to their appropriate position
         [self.layoutOSC updateControls];  // creates and saves a 'Default' OSC profile or loads the one the user selected on the previous screen
         
         [self addInnerAnalogSticksToOuterAnalogLayers];
@@ -363,8 +433,9 @@
 }
 
 - (void) touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+
+    // -------- for OSC buttons
     [self.layoutOSC touchesMoved:touches withEvent:event];
-    
     if ([self.layoutOSC isLayer:self.layoutOSC.layerBeingDragged
                         hoveringOverButton:trashCanButton]) { // check if user is dragging around a button and hovering it over the trash can button
         trashCanButton.tintColor = [UIColor redColor];
@@ -372,11 +443,44 @@
     else {
         trashCanButton.tintColor = [UIColor colorWithRed:171.0/255.0 green:157.0/255.0 blue:255.0/255.0 alpha:1];
     }
+    
+    // -------- for keyboard Buttons
+    UITouch *touch = [touches anyObject]; // Get the first touch in the set
+    if([self touchWithinTashcanButton:touch]){
+        trashCanButton.tintColor = [UIColor redColor];
+    }
+    else trashCanButton.tintColor = [UIColor colorWithRed:171.0/255.0 green:157.0/255.0 blue:255.0/255.0 alpha:1];
+
+    
 }
 
+- (bool)touchWithinTashcanButton:(UITouch* )touch {
+    CGPoint locationInView = [touch locationInView:self.view];
+    
+    // Convert the location to the button's coordinate system
+    CGPoint locationInButton = [self.view convertPoint:locationInView toView:trashCanButton];
+    bool ret = CGRectContainsPoint(trashCanButton.bounds, locationInButton);
+    NSLog(@"within button: %d", ret);
+    // Check if the location is within the button's bounds
+    return ret;
+}
+
+
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    
+    // removing keyboard buttons objs
+    UITouch *touch = [touches anyObject]; // Get the first touch in the set
+    if([self touchWithinTashcanButton:touch]){
+        [self.onScreenKeyViewsDict[@(OnScreenKeyView.timestampOfButtonBeingDragged)] removeFromSuperview];
+        [self.onScreenKeyViewsDict removeObjectForKey:@(OnScreenKeyView.timestampOfButtonBeingDragged)];
+        OnScreenKeyView.timestampOfButtonBeingDragged = 0; //reset thie timestamp
+    }
+    
+    
+    //removing OSC buttons
     if (self.layoutOSC.layerBeingDragged != nil &&
         [self.layoutOSC isLayer:self.layoutOSC.layerBeingDragged hoveringOverButton:trashCanButton]) { // check if user wants to throw OSC button into the trash can
+        // here we're going to delete something
         
         self.layoutOSC.layerBeingDragged.hidden = YES;
         
@@ -394,8 +498,6 @@
         if ([self.layoutOSC.layerBeingDragged.name isEqualToString:@"rightStickBackground"]) {
             self.layoutOSC._rightStick.hidden = YES;
         }
-        
-        trashCanButton.tintColor = [UIColor colorWithRed:171.0/255.0 green:157.0/255.0 blue:255.0/255.0 alpha:1];
     }
     [self.layoutOSC touchesEnded:touches withEvent:event];
     
@@ -407,6 +509,9 @@
         }]];
         [self presentViewController:movedAlertController animated:YES completion:nil];
     }
+    
+    
+    trashCanButton.tintColor = [UIColor colorWithRed:171.0/255.0 green:157.0/255.0 blue:255.0/255.0 alpha:1];
 }
 
 @end
