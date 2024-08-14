@@ -45,10 +45,11 @@ static CGFloat screenWidthInPoints;
             if(lowestTouchPointYCoord < [touch locationInView:self.view].y) lowestTouchPointYCoord = [touch locationInView:self.view].y;
         }
         
-        if(_numberOfTouchesRequired == 2){
+        // this mechanism is deprecated.
+        /* if(_numberOfTouchesRequired == 2){
             NSArray *twoTouches = [[event allTouches] allObjects];
             _areVirtualControllerTaps = fabs([twoTouches[1] locationInView:self.view].x - [twoTouches[0] locationInView:self.view].x) > screenWidthInPoints/3;
-        }
+        } */
         
         _lowestTouchPointHeight = screenHeightInPoints - lowestTouchPointYCoord;
         if(_immediateTriggering){
@@ -67,17 +68,19 @@ static CGFloat screenWidthInPoints;
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     // [super touchesEnded:touches withEvent:event];
     if(_immediateTriggering) return;
-    if([[event allTouches] count] > _numberOfTouchesRequired) {
+    uint8_t allTouchesCount = [[event allTouches] count];
+    if(allTouchesCount > _numberOfTouchesRequired) {
         _gestureCaptured = false;
         self.state = UIGestureRecognizerStateFailed;
-    } 
-    else if(_gestureCaptured && [[event allTouches] count] == [touches count] && !_areVirtualControllerTaps){  //must exclude virtual controller taps here to prevent stucked button
+    }
+    else if(_gestureCaptured && allTouchesCount == [touches count] && !_areVirtualControllerTaps){  //must exclude virtual controller taps here to prevent stucked button, _areVirtualControllerTaps flag is set by onscreencontrols or anyother related classes.
         _gestureCaptured = false; //reset for next recognition
         if((CACurrentMediaTime() - _gestureCapturedTime) < _tapDownTimeThreshold){
             lowestTouchPointYCoord = 0.0; //reset for next recognition
             self.state = UIGestureRecognizerStateRecognized;
         }
     }
+    if (allTouchesCount == [touches count]) _areVirtualControllerTaps = false; // need to reset this flag anyway, when all fingers are lefting
 }
 
 @end

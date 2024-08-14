@@ -7,7 +7,6 @@
 //
 
 #import "RelativeTouchHandler.h"
-#import "CustomTapGestureRecognizer.h"
 #import "DataManager.h"
 
 #include <Limelight.h>
@@ -24,7 +23,6 @@ static const int REFERENCE_HEIGHT = 720;
     BOOL isDragging;
     NSTimer* dragTimer;
     NSUInteger peakTouchCount;
-    CustomTapGestureRecognizer* rightClickTapRecognizer;
     
 #if TARGET_OS_TV
     UIGestureRecognizer* remotePressRecognizer;
@@ -39,12 +37,12 @@ static const int REFERENCE_HEIGHT = 720;
     self->view = view;
     self->currentSettings = settings;
     // replace righclick recoginizing with my CustomTapGestureRecognizer for better experience, higher recoginizing rate.
-    rightClickTapRecognizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(mouseRightClick)];
-    rightClickTapRecognizer.numberOfTouchesRequired = 2;
-    rightClickTapRecognizer.tapDownTimeThreshold = RIGHTCLICK_TAP_DOWN_TIME_THRESHOLD_S; // tap down time in seconds.
-    rightClickTapRecognizer.delaysTouchesBegan = NO;
-    rightClickTapRecognizer.delaysTouchesEnded = NO;
-    [self->view addGestureRecognizer:rightClickTapRecognizer];
+    _mouseRightClickTapRecognizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(mouseRightClick)];
+    _mouseRightClickTapRecognizer.numberOfTouchesRequired = 2;
+    _mouseRightClickTapRecognizer.tapDownTimeThreshold = RIGHTCLICK_TAP_DOWN_TIME_THRESHOLD_S; // tap down time in seconds.
+    _mouseRightClickTapRecognizer.delaysTouchesBegan = NO;
+    _mouseRightClickTapRecognizer.delaysTouchesEnded = NO;
+    [self->view addGestureRecognizer:_mouseRightClickTapRecognizer];
 
     
     
@@ -134,7 +132,7 @@ static const int REFERENCE_HEIGHT = 720;
         CGPoint secondLocation = [[[[event allTouches] allObjects] objectAtIndex:1] locationInView:view];
         
         CGPoint avgLocation = CGPointMake((firstLocation.x + secondLocation.x) / 2, (firstLocation.y + secondLocation.y) / 2);
-        if ((CACurrentMediaTime() - rightClickTapRecognizer.gestureCapturedTime > RIGHTCLICK_TAP_DOWN_TIME_THRESHOLD_S) && touchLocation.y != avgLocation.y) { //prevent sending scrollevent while right click gesture is being recognized. The time threshold is only 150ms, resulting in a barely noticeable delay before the scroll event is activated.
+        if ((CACurrentMediaTime() - _mouseRightClickTapRecognizer.gestureCapturedTime > RIGHTCLICK_TAP_DOWN_TIME_THRESHOLD_S) && touchLocation.y != avgLocation.y) { //prevent sending scrollevent while right click gesture is being recognized. The time threshold is only 150ms, resulting in a barely noticeable delay before the scroll event is activated.
             LiSendHighResScrollEvent((avgLocation.y - touchLocation.y) * 10);
         }
 

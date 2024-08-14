@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ControllerSupport.h"
+#import "CustomTapGestureRecognizer.h"
 #import "OSCProfile.h"
 
 @class ControllerSupport;
@@ -31,6 +32,8 @@ typedef NS_ENUM(NSInteger, OnScreenControlsLevel) {
     OnScreenControlsLevelAutoGCExtendedGamepadWithStickButtons
 };
 
+
+@property (nonatomic, assign) CustomTapGestureRecognizer* mouseRightClickTapRecognizer; // this object will be passed to onscreencontrols class for areVirtualControllerTaps flag setting
 @property CALayer* _aButton;
 @property CALayer* _bButton;
 @property CALayer* _xButton;
