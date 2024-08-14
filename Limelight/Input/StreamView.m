@@ -124,6 +124,12 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     }
     
     onScreenControls = [[OnScreenControls alloc] initWithView:self controllerSup:controllerSupport streamConfig:streamConfig];
+    // here we pass the tap recognizer to the onscreencontrols obj
+    if (settings.touchMode.intValue == RELATIVE_TOUCH){
+        RelativeTouchHandler* relativeTouchHandler = (RelativeTouchHandler*) touchHandler;
+        onScreenControls.mouseRightClickTapRecognizer = relativeTouchHandler.mouseRightClickTapRecognizer;
+    }
+    
     OnScreenControlsLevel level = (OnScreenControlsLevel)[settings.onscreenControls integerValue];
     if (settings.touchMode.intValue != RELATIVE_TOUCH && settings.touchMode.intValue != REGULAR_NATIVE_TOUCH ) {
         Log(LOG_I, @"On-screen controls disabled in non-relative touch mode");

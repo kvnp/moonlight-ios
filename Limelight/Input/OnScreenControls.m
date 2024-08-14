@@ -1037,6 +1037,8 @@ static float L3_Y;
         }
     }
     if (updated) {
+        _mouseRightClickTapRecognizer.areVirtualControllerTaps = true; //inform the tap recognizer that this will be a controller tap.
+        
         [_controllerSupport updateFinished:_controller];
     }
     return updated || stickTouch;
