@@ -9,7 +9,7 @@
 #import "LayoutOnScreenControlsViewController.h"
 #import "OSCProfilesTableViewController.h"
 #import "OnScreenButtonState.h"
-#import "OnScreenControls.h"
+//#import "OnScreenControls.h"
 #import "OSCProfilesManager.h"
 #import "LocalizationHelper.h"
 #import "Moonlight-Swift.h"

@@ -8,6 +8,7 @@
 
 #import "OnScreenControls.h"
 #import "StreamView.h"
+#import "CustomTapGestureRecognizer.h"
 #import "Controller.h"
 #include "Limelight.h"
 #import "OnScreenButtonState.h"
@@ -128,6 +129,7 @@ static float L3_Y;
 
 - (id) initWithView:(UIView*)view controllerSup:(ControllerSupport*)controllerSupport streamConfig:(StreamConfiguration*)streamConfig {
     self = [self init];
+    self.isLayingOut = false; // set false by default (play mode instead of layout mode)
     _view = view;
     
     profilesManager = [OSCProfilesManager sharedManager];
@@ -1037,11 +1039,23 @@ static float L3_Y;
         }
     }
     if (updated) {
-        _mouseRightClickTapRecognizer.areVirtualControllerTaps = true; //inform the tap recognizer that this will be a controller tap.
-        
         [_controllerSupport updateFinished:_controller];
     }
-    return updated || stickTouch;
+    
+    bool oscTouched = updated || stickTouch;
+    if(oscTouched){
+        StreamView *streamView = (StreamView* )self->_view;
+        for (UIGestureRecognizer *gesture in _view.gestureRecognizers) {
+            if ([gesture isKindOfClass:[CustomTapGestureRecognizer class]]) {
+                // This is a CustomTapGestureRecognizer
+                CustomTapGestureRecognizer *tapGesture = (CustomTapGestureRecognizer *)gesture;
+                tapGesture.areOnScreenButtonTaps = true;
+                // Perform actions with tapGesture
+            }
+        }
+    }
+    
+    return oscTouched;
 }
 
 - (BOOL)handleTouchUpEvent:touches {

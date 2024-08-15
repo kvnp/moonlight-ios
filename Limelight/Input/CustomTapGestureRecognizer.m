@@ -32,7 +32,7 @@ static CGFloat screenWidthInPoints;
     _immediateTriggering = false;
     _tapDownTimeThreshold = 0.3;
     _gestureCaptured = false;
-    _areVirtualControllerTaps = false;
+    _areOnScreenButtonTaps = false;
     return self;
 }
 
@@ -73,14 +73,14 @@ static CGFloat screenWidthInPoints;
         _gestureCaptured = false;
         self.state = UIGestureRecognizerStateFailed;
     }
-    else if(_gestureCaptured && allTouchesCount == [touches count] && !_areVirtualControllerTaps){  //must exclude virtual controller taps here to prevent stucked button, _areVirtualControllerTaps flag is set by onscreencontrols or anyother related classes.
+    else if(_gestureCaptured && allTouchesCount == [touches count] && !_areOnScreenButtonTaps){  //must exclude virtual controller taps here to prevent stucked button, _areVirtualControllerTaps flag is set by onscreencontrols or anyother related classes.
         _gestureCaptured = false; //reset for next recognition
         if((CACurrentMediaTime() - _gestureCapturedTime) < _tapDownTimeThreshold){
             lowestTouchPointYCoord = 0.0; //reset for next recognition
             self.state = UIGestureRecognizerStateRecognized;
         }
     }
-    if (allTouchesCount == [touches count]) _areVirtualControllerTaps = false; // need to reset this flag anyway, when all fingers are lefting
+    if (allTouchesCount == [touches count]) _areOnScreenButtonTaps = false; // need to reset this flag anyway, when all fingers are lefting
 }
 
 @end

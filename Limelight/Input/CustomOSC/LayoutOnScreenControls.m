@@ -31,6 +31,7 @@
     _view.multipleTouchEnabled = false;
   
     self = [super initWithView:view controllerSup:controllerSupport streamConfig:streamConfig];
+    self.isLayingOut = true; // make sure the super class have a flag to tell it's currently laying out the OSCs, intead play mode.
     self._level = oscLevel;
 
     layoutChanges = [[NSMutableArray alloc] init];  // will contain OSC button layout changes the user has made for this profile

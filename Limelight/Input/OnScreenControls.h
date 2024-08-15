@@ -33,7 +33,8 @@ typedef NS_ENUM(NSInteger, OnScreenControlsLevel) {
 };
 
 
-@property (nonatomic, assign) CustomTapGestureRecognizer* mouseRightClickTapRecognizer; // this object will be passed to onscreencontrols class for areVirtualControllerTaps flag setting
+// @property (nonatomic, assign) CustomTapGestureRecognizer* mouseRightClickTapRecognizer; // this object will be passed to onscreencontrols class for areVirtualControllerTaps flag setting
+@property (nonatomic, assign) bool isLayingOut;
 @property CALayer* _aButton;
 @property CALayer* _bButton;
 @property CALayer* _xButton;

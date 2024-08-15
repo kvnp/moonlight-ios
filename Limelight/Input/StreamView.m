@@ -124,11 +124,12 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     }
     
     onScreenControls = [[OnScreenControls alloc] initWithView:self controllerSup:controllerSupport streamConfig:streamConfig];
+    /*
     // here we pass the tap recognizer to the onscreencontrols obj
     if (settings.touchMode.intValue == RELATIVE_TOUCH){
         RelativeTouchHandler* relativeTouchHandler = (RelativeTouchHandler*) touchHandler;
         onScreenControls.mouseRightClickTapRecognizer = relativeTouchHandler.mouseRightClickTapRecognizer;
-    }
+    } */
     
     OnScreenControlsLevel level = (OnScreenControlsLevel)[settings.onscreenControls integerValue];
     if (settings.touchMode.intValue != RELATIVE_TOUCH && settings.touchMode.intValue != REGULAR_NATIVE_TOUCH ) {
@@ -301,11 +302,14 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 #endif
 }
 
+- (bool) isOscEnabled{
+    return (settings.touchMode.intValue == RELATIVE_TOUCH || settings.touchMode.intValue == REGULAR_NATIVE_TOUCH) && settings.onscreenControls.intValue != OnScreenControlsLevelOff;
+}
+
 - (void) reloadOnScreenControlsRealtimeWith:(ControllerSupport*)controllerSupport
                          andConfig:(StreamConfiguration*)streamConfig {
     [self reloadOnScreenControlsWith:controllerSupport andConfig:streamConfig];
-    bool oscEnabled = (settings.touchMode.intValue == RELATIVE_TOUCH || settings.touchMode.intValue == REGULAR_NATIVE_TOUCH) && settings.onscreenControls.intValue != OnScreenControlsLevelOff;
-    if(oscEnabled) [self showOnScreenControls];
+    if([self isOscEnabled]) [self showOnScreenControls];
     else [self disableOnScreenControls];
 }
 
@@ -313,6 +317,14 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 - (void) reloadOnScreenControlsWith:(ControllerSupport*)controllerSupport
                          andConfig:(StreamConfiguration*)streamConfig {
     onScreenControls = [[OnScreenControls alloc] initWithView:self controllerSup:controllerSupport streamConfig:streamConfig];
+    
+    /*
+    // pass mouseRightClickTapRecognizer to onScreenControls obj here:
+    if([self isOscEnabled]){
+        
+        RelativeTouchHandler* relativeTouchHandler = (RelativeTouchHandler *)touchHandler;
+        onScreenControls.mouseRightClickTapRecognizer = relativeTouchHandler.mouseRightClickTapRecognizer;
+    } */
     [onScreenControls setLevel:(OnScreenControlsLevel)settings.onscreenControls.intValue];
 }
 

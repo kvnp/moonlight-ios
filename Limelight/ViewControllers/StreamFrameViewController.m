@@ -63,7 +63,7 @@
 
 
 - (void)configOscLayoutTool{
-    [self.view removeGestureRecognizer:_oscLayoutTapRecoginizer];
+    [self->_streamView removeGestureRecognizer:_oscLayoutTapRecoginizer];
     if((_settings.touchMode.intValue == RELATIVE_TOUCH || _settings.touchMode.intValue == REGULAR_NATIVE_TOUCH) && _settings.onscreenControls.intValue == OnScreenControlsLevelCustom){
         _oscLayoutTapRecoginizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(layoutOSC)];
         _oscLayoutTapRecoginizer.numberOfTouchesRequired = 4; //tap 4 fingers to invoke OSC rebase
@@ -71,7 +71,7 @@
         _oscLayoutTapRecoginizer.delaysTouchesBegan = NO;
         _oscLayoutTapRecoginizer.delaysTouchesEnded = NO;
         
-        [self.view addGestureRecognizer:_oscLayoutTapRecoginizer];
+        [self->_streamView addGestureRecognizer:_oscLayoutTapRecoginizer]; // all gesture recognizers created in this view controller will be added to the streamview instead of self.view
         /* sets a reference to the correct 'LayoutOnScreenControlsViewController' depending on whether the user is on an iPhone or iPad */
         _layoutOnScreenControlsVC = [[LayoutOnScreenControlsViewController alloc] init];
         BOOL isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
@@ -94,24 +94,24 @@
     [self presentViewController:cmdManViewController animated:YES completion:nil];
 }
 
-- (void)configSwipeGestures{
-    [self.view removeGestureRecognizer:_slideToSettingsRecognizer];
+- (void)configGestures{
+    [self->_streamView removeGestureRecognizer:_slideToSettingsRecognizer];
     _slideToSettingsRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(edgeSwiped)];
     _slideToSettingsRecognizer.edges = _settings.slideToSettingsScreenEdge.intValue;
     _slideToSettingsRecognizer.normalizedThresholdDistance = _settings.slideToSettingsDistance.floatValue;
     _slideToSettingsRecognizer.delaysTouchesBegan = NO;
     _slideToSettingsRecognizer.delaysTouchesEnded = NO;
-    [self.view addGestureRecognizer:_slideToSettingsRecognizer];
+    [self->_streamView addGestureRecognizer:_slideToSettingsRecognizer];
     
     
-    [self.view removeGestureRecognizer:_slideToCmdToolRecognizer];
+    [self->_streamView removeGestureRecognizer:_slideToCmdToolRecognizer];
     _slideToCmdToolRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(presentCommandManagerViewController)];
     if(_settings.slideToSettingsScreenEdge.intValue == UIRectEdgeLeft) _slideToCmdToolRecognizer.edges = UIRectEdgeRight;
     else _slideToCmdToolRecognizer.edges = UIRectEdgeLeft;  // _commandManager triggered by sliding from another side.
     _slideToCmdToolRecognizer.normalizedThresholdDistance = _settings.slideToSettingsDistance.floatValue;
     _slideToCmdToolRecognizer.delaysTouchesBegan = NO;
     _slideToCmdToolRecognizer.delaysTouchesEnded = NO;
-    [self.view addGestureRecognizer:_slideToCmdToolRecognizer];
+    [self->_streamView addGestureRecognizer:_slideToCmdToolRecognizer];
 }
 
 - (void)configZoomGesture{
@@ -140,7 +140,7 @@
     //[self.view removeGestureRecognizer:]
     _settings = [[[DataManager alloc] init] getSettings];  //StreamFrameViewController retrieve the settings here.
     [self configOscLayoutTool];
-    [self configSwipeGestures];
+    [self configGestures];
     [self configZoomGesture];
     [self->_streamView disableOnScreenControls]; //don't know why but this must be called outside the streamview class, just put it here. execute in streamview class cause hang
     [self.mainFrameViewcontroller reloadStreamConfig]; // reload streamconfig
@@ -269,7 +269,7 @@
     [self.view addGestureRecognizer:_playPauseTapGestureRecognizer];
 
 #else
-    [self configSwipeGestures]; // swipe & exit gesture configured here
+    [self configGestures]; // swipe & exit gesture configured here
     [self configOscLayoutTool]; //_oscLayoutTapRecoginizer will be added or removed to the view here
 #endif
     

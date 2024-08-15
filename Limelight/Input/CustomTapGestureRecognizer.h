@@ -18,7 +18,8 @@
 @property (nonatomic, assign) uint8_t numberOfTouchesRequired;
 @property (nonatomic, assign) bool immediateTriggering; // if enabled,  trigger the signal on touchesBegan stage.
 @property (nonatomic, assign) double tapDownTimeThreshold; // tap down threshold in seconds.
-@property (nonatomic, assign) bool areVirtualControllerTaps; // will be set by the onscreencontrol class
+@property (nonatomic, assign) bool areOnScreenButtonTaps; // will be set by the onscreencontrol or other related class
+//@property (nonatomic, assign) bool haveOnScreenButtonsOnStreamview;
 @property (nonatomic, readonly) CGFloat lowestTouchPointHeight;
 @property (nonatomic, readonly) bool gestureCaptured;
 @property (nonatomic, readonly) NSTimeInterval gestureCapturedTime;
