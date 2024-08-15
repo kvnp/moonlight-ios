@@ -15,6 +15,7 @@
 
 static const int REFERENCE_WIDTH = 1280;
 static const int REFERENCE_HEIGHT = 720;
+//static CustomTapGestureRecognizer* mouseRightClickTapRecognizer;
 
 @implementation RelativeTouchHandler {
     TemporarySettings* currentSettings;
@@ -30,21 +31,14 @@ static const int REFERENCE_HEIGHT = 720;
 #endif
     
     UIView* view;
+    CustomTapGestureRecognizer* mouseRightClickTapRecognizer;
 }
 
 - (id)initWithView:(StreamView*)view andSettings:(TemporarySettings*)settings {
     self = [self init];
     self->view = view;
     self->currentSettings = settings;
-    // replace righclick recoginizing with my CustomTapGestureRecognizer for better experience, higher recoginizing rate.
-    _mouseRightClickTapRecognizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(mouseRightClick)];
-    _mouseRightClickTapRecognizer.numberOfTouchesRequired = 2;
-    _mouseRightClickTapRecognizer.tapDownTimeThreshold = RIGHTCLICK_TAP_DOWN_TIME_THRESHOLD_S; // tap down time in seconds.
-    _mouseRightClickTapRecognizer.delaysTouchesBegan = NO;
-    _mouseRightClickTapRecognizer.delaysTouchesEnded = NO;
-    [self->view addGestureRecognizer:_mouseRightClickTapRecognizer];
 
-    
     
 #if TARGET_OS_TV
     remotePressRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(remoteButtonPressed:)];
@@ -59,6 +53,20 @@ static const int REFERENCE_HEIGHT = 720;
     
     return self;
 }
+
+// rightClickTapRec must be created from relativeTouchHandler,since there's a attr must be accessed directly from recognizer, and it's also a relative touch specific recognizer, having a right click selector in this touch handler class.
+- (CustomTapGestureRecognizer* )getMouseRightClickTapRecognizer{
+    // replace righclick recoginizing with my CustomTapGestureRecognizer for better experience, higher recoginizing rate.
+    mouseRightClickTapRecognizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(mouseRightClick)];
+    mouseRightClickTapRecognizer.numberOfTouchesRequired = 2;
+    mouseRightClickTapRecognizer.tapDownTimeThreshold = RIGHTCLICK_TAP_DOWN_TIME_THRESHOLD_S; // tap down time in seconds.
+    mouseRightClickTapRecognizer.delaysTouchesBegan = NO;
+    mouseRightClickTapRecognizer.delaysTouchesEnded = NO;
+    // [self->view addGestureRecognizer:mouseRightClickTapRecognizer]; //this recognizer will be added & removed by streamframeviewcontroller, instead of here by the touchHouandler.
+    return mouseRightClickTapRecognizer; // make sure callers outside the class get the same recognizer as the one created within the current class.
+}
+
+
 
 - (void)mouseRightClick {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
@@ -132,7 +140,7 @@ static const int REFERENCE_HEIGHT = 720;
         CGPoint secondLocation = [[[[event allTouches] allObjects] objectAtIndex:1] locationInView:view];
         
         CGPoint avgLocation = CGPointMake((firstLocation.x + secondLocation.x) / 2, (firstLocation.y + secondLocation.y) / 2);
-        if ((CACurrentMediaTime() - _mouseRightClickTapRecognizer.gestureCapturedTime > RIGHTCLICK_TAP_DOWN_TIME_THRESHOLD_S) && touchLocation.y != avgLocation.y) { //prevent sending scrollevent while right click gesture is being recognized. The time threshold is only 150ms, resulting in a barely noticeable delay before the scroll event is activated.
+        if ((CACurrentMediaTime() - mouseRightClickTapRecognizer.gestureCapturedTime > RIGHTCLICK_TAP_DOWN_TIME_THRESHOLD_S) && touchLocation.y != avgLocation.y) { //prevent sending scrollevent while right click gesture is being recognized. The time threshold is only 150ms, resulting in a barely noticeable delay before the scroll event is activated.
             LiSendHighResScrollEvent((avgLocation.y - touchLocation.y) * 10);
         }
 

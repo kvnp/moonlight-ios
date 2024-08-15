@@ -2119,48 +2119,48 @@
         }
       }
     },
-    "Tap 4 fingers to change on-screen controller layout in stream view" : {
+    "Tap 5 fingers to change on-screen controller layout in stream view" : {
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在串流视图中轻按4根手指修改虚拟手柄布局"
+            "value" : "在串流视图中轻按5根手指修改虚拟手柄布局"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在串流视图中轻按4根手指修改虚拟手柄布局"
+            "value" : "在串流视图中轻按5根手指修改虚拟手柄布局"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在串流视图中轻按4根手指修改虚拟手柄布局"
+            "value" : "在串流视图中轻按5根手指修改虚拟手柄布局"
           }
         }
       }
     },
-    "Tap 4 Fingers to Change OSC Layout in Stream View" : {
+    "Tap 5 Fingers to Change OSC Layout in Stream View" : {
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在串流视图中轻按4根手指修改虚拟手柄布局"
+            "value" : "在串流视图中轻按5根手指修改虚拟手柄布局"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在串流视图中轻按4根手指修改虚拟手柄布局"
+            "value" : "在串流视图中轻按5根手指修改虚拟手柄布局"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在串流视图中轻按4根手指修改虚拟手柄布局"
+            "value" : "在串流视图中轻按5根手指修改虚拟手柄布局"
           }
         }
       }

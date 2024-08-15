@@ -39,6 +39,8 @@
 - (uint16_t)getRotationFromAzimuthAngle:(float)azimuthAngle;
 
 - (OnScreenControlsLevel) getCurrentOscState;
+- (UIResponder* )getTouchHandler;
+- (OnScreenControls* )getOnScreenControlsObj;
 
 #if !TARGET_OS_TV
 - (void) updateCursorLocation:(CGPoint)location isMouse:(BOOL)isMouse;

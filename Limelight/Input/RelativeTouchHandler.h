@@ -14,10 +14,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RelativeTouchHandler : UIResponder
-@property (nonatomic, readonly) CustomTapGestureRecognizer* mouseRightClickTapRecognizer; // this object will be passed to onscreencontrol class for areVirtualControllerTaps flag setting
 
 
 - (id)initWithView:(StreamView*)view andSettings:(TemporarySettings*)settings;
+- (CustomTapGestureRecognizer* )getMouseRightClickTapRecognizer; // rightClickTapRec must be created from relativeTouchHandler,since there's a attr must be accessed directly from recognizer, and it's also a relative touch specific recognizer.
 
 @end
 

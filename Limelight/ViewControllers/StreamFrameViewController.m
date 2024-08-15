@@ -15,7 +15,9 @@
 #import "CustomEdgeSwipeGestureRecognizer.h"
 #import "CustomTapGestureRecognizer.h"
 #import "LocalizationHelper.h"
+#import "RelativeTouchHandler.h"
 #import "Moonlight-Swift.h"
+#import "SettingsViewController.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -56,22 +58,24 @@
 #if !TARGET_OS_TV
     CustomEdgeSwipeGestureRecognizer *_slideToSettingsRecognizer;
     CustomEdgeSwipeGestureRecognizer *_slideToCmdToolRecognizer;
-    CustomTapGestureRecognizer *_oscLayoutTapRecoginizer;
+    CustomTapGestureRecognizer *_oscLayoutTapRecognizer;
+    CustomTapGestureRecognizer *_mouseRightClickRecognizer;
+    
     LayoutOnScreenControlsViewController *_layoutOnScreenControlsVC;
 #endif
 }
 
 
 - (void)configOscLayoutTool{
-    [self.view removeGestureRecognizer:_oscLayoutTapRecoginizer];
+    [self.view removeGestureRecognizer:_oscLayoutTapRecognizer];
     if((_settings.touchMode.intValue == RELATIVE_TOUCH || _settings.touchMode.intValue == REGULAR_NATIVE_TOUCH) && _settings.onscreenControls.intValue == OnScreenControlsLevelCustom){
-        _oscLayoutTapRecoginizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(layoutOSC)];
-        _oscLayoutTapRecoginizer.numberOfTouchesRequired = 4; //tap 4 fingers to invoke OSC rebase
-        _oscLayoutTapRecoginizer.tapDownTimeThreshold = 1;
-        _oscLayoutTapRecoginizer.delaysTouchesBegan = NO;
-        _oscLayoutTapRecoginizer.delaysTouchesEnded = NO;
+        _oscLayoutTapRecognizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(layoutOSC)];
+        _oscLayoutTapRecognizer.numberOfTouchesRequired = OSC_TOOL_FINGERS; //Tap 5 fingers to invoke OSC rebase
+        _oscLayoutTapRecognizer.tapDownTimeThreshold = 1;
+        _oscLayoutTapRecognizer.delaysTouchesBegan = NO;
+        _oscLayoutTapRecognizer.delaysTouchesEnded = NO;
         
-        [self.view addGestureRecognizer:_oscLayoutTapRecoginizer];
+        [self.view addGestureRecognizer:_oscLayoutTapRecognizer];
         /* sets a reference to the correct 'LayoutOnScreenControlsViewController' depending on whether the user is on an iPhone or iPad */
         _layoutOnScreenControlsVC = [[LayoutOnScreenControlsViewController alloc] init];
         BOOL isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
@@ -92,6 +96,22 @@
 - (void)presentCommandManagerViewController{
     CommandManagerViewController* cmdManViewController = [[CommandManagerViewController alloc] init];
     [self presentViewController:cmdManViewController animated:YES completion:nil];
+}
+
+- (void)configMouseRightClickGesture{
+    [self.view removeGestureRecognizer:_mouseRightClickRecognizer];// remove the recognizer first
+    OnScreenControls* onScreenControls = [_streamView getOnScreenControlsObj];// retrieve onScreenControls obj from sreamview
+    onScreenControls.mouseRightClickTapRecognizer = nil;
+    
+    if(_settings.touchMode.intValue == RELATIVE_TOUCH){
+        // retrieve mouse right click recognizer from streamview
+        RelativeTouchHandler* touchHandler = (RelativeTouchHandler* ) [_streamView getTouchHandler];
+        _mouseRightClickRecognizer = [touchHandler getMouseRightClickTapRecognizer];
+        onScreenControls.mouseRightClickTapRecognizer = _mouseRightClickRecognizer; // pass the recognizer to the onscreen controls obj.
+        // add the recognizer to the streamframe view.
+        [self.view addGestureRecognizer:_mouseRightClickRecognizer];
+    }
+    // reset this recognizer for streamview.
 }
 
 - (void)configSwipeGestures{
@@ -139,9 +159,11 @@
 - (void)reConfigStreamViewRealtime{
     //[self.view removeGestureRecognizer:]
     _settings = [[[DataManager alloc] init] getSettings];  //StreamFrameViewController retrieve the settings here.
+    /*
     [self configOscLayoutTool];
     [self configSwipeGestures];
-    [self configZoomGesture];
+    [self configMouseRightClickGesture]; // added in relative touch mode.
+    [self configZoomGesture]; */
     [self->_streamView disableOnScreenControls]; //don't know why but this must be called outside the streamview class, just put it here. execute in streamview class cause hang
     [self.mainFrameViewcontroller reloadStreamConfig]; // reload streamconfig
     _controllerSupport = [[ControllerSupport alloc] initWithConfig:self.streamConfig delegate:self]; // reload controllerSupport obj, this is mandatory for OSC reload,especially when the stream view is launched without OSC
@@ -155,6 +177,11 @@
                                                              selector:@selector(updateStatsOverlay)
                                                              userInfo:nil
                                                               repeats:_settings.statsOverlay];
+    // these must be congured in the last step:
+    [self configOscLayoutTool];
+    [self configSwipeGestures];
+    [self configMouseRightClickGesture]; // added in relative touch mode.
+    [self configZoomGesture];
 }
 
 
@@ -270,6 +297,7 @@
 
 #else
     [self configSwipeGestures]; // swipe & exit gesture configured here
+    [self configMouseRightClickGesture]; // added in relative touch mode.
     [self configOscLayoutTool]; //_oscLayoutTapRecoginizer will be added or removed to the view here
 #endif
     

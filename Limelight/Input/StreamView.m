@@ -79,6 +79,8 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     
     [self removeGestureRecognizer:keyboardToggleRecognizer]; // for reconfig streamview in realtime
     isInputingText = false;
+    
+    //keyboardToggleRecognizer is one of the only recognizers defined within the stream view class
     keyboardToggleRecognizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleKeyboard)];
     keyboardToggleRecognizer.numberOfTouchesRequired = settings.keyboardToggleFingers.intValue; //will be changed accordinly by touch modes.
     keyboardToggleRecognizer.tapDownTimeThreshold = 0.3; // tap down time threshold in seconds.
@@ -105,14 +107,14 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     switch (settings.touchMode.intValue) {
         case REGULAR_NATIVE_TOUCH:
             keyboardToggleRecognizer.immediateTriggering = false;
-            if(settings.onscreenControls.intValue == OnScreenControlsLevelCustom) keyboardToggleRecognizer.numberOfTouchesRequired = 3; //fixing keyboard taps to 3, in order to invoke OSC rebase in stream view by 4-finger tap.
+            //if(settings.onscreenControls.intValue == OnScreenControlsLevelCustom) keyboardToggleRecognizer.numberOfTouchesRequired = 3; //decprecated: fixing keyboard taps to 3, in order to invoke OSC rebase in stream view by 4-finger tap.
 
         case PURE_NATIVE_TOUCH:
             self->touchHandler = [[NativeTouchHandler alloc] initWithView:self andSettings:settings];break;
         case RELATIVE_TOUCH:
             self->touchHandler = [[RelativeTouchHandler alloc] initWithView:self andSettings:settings];
             keyboardToggleRecognizer.immediateTriggering = false;
-            if(settings.onscreenControls.intValue == OnScreenControlsLevelCustom) keyboardToggleRecognizer.numberOfTouchesRequired = 3; //fixing keyboard taps to 3, in order to invoke OSC rebase in stream view by 4-finger tap.
+            //if(settings.onscreenControls.intValue == OnScreenControlsLevelCustom) keyboardToggleRecognizer.numberOfTouchesRequired = 3; //deprecated: fixing keyboard taps to 3, in order to invoke OSC rebase in stream view by 4-finger tap.
             break;
         case ABSOLUTE_TOUCH:
             self->touchHandler = [[AbsoluteTouchHandler alloc] initWithView:self]; 
@@ -124,11 +126,6 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     }
     
     onScreenControls = [[OnScreenControls alloc] initWithView:self controllerSup:controllerSupport streamConfig:streamConfig];
-    // here we pass the tap recognizer to the onscreencontrols obj
-    if (settings.touchMode.intValue == RELATIVE_TOUCH){
-        RelativeTouchHandler* relativeTouchHandler = (RelativeTouchHandler*) touchHandler;
-        onScreenControls.mouseRightClickTapRecognizer = relativeTouchHandler.mouseRightClickTapRecognizer;
-    }
     
     OnScreenControlsLevel level = (OnScreenControlsLevel)[settings.onscreenControls integerValue];
     if (settings.touchMode.intValue != RELATIVE_TOUCH && settings.touchMode.intValue != REGULAR_NATIVE_TOUCH ) {
@@ -187,6 +184,15 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     [self becomeFirstResponder];
 }
 
+
+- (UIResponder* )getTouchHandler{
+    return self->touchHandler;
+}
+
+- (OnScreenControls* )getOnScreenControlsObj{
+    return self->onScreenControls;
+}
+
 // this method also deals with lifting streamview for local keyboard
 - (void)keyboardWillShow:(NSNotification *)notification{
     if(settings.liftStreamViewForKeyboard && !isInputingText){
@@ -204,6 +210,8 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     }
     // NSLog(@"keyboard will show");
 }
+
+
 
 // this method also deals with recovering streamview when local keyboard is turned off
 - (void)keyboardWillHide:(NSNotification *)notification{
