@@ -105,14 +105,14 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     switch (settings.touchMode.intValue) {
         case REGULAR_NATIVE_TOUCH:
             keyboardToggleRecognizer.immediateTriggering = false;
-            if(settings.onscreenControls.intValue == OnScreenControlsLevelCustom) keyboardToggleRecognizer.numberOfTouchesRequired = 3; //fixing keyboard taps to 3, in order to invoke OSC rebase in stream view by 4-finger tap.
+            // if(settings.onscreenControls.intValue == OnScreenControlsLevelCustom) keyboardToggleRecognizer.numberOfTouchesRequired = 3; //deprecated: fixing keyboard taps to 3, in order to invoke OSC rebase in stream view by 4-finger tap.
 
         case PURE_NATIVE_TOUCH:
             self->touchHandler = [[NativeTouchHandler alloc] initWithView:self andSettings:settings];break;
         case RELATIVE_TOUCH:
             self->touchHandler = [[RelativeTouchHandler alloc] initWithView:self andSettings:settings];
             keyboardToggleRecognizer.immediateTriggering = false;
-            if(settings.onscreenControls.intValue == OnScreenControlsLevelCustom) keyboardToggleRecognizer.numberOfTouchesRequired = 3; //fixing keyboard taps to 3, in order to invoke OSC rebase in stream view by 4-finger tap.
+            // if(settings.onscreenControls.intValue == OnScreenControlsLevelCustom) keyboardToggleRecognizer.numberOfTouchesRequired = 3; //deprecated: fixing keyboard taps to 3, in order to invoke OSC rebase in stream view by 4-finger tap.
             break;
         case ABSOLUTE_TOUCH:
             self->touchHandler = [[AbsoluteTouchHandler alloc] initWithView:self]; 
