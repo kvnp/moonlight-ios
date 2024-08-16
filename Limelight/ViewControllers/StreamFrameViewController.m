@@ -63,7 +63,6 @@
 
 
 - (void)configOscLayoutTool{
-    [self->_streamView removeGestureRecognizer:_oscLayoutTapRecoginizer];
     if((_settings.touchMode.intValue == RELATIVE_TOUCH || _settings.touchMode.intValue == REGULAR_NATIVE_TOUCH) && _settings.onscreenControls.intValue == OnScreenControlsLevelCustom){
         _oscLayoutTapRecoginizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(layoutOSC)];
         _oscLayoutTapRecoginizer.numberOfTouchesRequired = OSC_TOOL_FINGERS; //tap a predefined number of fingers to open osc layout tool
@@ -71,7 +70,7 @@
         _oscLayoutTapRecoginizer.delaysTouchesBegan = NO;
         _oscLayoutTapRecoginizer.delaysTouchesEnded = NO;
         
-        [self->_streamView addGestureRecognizer:_oscLayoutTapRecoginizer]; // all gesture recognizers created in this view controller will be added to the streamview instead of self.view
+        [self.view addGestureRecognizer:_oscLayoutTapRecoginizer]; //
         /* sets a reference to the correct 'LayoutOnScreenControlsViewController' depending on whether the user is on an iPhone or iPad */
         _layoutOnScreenControlsVC = [[LayoutOnScreenControlsViewController alloc] init];
         BOOL isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
@@ -94,28 +93,25 @@
     [self presentViewController:cmdManViewController animated:YES completion:nil];
 }
 
-- (void)configGestures{
-    [self->_streamView removeGestureRecognizer:_slideToSettingsRecognizer];
+- (void)configSwipeGestures{
     _slideToSettingsRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(edgeSwiped)];
     _slideToSettingsRecognizer.edges = _settings.slideToSettingsScreenEdge.intValue;
     _slideToSettingsRecognizer.normalizedThresholdDistance = _settings.slideToSettingsDistance.floatValue;
     _slideToSettingsRecognizer.delaysTouchesBegan = NO;
     _slideToSettingsRecognizer.delaysTouchesEnded = NO;
-    [self->_streamView addGestureRecognizer:_slideToSettingsRecognizer];
+    [self.view addGestureRecognizer:_slideToSettingsRecognizer];
     
     
-    [self->_streamView removeGestureRecognizer:_slideToCmdToolRecognizer];
     _slideToCmdToolRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(presentCommandManagerViewController)];
     if(_settings.slideToSettingsScreenEdge.intValue == UIRectEdgeLeft) _slideToCmdToolRecognizer.edges = UIRectEdgeRight;
     else _slideToCmdToolRecognizer.edges = UIRectEdgeLeft;  // _commandManager triggered by sliding from another side.
     _slideToCmdToolRecognizer.normalizedThresholdDistance = _settings.slideToSettingsDistance.floatValue;
     _slideToCmdToolRecognizer.delaysTouchesBegan = NO;
     _slideToCmdToolRecognizer.delaysTouchesEnded = NO;
-    [self->_streamView addGestureRecognizer:_slideToCmdToolRecognizer];
+    [self.view addGestureRecognizer:_slideToCmdToolRecognizer];
 }
 
 - (void)configZoomGesture{
-    [_scrollView removeFromSuperview];
     if (_settings.touchMode.intValue == ABSOLUTE_TOUCH) {
         _scrollView = [[UIScrollView alloc] initWithFrame:self.view.frame];
 #if !TARGET_OS_TV
@@ -130,20 +126,31 @@
         // Add StreamView inside a UIScrollView for absolute mode
         [_scrollView addSubview:_streamView];
         [self.view addSubview:_scrollView];
-        return;
     }
-    [self.view addSubview:_streamView];
+    else{
+        // Add streamView directly to self.view in other touch modes
+        [self.view addSubview:_streamView];
+    }
 }
 
 // key implementation of reconfiguring streamview after realtime setting menu is closed.
 - (void)reConfigStreamViewRealtime{
     //[self.view removeGestureRecognizer:]
+    //first, remove all gesture recognizers:
+    for (UIGestureRecognizer *recognizer in _streamView.gestureRecognizers) {
+        [_streamView removeGestureRecognizer:recognizer];
+    }
+    for (UIGestureRecognizer *recognizer in self.view.gestureRecognizers) {
+        [self.view removeGestureRecognizer:recognizer];
+    }
+    
     _settings = [[[DataManager alloc] init] getSettings];  //StreamFrameViewController retrieve the settings here.
     [self configOscLayoutTool];
-    [self configGestures];
+    [self configSwipeGestures];
     [self configZoomGesture];
     [self->_streamView disableOnScreenControls]; //don't know why but this must be called outside the streamview class, just put it here. execute in streamview class cause hang
     [self.mainFrameViewcontroller reloadStreamConfig]; // reload streamconfig
+    
     _controllerSupport = [[ControllerSupport alloc] initWithConfig:self.streamConfig delegate:self]; // reload controllerSupport obj, this is mandatory for OSC reload,especially when the stream view is launched without OSC
     [_streamView setupStreamView:_controllerSupport interactionDelegate:self config:self.streamConfig]; //reinitiate setupStreamView process.
     [self->_streamView reloadOnScreenControlsRealtimeWith:(ControllerSupport*)_controllerSupport
@@ -155,6 +162,9 @@
                                                              selector:@selector(updateStatsOverlay)
                                                              userInfo:nil
                                                               repeats:_settings.statsOverlay];
+    
+    NSLog(@"frameview gestures: %d", (uint32_t)[self.view.gestureRecognizers count]);
+    NSLog(@"streamview gestures: %d", (uint32_t)[_streamView.gestureRecognizers count]);
 }
 
 
@@ -248,7 +258,8 @@
     _inactivityTimer = nil;
     
     _streamView = [[StreamView alloc] initWithFrame:self.view.frame];
-    [_streamView setupStreamView:_controllerSupport interactionDelegate:self config:self.streamConfig];
+    //[_streamView setupStreamView:_controllerSupport interactionDelegate:self config:self.streamConfig];
+    [self reConfigStreamViewRealtime]; // call this method again to make sure all gestures are configured & added to the superview(self.view), including the gestures added from inside the streamview.
     
 #if TARGET_OS_TV
     if (!_menuTapGestureRecognizer || !_menuDoubleTapGestureRecognizer || !_playPauseTapGestureRecognizer) {
@@ -269,8 +280,8 @@
     [self.view addGestureRecognizer:_playPauseTapGestureRecognizer];
 
 #else
-    [self configGestures]; // swipe & exit gesture configured here
-    [self configOscLayoutTool]; //_oscLayoutTapRecoginizer will be added or removed to the view here
+    //[self configSwipeGestures]; // swipe & exit gesture configured here
+    //[self configOscLayoutTool]; //_oscLayoutTapRecoginizer will be added or removed to the view here
 #endif
     
     _tipLabel = [[UILabel alloc] init];
@@ -328,26 +339,6 @@
                                                object: nil];
 #endif
     
-    // Only enable scroll and zoom in absolute touch mode
-    if (_settings.touchMode.intValue == ABSOLUTE_TOUCH) {
-        _scrollView = [[UIScrollView alloc] initWithFrame:self.view.frame];
-#if !TARGET_OS_TV
-        [_scrollView.panGestureRecognizer setMinimumNumberOfTouches:2];
-        [_scrollView.panGestureRecognizer setMaximumNumberOfTouches:2]; // reduce competing with keyboardToggleRecognizer in StreamView.
-#endif
-        [_scrollView setShowsHorizontalScrollIndicator:NO];
-        [_scrollView setShowsVerticalScrollIndicator:NO];
-        [_scrollView setDelegate:self];
-        [_scrollView setMaximumZoomScale:10.0f];
-        
-        // Add StreamView inside a UIScrollView for absolute mode
-        [_scrollView addSubview:_streamView];
-        [self.view addSubview:_scrollView];
-    }
-    else {
-        // Add StreamView directly in relative mode
-        [self.view addSubview:_streamView];
-    }
     [self.view addSubview:_stageLabel];
     [self.view addSubview:_spinner];
     [self.view addSubview:_tipLabel];

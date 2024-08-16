@@ -1044,8 +1044,7 @@ static float L3_Y;
     
     bool oscTouched = updated || stickTouch;
     if(oscTouched){
-        StreamView *streamView = (StreamView* )self->_view;
-        for (UIGestureRecognizer *gesture in _view.gestureRecognizers) {
+        for (UIGestureRecognizer *gesture in _view.superview.gestureRecognizers) { // we'll iterate the superview(streamframe view, where all the custom gestures are added), instead the streamview, that the osc buttons are pressed
             if ([gesture isKindOfClass:[CustomTapGestureRecognizer class]]) {
                 // This is a CustomTapGestureRecognizer
                 CustomTapGestureRecognizer *tapGesture = (CustomTapGestureRecognizer *)gesture;

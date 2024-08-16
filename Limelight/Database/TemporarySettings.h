@@ -11,7 +11,7 @@
 #define REGULAR_NATIVE_TOUCH 1
 #define PURE_NATIVE_TOUCH 2
 #define ABSOLUTE_TOUCH 3
-#define OSC_TOOL_FINGERS 5
+#define OSC_TOOL_FINGERS 4
 
 
 @interface TemporarySettings : NSObject

@@ -483,7 +483,7 @@ BOOL isCustomResolution(CGSize res) {
 
 - (void)showCustomOSCTip {
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[LocalizationHelper localizedStringForKey:@"Rebase in Stream View"]
-                                                                             message:[LocalizationHelper localizedStringForKey:@"Tap 5 fingers to change on-screen controller layout in stream view"]
+                                                                             message:[LocalizationHelper localizedStringForKey:@"Tap %d fingers to change on-screen controller layout in stream view", OSC_TOOL_FINGERS]
                                                                       preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey: @"Got it!"]
                                                        style:UIAlertActionStyleDefault
@@ -518,7 +518,7 @@ BOOL isCustomResolution(CGSize res) {
         // [self.keyboardToggleFingerNumSlider setValue:3.0];
         // [self keyboardToggleFingerNumSliderMoved];
         [self keyboardToggleFingerNumSliderMoved]; // go to exclude 5 fingers
-        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap 5 Fingers to Change OSC Layout in Stream View"]];
+        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap %d Fingers to Change OSC Layout in Stream View", OSC_TOOL_FINGERS]];
         [self showCustomOSCTip];
         justEnteredSettingsViewDoNotOpenOscLayoutTool = false;
         //if (self.layoutOnScreenControlsVC.isBeingPresented == NO)
@@ -611,7 +611,7 @@ BOOL isCustomResolution(CGSize res) {
     if(customOscEnabled) {
         // [self.keyboardToggleFingerNumSlider setValue:3.0];
         // [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]];
-        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap 5 Fingers to Change OSC Layout in Stream View"]];
+        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap %d Fingers to Change OSC Layout in Stream View", OSC_TOOL_FINGERS]];
         [self keyboardToggleFingerNumSliderMoved]; // go exclude 5 fingers
         //if (self.layoutOnScreenControlsVC.isBeingPresented == NO)
     }
@@ -814,9 +814,9 @@ BOOL isCustomResolution(CGSize res) {
     
     CGFloat sliderValue = self.keyboardToggleFingerNumSlider.value;
     if(customOscEnabled){
-        // exclude 5 fingers when custom osc is enabled
-        if(sliderValue > OSC_TOOL_FINGERS - 1 && sliderValue < OSC_TOOL_FINGERS) [self.keyboardToggleFingerNumSlider setValue:4.0];
-        if(sliderValue >= OSC_TOOL_FINGERS && sliderValue < OSC_TOOL_FINGERS + 1) [self.keyboardToggleFingerNumSlider setValue:6.0];
+        // exclude OSC_TOOL_FINGERS when custom osc is enabled
+        if(sliderValue > OSC_TOOL_FINGERS - 1 && sliderValue < OSC_TOOL_FINGERS) [self.keyboardToggleFingerNumSlider setValue: OSC_TOOL_FINGERS - 1];
+        if(sliderValue >= OSC_TOOL_FINGERS && sliderValue < OSC_TOOL_FINGERS + 1) [self.keyboardToggleFingerNumSlider setValue: OSC_TOOL_FINGERS + 1];
     }
         
     sliderValue = self.keyboardToggleFingerNumSlider.value;

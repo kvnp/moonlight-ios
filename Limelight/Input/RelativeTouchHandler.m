@@ -42,7 +42,7 @@ static const int REFERENCE_HEIGHT = 720;
     _mouseRightClickTapRecognizer.tapDownTimeThreshold = RIGHTCLICK_TAP_DOWN_TIME_THRESHOLD_S; // tap down time in seconds.
     _mouseRightClickTapRecognizer.delaysTouchesBegan = NO;
     _mouseRightClickTapRecognizer.delaysTouchesEnded = NO;
-    [self->view addGestureRecognizer:_mouseRightClickTapRecognizer];
+    [self->view.superview addGestureRecognizer:_mouseRightClickTapRecognizer]; // add all additional gestures to the streamframeview instead of the streamview.
 
     
     

@@ -63,6 +63,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 - (void) setupStreamView:(ControllerSupport*)controllerSupport
      interactionDelegate:(id<UserInteractionDelegate>)interactionDelegate
                   config:(StreamConfiguration*)streamConfig {
+
     
     self->interactionDelegate = interactionDelegate;
     self->streamAspectRatio = (float)streamConfig.width / (float)streamConfig.height;
@@ -77,7 +78,6 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     [keyInputField setSpellCheckingType:UITextSpellCheckingTypeNo];
     [self addSubview:keyInputField];
     
-    [self removeGestureRecognizer:keyboardToggleRecognizer]; // for reconfig streamview in realtime
     isInputingText = false;
     keyboardToggleRecognizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleKeyboard)];
     keyboardToggleRecognizer.numberOfTouchesRequired = settings.keyboardToggleFingers.intValue; //will be changed accordinly by touch modes.
@@ -93,7 +93,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
-    [self addGestureRecognizer:keyboardToggleRecognizer];
+    [self.superview addGestureRecognizer:keyboardToggleRecognizer];
     
 #if TARGET_OS_TV
     // tvOS requires RelativeTouchHandler to manage Apple Remote input
@@ -151,14 +151,12 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     if (@available(iOS 13.4, *)) {
         [self addInteraction:[[UIPointerInteraction alloc] initWithDelegate:self]];
         
-        [self removeGestureRecognizer:discreteMouseWheelRecognizer]; // for realtime reconfig stream view
         UIPanGestureRecognizer *discreteMouseWheelRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(mouseWheelMovedDiscrete:)];
         discreteMouseWheelRecognizer.maximumNumberOfTouches = 0;
         discreteMouseWheelRecognizer.allowedScrollTypesMask = UIScrollTypeMaskDiscrete;
         discreteMouseWheelRecognizer.allowedTouchTypes = @[@(UITouchTypeIndirectPointer)];
         [self addGestureRecognizer:discreteMouseWheelRecognizer];
         
-        [self removeGestureRecognizer:continuousMouseWheelRecognizer]; // for realtime reconfig stream view
         UIPanGestureRecognizer *continuousMouseWheelRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(mouseWheelMovedContinuous:)];
         continuousMouseWheelRecognizer.maximumNumberOfTouches = 0;
         continuousMouseWheelRecognizer.allowedScrollTypesMask = UIScrollTypeMaskContinuous;
@@ -168,7 +166,6 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     
 #if defined(__IPHONE_16_1) || defined(__TVOS_16_1)
     if (@available(iOS 16.1, *)) {
-        [self removeGestureRecognizer:stylusHoverRecognizer]; // for realtime reconfig streamview
         UIHoverGestureRecognizer *stylusHoverRecognizer = [[UIHoverGestureRecognizer alloc] initWithTarget:self action:@selector(sendStylusHoverEvent:)];
         stylusHoverRecognizer.allowedTouchTypes = @[@(UITouchTypePencil)];
         [self addGestureRecognizer:stylusHoverRecognizer];
