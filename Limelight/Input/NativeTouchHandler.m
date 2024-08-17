@@ -9,16 +9,20 @@
 #import <Foundation/Foundation.h>
 #import "NativeTouchHandler.h"
 #import "NativeTouchPointer.h"
+#import "OnScreenControls.h"
 #import "StreamView.h"
 #import "DataManager.h"
 
 #include <Limelight.h>
 
 
+
+
 @implementation NativeTouchHandler {
     StreamView* streamView;
     TemporarySettings* currentSettings;
     bool activateCoordSelector;
+    bool notPureNativeTouchMode;
     // Use a Dictionary to store UITouch object's memory address as key, and pointerId as value,字典存放UITouch对象地址和pointerId映射关系
     // pointerId will be generated from a pre-defined pool
     // Use a NSSet store active pointerId,
@@ -34,6 +38,8 @@
     self->streamView = view;
     self->currentSettings = settings;
     self->activateCoordSelector = currentSettings.pointerVelocityModeDivider.floatValue != 1.0;
+    self->notPureNativeTouchMode = !(currentSettings.touchMode.intValue == PURE_NATIVE_TOUCH);
+    //_touchesCapturedByOnScreenButtons = [[NSMutableSet alloc] init];
     
     pointerIdDict = [NSMutableDictionary dictionary];
     pointerIdPool = [NSMutableSet set];
@@ -45,6 +51,7 @@
     [NativeTouchPointer setPointerVelocityDivider:settings.pointerVelocityModeDivider.floatValue];
     [NativeTouchPointer setPointerVelocityFactor:settings.touchPointerVelocityFactor.floatValue];
     [NativeTouchPointer initContextWithView:self->streamView];
+    //_touchesCapturedByOnScreenButtons = [[NSMutableSet alloc] init];
     return self;
 }
 
@@ -94,6 +101,8 @@
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     for (UITouch* touch in touches){
+        // continue to the next loop if current touch is already captured by OSC. works only in regular native touch
+        if(notPureNativeTouchMode && [OnScreenControls.touchAddrsCapturedByOnScreenControls containsObject:@((uintptr_t)touch)]) continue;
         [self populatePointerId:touch]; //generate & populate pointerId
         if(activateCoordSelector) [NativeTouchPointer populatePointerObjIntoDict:touch];
         [self sendTouchEvent:touch withTouchtype:LI_TOUCH_EVENT_DOWN];
@@ -101,7 +110,10 @@
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+    // NSLog(@"captured by OSB touches: %d", (uint32_t)[OnScreenControls.touchAddrsCapturedByOnScreenControls count]);
     for (UITouch* touch in touches){
+        // continue to the next loop if current touch is already captured by OSC. works only in regular native touch
+        if(notPureNativeTouchMode && [OnScreenControls.touchAddrsCapturedByOnScreenControls containsObject:@((uintptr_t)touch)]) continue;
         if(activateCoordSelector) [NativeTouchPointer updatePointerObjInDict:touch];
         [self sendTouchEvent:touch withTouchtype:LI_TOUCH_EVENT_MOVE];
         [[NativeTouchPointer getPointerObjFromDict:touch] doesNeedResetCoords]; // execute the judging of doesReachBoundary for current pointer instance. (happens after the event is sent to Sunshine service)
@@ -112,6 +124,8 @@
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     for (UITouch* touch in touches){
+        // continue to the next loop if current touch is already captured by OSC. works only in regular native touch
+        if(notPureNativeTouchMode && [OnScreenControls.touchAddrsCapturedByOnScreenControls containsObject:@((uintptr_t)touch)]) continue;
         [self sendTouchEvent:touch withTouchtype:LI_TOUCH_EVENT_UP]; //send touch event before remove pointerId
         [self removePointerId:touch]; //then remove pointerId
         if(activateCoordSelector) [NativeTouchPointer removePointerObjFromDict:touch];

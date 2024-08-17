@@ -35,6 +35,7 @@ typedef NS_ENUM(NSInteger, OnScreenControlsLevel) {
 
 // @property (nonatomic, assign) CustomTapGestureRecognizer* mouseRightClickTapRecognizer; // this object will be passed to onscreencontrols class for areVirtualControllerTaps flag setting
 @property (nonatomic, assign) bool isLayingOut;
+//@property (nonatomic) NSMutableSet<UITouch* >* touchesCapturedByOnScreenButtons;
 @property CALayer* _aButton;
 @property CALayer* _bButton;
 @property CALayer* _xButton;
@@ -64,6 +65,8 @@ typedef NS_ENUM(NSInteger, OnScreenControlsLevel) {
 
 @property NSMutableArray *OSCButtonLayers;
 
+
++ (NSMutableSet* )touchAddrsCapturedByOnScreenControls;
 - (id) initWithView:(UIView*)view controllerSup:(ControllerSupport*)controllerSupport streamConfig:(StreamConfiguration*)streamConfig;
 - (BOOL) handleTouchDownEvent:(NSSet*)touches;
 - (BOOL) handleTouchUpEvent:(NSSet*)touches;

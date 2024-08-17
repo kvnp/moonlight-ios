@@ -19,9 +19,10 @@
 #define UPDATE_BUTTON(x, y) (buttonFlags = \
 (y) ? (buttonFlags | (x)) : (buttonFlags & ~(x)))
 
+static NSMutableSet* touchAddrsCapturedByOnScreenControls;
+
 @implementation OnScreenControls {
 
-    
     UITouch* _aTouch;
     UITouch* _bTouch;
     UITouch* _xTouch;
@@ -125,6 +126,9 @@ static float L2_Y;
 static float L3_X;
 static float L3_Y;
 
++ (NSMutableSet* )touchAddrsCapturedByOnScreenControls{
+    return touchAddrsCapturedByOnScreenControls;
+}
 
 
 - (id) initWithView:(UIView*)view controllerSup:(ControllerSupport*)controllerSupport streamConfig:(StreamConfiguration*)streamConfig {
@@ -225,6 +229,7 @@ static float L3_Y;
     _leftButton.name = @"leftButton";
     
     _activeCustomOscButtonPositionDict = [[NSMutableDictionary alloc] init];
+    touchAddrsCapturedByOnScreenControls = [[NSMutableSet alloc] init];
     
     return self;
 }
@@ -1037,10 +1042,15 @@ static float L3_Y;
             updated = true;
             // NSLog(@"blablablab updated true");
         }
+        
+        // additionally, populate the touchesCapturedByOSButton set, for native touch handler to deal with.
+        if(updated || stickTouch) [touchAddrsCapturedByOnScreenControls addObject:@((uintptr_t)touch)];
     }
     if (updated) {
         [_controllerSupport updateFinished:_controller];
     }
+    // NSLog(@"captured by OSB touches, OSC Class: %d", (uint32_t)[touchAddrsCapturedByOnScreenControls count]);
+
     
     bool oscTouched = updated || stickTouch;
     if(oscTouched){
@@ -1061,6 +1071,10 @@ static float L3_Y;
     BOOL updated = false;
     BOOL touched = false;
     for (UITouch* touch in touches) {
+        
+        // remove the touch obj from touchesCapturedByOnScreenButtons
+        if([touchAddrsCapturedByOnScreenControls containsObject:@((uintptr_t)touch)]) [touchAddrsCapturedByOnScreenControls removeObject:@((uintptr_t)touch)];
+        
         if (touch == _aTouch) {
             [_controllerSupport clearButtonFlag:_controller flags:A_FLAG];
             _aTouch = nil;

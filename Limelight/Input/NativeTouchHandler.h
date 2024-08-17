@@ -14,7 +14,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NativeTouchHandler : UIResponder
-- (id)initWithView:(StreamView*)view andSettings:(TemporarySettings*)settings;
+@property (nonatomic, assign) NSMutableSet<UITouch *>* touchesCapturedByOnScreenButtons;
+
+
+- (id)initWithView:(StreamView* )view andSettings:(TemporarySettings*)settings;
 
 
 @end

@@ -125,7 +125,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
             break;
     }
     
-    onScreenControls = [[OnScreenControls alloc] initWithView:self controllerSup:controllerSupport streamConfig:streamConfig];
+    onScreenControls = [[OnScreenControls alloc] initWithView:self controllerSup:controllerSupport streamConfig:streamConfig];  // don't delete, this is mandatory
     /*
     // here we pass the tap recognizer to the onscreencontrols obj
     if (settings.touchMode.intValue == RELATIVE_TOUCH){
@@ -137,6 +137,17 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     if (settings.touchMode.intValue != RELATIVE_TOUCH && settings.touchMode.intValue != REGULAR_NATIVE_TOUCH ) {
         Log(LOG_I, @"On-screen controls disabled in non-relative touch mode");
         [onScreenControls setLevel:OnScreenControlsLevelOff];
+        
+        //pass touchesCaptureByOnScreenButtons Set to the native touchhandler, this NSSet is init witihin onscreencontrols class, don't do it again in native touch handler class
+        [OnScreenControls.touchAddrsCapturedByOnScreenControls removeAllObjects]; // reset the attribute to nil
+        
+        /*
+        if(settings.touchMode.intValue == REGULAR_NATIVE_TOUCH){
+            NativeTouchHandler* nativeTouchHandler = (NativeTouchHandler* )touchHandler;
+            nativeTouchHandler.touchesCapturedByOnScreenButtons = onScreenControls.touchesCapturedByOnScreenButtons;
+            touchHandler = nativeTouchHandler;
+        }; // pass touchHandler to onScreenControl
+         */
     }
     //else if (level == OnScreenControlsLevelAuto) {
     else if (false) { // level auto cancelled in settings
@@ -507,16 +518,11 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     // Notify of user interaction and start expiration timer
     [self startInteractionTimer];
     
-    if (![onScreenControls handleTouchDownEvent:touches]) {
-        // We still inform the touch handler even if we're going trigger the
-        // keyboard activation gesture. This is important to ensure the touch
-        // handler has a consistent view of touch events to correctly suppress
-        // activation of one or two finger gestures when a three finger gesture
-        // is triggered.
+    if(settings.touchMode.intValue == REGULAR_NATIVE_TOUCH){
+        [onScreenControls handleTouchDownEvent:touches];
         [touchHandler touchesBegan:touches withEvent:event];
-        // I refactored keyboard toggle by the CustomTapGestureRecognizer
-        // if ([[event allTouches] count] == keyboardToggleFingers) [self toggleKeyboard];
     }
+    else if(![onScreenControls handleTouchDownEvent:touches]) [touchHandler touchesBegan:touches withEvent:event];
 }
 
 - (UIBarButtonItem *)createButtonWithImageNamed:(NSString *)imageName backgroundColor:(UIColor *)backgroundColor target:(id)target action:(SEL)action keyCode:(NSInteger)keyCode isToggleable:(BOOL)isToggleable {
@@ -646,12 +652,10 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
         return; //This is a native touch oriented fork, in pure native touch mode, this call back method deals with native touch only.
     }
     
-    
     for (UITouch* touch in touches) {
         if (touch.type == UITouchTypePencil) {
             if ([self sendStylusEvent:touch]) return;
         }
-        
         if (@available(iOS 13.4, *)) {
             UITouch *touch = [touches anyObject];
             if (touch.type == UITouchTypeIndirectPointer) {
@@ -671,13 +675,15 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
                 return;
             }
         }
-        
 #endif
-        hasUserInteracted = YES;
-        if (![onScreenControls handleTouchMovedEvent:touches]) {
-            [touchHandler touchesMoved:touches withEvent:event];
-        }
     }
+    
+    hasUserInteracted = YES;
+    if(settings.touchMode.intValue == REGULAR_NATIVE_TOUCH){
+        [touchHandler touchesMoved:touches withEvent:event];
+        [onScreenControls handleTouchMovedEvent:touches];
+    }
+    else if(![onScreenControls handleTouchMovedEvent:touches]) [touchHandler touchesMoved:touches withEvent:event];
 }
 
 - (void)pressesBegan:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event {
@@ -746,9 +752,11 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     
     hasUserInteracted = YES;
     
-    if (![onScreenControls handleTouchUpEvent:touches]) {
-        [touchHandler touchesEnded:touches withEvent:event];
+    if(settings.touchMode.intValue == REGULAR_NATIVE_TOUCH){
+        [touchHandler touchesEnded:touches withEvent:event]; // when touches ended, must call the native touchhandler before onScreenControls, since the NSSet of touches captured by on screen button shall be updated later
+        [onScreenControls handleTouchUpEvent:touches];
     }
+    else if(![onScreenControls handleTouchUpEvent:touches]) [touchHandler touchesEnded:touches withEvent:event];
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
