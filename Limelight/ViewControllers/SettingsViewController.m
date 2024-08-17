@@ -20,6 +20,7 @@
     NSInteger _bitrate;
     NSInteger _lastSelectedResolutionIndex;
     bool justEnteredSettingsViewDoNotOpenOscLayoutTool;
+    uint16_t oscLayoutFingers;
 }
 
 @dynamic overrideUserInterfaceStyle;
@@ -180,6 +181,8 @@ BOOL isCustomResolution(CGSize res) {
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     [self updateResolutionTable];
+    //NSLog(@"osc tool fingers setting test: %d", currentSettings.oscLayoutToolFingers.intValue);
+
 }
 
 - (void)deviceOrientationDidChange{
@@ -396,7 +399,8 @@ BOOL isCustomResolution(CGSize res) {
     [self.showKeyboardToolbarSelector setSelectedSegmentIndex:currentSettings.showKeyboardToolbar ? 1 : 0];// Load old setting
     
     //  slide to menu settings
-    [self.slideToSettingsScreenEdgeSelector setSelectedSegmentIndex:[self getSelectorIndexFromScreenEdge:(uint32_t)currentSettings.slideToSettingsScreenEdge.integerValue]]; // Load old setting
+    [self.slideToSettingsScreenEdgeSelector setSelectedSegmentIndex:[self getSelectorIndexFromScreenEdge:(uint32_t)currentSettings.slideToSettingsScreenEdge.integerValue]];
+    // Load old setting
     [self.cmdToolScreenEdgeSelector setEnabled:false];
     [self.slideToSettingsScreenEdgeSelector addTarget:self action:@selector(slideToSettingsScreenEdgeChanged) forControlEvents:UIControlEventValueChanged];
     [self slideToSettingsScreenEdgeChanged];
@@ -425,7 +429,9 @@ BOOL isCustomResolution(CGSize res) {
     [self mousePointerVelocityFactorSliderMoved];
     
     
-    // this setting will be affected by onscreenControl & touchMode, must be loaded before them.
+    // these settings will be affected by onscreenControl & touchMode, must be loaded before them.
+    // NSLog(@"osc tool fingers setting test: %d", currentSettings.oscLayoutToolFingers.intValue);
+    self->oscLayoutFingers = (uint16_t)currentSettings.oscLayoutToolFingers.intValue; // load old setting of oscLayoutFingers
     [self.keyboardToggleFingerNumSlider setValue:(CGFloat)currentSettings.keyboardToggleFingers.intValue animated:YES]; // Load old setting. old setting was converted to uint16_t before saving.
     [self.keyboardToggleFingerNumSlider addTarget:self action:@selector(keyboardToggleFingerNumSliderMoved) forControlEvents:(UIControlEventValueChanged)]; // Update label display when slider is being moved.
     [self keyboardToggleFingerNumSliderMoved];
@@ -480,21 +486,51 @@ BOOL isCustomResolution(CGSize res) {
     [self.touchModeLabel setText:labelText];
 }
 
-
 - (void)showCustomOSCTip {
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[LocalizationHelper localizedStringForKey:@"Rebase in Stream View"]
-                                                                             message:[LocalizationHelper localizedStringForKey:@"Tap %d fingers to change on-screen controller layout in stream view", OSC_TOOL_FINGERS]
+                                                                             message:[LocalizationHelper localizedStringForKey:@"Tap %d fingers to change on-screen controller layout in stream view, or change the number of fingers required to:", self->oscLayoutFingers]
                                                                       preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey: @"Got it!"]
+    
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.placeholder = [LocalizationHelper localizedStringForKey:@"%d", self->oscLayoutFingers];
+        textField.keyboardType = UIKeyboardTypeNumberPad;
+    }];
+    
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Cancel"]
+                                                           style:UIAlertActionStyleCancel
+                                                         handler:nil];
+    
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"OK"]
                                                        style:UIAlertActionStyleDefault
                                                      handler:^(UIAlertAction *action) {
-                                                        // Continue execution after the alert is dismissed
-                                                        if(!self->_mainFrameViewController.settingsExpandedInStreamView) [self invokeOscLayout]; //don't open osc layout tool immediately during streaming
-                                                         NSLog(@"OK button tapped");
+                                                         UITextField *textField = alertController.textFields.firstObject;
+                                                         NSString *inputText = textField.text;
+                                                         NSInteger fingers = [inputText integerValue];
+                                                         if (inputText.length > 0 && fingers >= 4) {
+                                                             self->oscLayoutFingers = (uint16_t) fingers;
+                                                             NSLog(@"OK button tapped with %d fingers", (uint16_t)fingers);
+                                                         } else {
+                                                             NSLog(@"OK button tapped with no change");
+                                                         }
+                                                         
+                                                         // Continue execution after the alert is dismissed
+                                                         if (!self->_mainFrameViewController.settingsExpandedInStreamView) {
+                                                             [self invokeOscLayout]; // Don't open osc layout tool immediately during streaming
+                                                         }
+                                                         
+                                                        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap %d Fingers to Change OSC Layout in Stream View", self->oscLayoutFingers]]; //update the osc label
+                                                        [self keyboardToggleFingerNumSliderMoved]; //update keyboard toggle number;
                                                      }];
+    
+    [alertController addAction:cancelAction];
     [alertController addAction:okAction];
     [self presentViewController:alertController animated:YES completion:nil];
 }
+
+
+
+
+
 
 
 
@@ -518,7 +554,7 @@ BOOL isCustomResolution(CGSize res) {
         // [self.keyboardToggleFingerNumSlider setValue:3.0];
         // [self keyboardToggleFingerNumSliderMoved];
         [self keyboardToggleFingerNumSliderMoved]; // go to exclude 5 fingers
-        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap %d Fingers to Change OSC Layout in Stream View", OSC_TOOL_FINGERS]];
+        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap %d Fingers to Change OSC Layout in Stream View", self->oscLayoutFingers]];
         [self showCustomOSCTip];
         justEnteredSettingsViewDoNotOpenOscLayoutTool = false;
         //if (self.layoutOnScreenControlsVC.isBeingPresented == NO)
@@ -611,7 +647,7 @@ BOOL isCustomResolution(CGSize res) {
     if(customOscEnabled) {
         // [self.keyboardToggleFingerNumSlider setValue:3.0];
         // [self.keyboardToggleFingerNumLabel setText:[LocalizationHelper localizedStringForKey:@"To Toggle Local Keyboard: Tap %d Fingers", (uint16_t)self.keyboardToggleFingerNumSlider.value]];
-        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap %d Fingers to Change OSC Layout in Stream View", OSC_TOOL_FINGERS]];
+        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"Tap %d Fingers to Change OSC Layout in Stream View", self->oscLayoutFingers]];
         [self keyboardToggleFingerNumSliderMoved]; // go exclude 5 fingers
         //if (self.layoutOnScreenControlsVC.isBeingPresented == NO)
     }
@@ -814,9 +850,9 @@ BOOL isCustomResolution(CGSize res) {
     
     CGFloat sliderValue = self.keyboardToggleFingerNumSlider.value;
     if(customOscEnabled){
-        // exclude OSC_TOOL_FINGERS when custom osc is enabled
-        if(sliderValue > OSC_TOOL_FINGERS - 1 && sliderValue < OSC_TOOL_FINGERS) [self.keyboardToggleFingerNumSlider setValue: OSC_TOOL_FINGERS - 1];
-        if(sliderValue >= OSC_TOOL_FINGERS && sliderValue < OSC_TOOL_FINGERS + 1) [self.keyboardToggleFingerNumSlider setValue: OSC_TOOL_FINGERS + 1];
+        // exclude self->oscLayoutFingers when custom osc is enabled
+        if(sliderValue > self->oscLayoutFingers - 1 && sliderValue < self->oscLayoutFingers) [self.keyboardToggleFingerNumSlider setValue: self->oscLayoutFingers - 1];
+        if(sliderValue >= self->oscLayoutFingers && sliderValue < self->oscLayoutFingers + 1) [self.keyboardToggleFingerNumSlider setValue: self->oscLayoutFingers + 1];
     }
         
     sliderValue = self.keyboardToggleFingerNumSlider.value;
@@ -902,6 +938,7 @@ BOOL isCustomResolution(CGSize res) {
     NSInteger width = [self getChosenStreamWidth];
     NSInteger onscreenControls = [self.onscreenControlSelector selectedSegmentIndex];
     NSInteger keyboardToggleFingers = (uint16_t)self.keyboardToggleFingerNumSlider.value;
+    NSInteger oscLayoutToolFingers = (uint16_t)self->oscLayoutFingers;
     // NSLog(@"saveSettings keyboardToggleFingers  %d", (uint16_t)keyboardToggleFingers);
     CGFloat slideToSettingsDistance = self.slideToMenuDistanceSlider.value;
     uint32_t slideToSettingsScreenEdge = [self getScreenEdgeFromSelector];
@@ -930,7 +967,8 @@ BOOL isCustomResolution(CGSize res) {
                          audioConfig:2 // Stereo
                     onscreenControls:onscreenControls
                keyboardToggleFingers:keyboardToggleFingers
-                 slideToSettingsScreenEdge:slideToSettingsScreenEdge
+                oscLayoutToolFingers:oscLayoutToolFingers
+           slideToSettingsScreenEdge:slideToSettingsScreenEdge
                  slideToSettingsDistance:slideToSettingsDistance
           pointerVelocityModeDivider:pointerVelocityModeDivider
           touchPointerVelocityFactor:touchPointerVelocityFactor

@@ -20,8 +20,9 @@
                      audioConfig:(NSInteger)audioConfig
                 onscreenControls:(NSInteger)onscreenControls
            keyboardToggleFingers:(NSInteger)keyboardToggleFingers
-             slideToSettingsScreenEdge:(NSInteger)slideToSettingsScreenEdge
-             slideToSettingsDistance:(CGFloat)slideToSettingsDistance
+            oscLayoutToolFingers:(NSInteger)oscLayoutToolFingers
+       slideToSettingsScreenEdge:(NSInteger)slideToSettingsScreenEdge
+         slideToSettingsDistance:(CGFloat)slideToSettingsDistance
       pointerVelocityModeDivider:(CGFloat)pointerVelocityModeDivider
       touchPointerVelocityFactor:(CGFloat)touchPointerVelocityFactor
       mousePointerVelocityFactor:(CGFloat)mousePointerVelocityFactor

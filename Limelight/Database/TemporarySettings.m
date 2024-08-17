@@ -88,6 +88,7 @@
     self.touchMode = settings.touchMode;
     self.statsOverlay = settings.statsOverlay;
     self.keyboardToggleFingers = settings.keyboardToggleFingers;
+    self.oscLayoutToolFingers = settings.oscLayoutToolFingers;
     self.slideToSettingsScreenEdge = settings.slideToSettingsScreenEdge;
     self.slideToSettingsDistance = settings.slideToSettingsDistance;
     self.liftStreamViewForKeyboard = settings.liftStreamViewForKeyboard;

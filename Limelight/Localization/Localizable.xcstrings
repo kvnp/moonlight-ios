@@ -2119,25 +2119,25 @@
         }
       }
     },
-    "Tap %d fingers to change on-screen controller layout in stream view" : {
+    "Tap %d fingers to change on-screen controller layout in stream view, or change the number of fingers required to:" : {
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在串流视图中轻按%d根手指修改虚拟手柄布局"
+            "value" : "在串流视图中轻按%d根手指修改虚拟手柄布局, 或将手势需要的手指数量改为:"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在串流视图中轻按%d根手指修改虚拟手柄布局"
+            "value" : "在串流视图中轻按%d根手指修改虚拟手柄布局, 或将手势需要的手指数量改为:"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在串流视图中轻按%d根手指修改虚拟手柄布局"
+            "value" : "在串流视图中轻按%d根手指修改虚拟手柄布局, 或将手势需要的手指数量改为:"
           }
         }
       }

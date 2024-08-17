@@ -59,7 +59,8 @@
                      audioConfig:(NSInteger)audioConfig
                 onscreenControls:(NSInteger)onscreenControls
            keyboardToggleFingers:(NSInteger)keyboardToggleFingers
-             slideToSettingsScreenEdge:(NSInteger)slideToSettingsScreenEdge
+            oscLayoutToolFingers:(NSInteger)oscLayoutToolFingers
+       slideToSettingsScreenEdge:(NSInteger)slideToSettingsScreenEdge
              slideToSettingsDistance:(CGFloat)slideToSettingsDistance
       pointerVelocityModeDivider:(CGFloat)pointerVelocityModeDivider
       touchPointerVelocityFactor:(CGFloat)touchPointerVelocityFactor
@@ -89,6 +90,7 @@
         settingsToSave.audioConfig = [NSNumber numberWithInteger:audioConfig];
         settingsToSave.onscreenControls = [NSNumber numberWithInteger:onscreenControls];
         settingsToSave.keyboardToggleFingers = [NSNumber numberWithInteger:(uint16_t)keyboardToggleFingers];
+        settingsToSave.oscLayoutToolFingers = [NSNumber numberWithInteger:(uint16_t)oscLayoutToolFingers];
         settingsToSave.slideToSettingsScreenEdge = [NSNumber numberWithInteger:(uint32_t)slideToSettingsScreenEdge];
         settingsToSave.slideToSettingsDistance = [NSNumber numberWithFloat:slideToSettingsDistance];
         settingsToSave.pointerVelocityModeDivider = [NSNumber numberWithFloat:pointerVelocityModeDivider];
