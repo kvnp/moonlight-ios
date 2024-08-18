@@ -703,6 +703,29 @@
         }
       }
     },
+    "Enter the command & key label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入按键命令和键帽标签"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入按键命令和键帽标签"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入按键命令和键帽标签"
+          }
+        }
+      }
+    },
     "Enter the name you want to save this controller profile as" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -958,6 +981,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "输入主机端IP地址"
+          }
+        }
+      }
+    },
+    "Key label (optional)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "键帽标签 (可留空)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "键帽标签 (可留空)"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "键帽标签 (可留空)"
           }
         }
       }
@@ -1308,6 +1354,29 @@
         }
       }
     },
+    "New Keyboard Button" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建屏显按键"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建屏显按键"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建屏显按键"
+          }
+        }
+      }
+    },
     "No video received from host." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1401,6 +1470,29 @@
       }
     },
     "Ok" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确认"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确认"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确认"
+          }
+        }
+      }
+    },
+    "OK" : {
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
