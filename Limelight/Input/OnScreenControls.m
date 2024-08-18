@@ -7,7 +7,6 @@
 //
 
 #import "OnScreenControls.h"
-#import "StreamView.h"
 #import "CustomTapGestureRecognizer.h"
 #import "Controller.h"
 #include "Limelight.h"

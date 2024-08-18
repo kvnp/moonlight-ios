@@ -61,7 +61,7 @@ import UIKit
         self.translatesAutoresizingMaskIntoConstraints = true // this is mandatory to prevent unexpected key view location change
         self.layer.borderColor = UIColor.black.cgColor
         self.layer.borderWidth = 0
-        self.layer.cornerRadius = 16
+        self.layer.cornerRadius = 20
         self.backgroundColor = UIColor(white: 0.2, alpha: 0.5)
         self.layer.shadowColor = UIColor.clear.cgColor
         self.layer.shadowRadius = 8
@@ -73,7 +73,7 @@ import UIKit
         NSLayoutConstraint.activate([
             //self.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.088),
             //self.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height * 0.1),
-            self.widthAnchor.constraint(equalToConstant: 75),
+            self.widthAnchor.constraint(equalToConstant: 70),
             self.heightAnchor.constraint(equalToConstant: 65),
         ])
         
@@ -84,8 +84,19 @@ import UIKit
             label.centerYAnchor.constraint(equalTo: centerYAnchor),
             //label.heightAnchor.constraint(equalToConstant: 40)
         ])
+    }
+    
+    private func buttonDownVisualEffect() {
+        let spread = 10.2;  // 扩散的大小
+        let largerRect = self.bounds.insetBy(dx: -spread, dy: -spread)
+        let shadowPath = UIBezierPath(roundedRect: largerRect, cornerRadius: self.layer.cornerRadius)
+        self.layer.shadowPath = shadowPath.cgPath
         
-
+        // self.layer.shadowColor = UIColor.systemBlue.withAlphaComponent(0.7).cgColor
+        self.layer.shadowColor = UIColor(red: 0.5, green: 0.5, blue: 1.0, alpha: 0.80).cgColor
+        self.layer.shadowOffset = CGSize.zero
+        self.layer.shadowOpacity = 1.0
+        self.layer.shadowRadius = 0.0
     }
     
     // Touch event handling
@@ -94,14 +105,15 @@ import UIKit
         //self.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 0.7)
         
         if !OnScreenKeyboardButtonView.editMode {
-            self.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.7)
+            // self.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.7)
+            self.buttonDownVisualEffect()
             
             // if the command(keystring contains "+", it's a multi-key command or a quick triggering key, rather than a physical button
             if(self.keyString.contains("+")){
                 let keyboardCmdStrings = CommandManager.shared.extractKeyStrings(from: self.keyString)!
                 CommandManager.shared.sendKeyDownEventWithDelay(keyboardCmdStrings: keyboardCmdStrings) // send multi-key command
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { // reset background color immediately 50ms later
-                    self.backgroundColor = self.originalBackgroundColor
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) { // reset shadow color immediately 50ms later
+                    self.layer.shadowColor = UIColor.clear.cgColor
                 }
             }
             // if there's no "+" in the keystring, treat it as a regular button:
@@ -141,9 +153,11 @@ import UIKit
         super.touchesEnded(touches, with: event)
         if !OnScreenKeyboardButtonView.editMode && !self.keyString.contains("+") { // if the command(keystring contains "+", it's a multi-key command rather than a single key button
             LiSendKeyboardEvent(CommandManager.keyMappings[self.keyString]!,Int8(KEY_ACTION_UP), 0)
-            self.backgroundColor = self.originalBackgroundColor
+            // self.backgroundColor = self.originalBackgroundColor
+            self.layer.shadowColor = UIColor.clear.cgColor
         }
-        self.backgroundColor = self.originalBackgroundColor
+        // self.backgroundColor = self.originalBackgroundColor
+        self.layer.shadowColor = UIColor.clear.cgColor
 
         guard let superview = superview else { return }
 
