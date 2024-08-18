@@ -47,7 +47,7 @@ import UIKit
     
     private func setupView() {
         label.text = self.keyLabel
-        //label.font = UIFont.systemFont(ofSize: 28)
+        label.font = UIFont.systemFont(ofSize: 19)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.adjustsFontSizeToFitWidth = true
         label.minimumScaleFactor = 0.1  // Adjust the scale factor as needed
@@ -78,8 +78,8 @@ import UIKit
         ])
         
         NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 5),
-            label.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -5),
+            label.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10), // set up label size contrain within UIView
+            label.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
             label.centerXAnchor.constraint(equalTo: centerXAnchor),
             label.centerYAnchor.constraint(equalTo: centerYAnchor),
             //label.heightAnchor.constraint(equalToConstant: 40)
