@@ -16,6 +16,7 @@
 #import "CustomTapGestureRecognizer.h"
 #import "LocalizationHelper.h"
 #import "Moonlight-Swift.h"
+#import "OSCProfilesManager.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -155,7 +156,7 @@
     [_streamView setupStreamView:_controllerSupport interactionDelegate:self config:self.streamConfig]; //reinitiate setupStreamView process.
     [self->_streamView reloadOnScreenControlsRealtimeWith:(ControllerSupport*)_controllerSupport
                                         andConfig:(StreamConfiguration*)_streamConfig]; //reload OSC here.
-    
+    [self->_streamView reloadOnScreenKeyboardButtons]; //reload keyboard buttons here. the keyboard button view will be added to the streamframe view instead streamview, the highest layer, which saves a lot of reengineering
     //reconfig statsOverlay
     self->_statsUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f
                                                                target:self
@@ -169,10 +170,12 @@
 
 
 
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
+    //[self layoutOnScreenKeyboardButtons];
+
     
     // onscreen keyView test
     /*
@@ -188,9 +191,9 @@
     CGFloat yOffset = 550;
     CGFloat spacing = 10.0;
     
-    [keyView setKeyLocationWithXOffset:500 yOffset:(CGFloat)550];
+    [keyView setKeyLocationWithXOffset:500 yOffset:(CGFloat)550]; */
      
-    */
+    
     
     
     
@@ -346,6 +349,7 @@
 
 - (void)layoutOSC{
     [self->_streamView disableOnScreenControls];
+    [self->_streamView clearOnScreenKeyboardButtons]; // clear all onScreenKeyboardButtons before entering edit mode
     [self presentViewController:_layoutOnScreenControlsVC animated:YES completion:nil];
 }
 
@@ -355,6 +359,7 @@
     [self->_streamView reloadOnScreenControlsWith:(ControllerSupport*)_controllerSupport
                                         andConfig:(StreamConfiguration*)_streamConfig];
     [self->_streamView showOnScreenControls];
+    [self->_streamView reloadOnScreenKeyboardButtons]; //update keyboard buttons here
 }
 
 

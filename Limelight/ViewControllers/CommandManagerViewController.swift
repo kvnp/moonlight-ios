@@ -304,29 +304,7 @@ import UIKit
     private func sendKeyboardCommand(_ cmd: RemoteCommand) {
         print("Sending key-value")
         let keyboardCmdStrings = CommandManager.shared.extractKeyStrings(from: cmd.keyboardCmdString)
-        sendKeyDownEventWithDelay(keyboardCmdStrings: keyboardCmdStrings!)
-    }
-    
-    private func sendKeyDownEventWithDelay(keyboardCmdStrings: [String], delay: TimeInterval = 0.05, index: Int = 0) {
-        guard index < keyboardCmdStrings.count else {
-            for keyStr in keyboardCmdStrings {
-                LiSendKeyboardEvent(CommandManager.keyMappings[keyStr]!,Int8(KEY_ACTION_UP), 0)
-            }
-            return
-        } // 如果已经处理完所有键，释放所有按键
-        
-        let keyCode = CommandManager.keyMappings[keyboardCmdStrings[index]]
-        guard let keyCode = keyCode else {
-            print("No mapping found for \(keyboardCmdStrings[index])")
-            sendKeyDownEventWithDelay(keyboardCmdStrings: keyboardCmdStrings, delay: delay, index: index+1) // 跳过当前键，继续下一个
-            return
-        }
-        // 发送当前键的键盘按下事件
-        LiSendKeyboardEvent(keyCode,Int8(KEY_ACTION_DOWN), 0)
-        // 使用 asyncAfter 在指定异步延迟后发送下一个键的键盘按下事件
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-            self.sendKeyDownEventWithDelay(keyboardCmdStrings: keyboardCmdStrings, delay: delay, index: index+1) // 跳过当前键，继续下一个
-        }
+        CommandManager.shared.sendKeyDownEventWithDelay(keyboardCmdStrings: keyboardCmdStrings!)
     }
 }
   

@@ -256,7 +256,7 @@ static float L3_Y;
 
 - (void) updateControls {
     if(self._level == OnScreenControlsLevelCustom){
-        // these buttons that has valid coords of positions
+        // mark all OSC buttons that has valid coords of positions
         NSSet *validPositionButtonNames = [NSSet setWithObjects:
             @"l2Button",
             @"l1Button",
@@ -286,9 +286,10 @@ static float L3_Y;
             }
         }
         NSLog(@"_activeCustomOscButtonPositionDict update, active button number: %lu", (unsigned long)[_activeCustomOscButtonPositionDict count]);
-
     }
     
+    
+    // belows are orginal codes:
     switch (self._level) {
         case OnScreenControlsLevelOff:
             [self hideButtons];

@@ -11,6 +11,8 @@
 #import "DataManager.h"
 #import "ControllerSupport.h"
 #import "KeyboardSupport.h"
+#import "Moonlight-Swift.h"
+#import "OSCProfilesManager.h"
 #import "NativeTouchPointer.h"
 #import "NativeTouchHandler.h"
 #import "RelativeTouchHandler.h"
@@ -327,7 +329,6 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 - (void) reloadOnScreenControlsWith:(ControllerSupport*)controllerSupport
                          andConfig:(StreamConfiguration*)streamConfig {
     onScreenControls = [[OnScreenControls alloc] initWithView:self controllerSup:controllerSupport streamConfig:streamConfig];
-    
     /*
     // pass mouseRightClickTapRecognizer to onScreenControls obj here:
     if([self isOscEnabled]){
@@ -338,6 +339,45 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     [onScreenControls setLevel:(OnScreenControlsLevel)settings.onscreenControls.intValue];
 }
 
+
+- (void) clearOnScreenKeyboardButtons{
+    for (UIView *subview in self.superview.subviews) {
+        // 检查子视图是否是特定类型的实例
+        if ([subview isKindOfClass:[OnScreenKeyboardButtonView class]]) {
+            // 如果是，就添加到将要被移除的数组中
+            [subview removeFromSuperview];
+        }
+    }
+}
+
+- (void) reloadOnScreenKeyboardButtons{
+    
+    NSLog(@"reload on screen keyboard buttons here");
+
+    // remove all keyboard button views first
+    [self clearOnScreenKeyboardButtons];
+    
+    bool customOscEnabled = (settings.touchMode.intValue == RELATIVE_TOUCH || settings.touchMode.intValue == REGULAR_NATIVE_TOUCH) && settings.onscreenControls.intValue == OnScreenControlsLevelCustom;
+    
+    if(!customOscEnabled) return; //returns if we're not in custom osc mode
+    
+    OSCProfilesManager* profilesManager = [OSCProfilesManager sharedManager];
+    OSCProfile *oscProfile = [profilesManager getSelectedProfile]; //returns the currently selected OSCProfile
+
+    if(!OnScreenKeyboardButtonView.editMode){ // in edit mode, keyboard button view will be updated within layoutool view controller.
+        for (NSData *buttonStateEncoded in oscProfile.buttonStates) {
+            OnScreenButtonState* buttonState = [NSKeyedUnarchiver unarchivedObjectOfClass:[OnScreenButtonState class] fromData:buttonStateEncoded error:nil];
+            if(buttonState.buttonType == KeyboardButton){
+                OnScreenKeyboardButtonView* keyView = [[OnScreenKeyboardButtonView alloc] initWithKeyString:buttonState.name keyLabel:buttonState.alias]; //reconstruct keyView
+                keyView.translatesAutoresizingMaskIntoConstraints = NO; // weird but this is mandatory, or you will find no key views added to the right place
+                // Add the KeyView to the view controller's view
+                [self.superview addSubview:keyView]; // add keyboard button to the stream frame view. must add it to the target view before setting location.
+                [keyView setKeyLocationWithXOffset:buttonState.position.x yOffset:buttonState.position.y];
+            }
+        }
+    }
+}
+
 - (OnScreenControlsLevel) getCurrentOscState {
     if (onScreenControls == nil) {
         return OnScreenControlsLevelOff;
@@ -346,6 +386,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
         return [onScreenControls getLevel];
     }
 }
+
 
 - (CGSize) getVideoAreaSize {
     if (self.bounds.size.width > self.bounds.size.height * streamAspectRatio) {

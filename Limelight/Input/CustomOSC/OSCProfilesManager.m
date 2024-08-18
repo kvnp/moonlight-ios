@@ -200,6 +200,50 @@ static NSMutableDictionary *onScreenKeyViewsDict;
 
 
 - (bool) updateSelectedProfile:(NSMutableArray *) oscButtonLayers {
+    NSMutableArray* buttonStatesEncoded = [self convertOnscreenButtonsToButtonStates:oscButtonLayers];
+    if([self getIndexOfSelectedProfile]==0) return false;
+    OSCProfile *newProfile = [[OSCProfile alloc] initWithName:[self getSelectedProfile].name
+                            buttonStates:buttonStatesEncoded isSelected:YES];        // create a new 'OSCProfile'. Set the array of encoded button states created above to the 'buttonStates' property of the new profile, along with a 'name'. Set 'isSelected' argument to YES which will set this saved profile as the one that will show up in the game stream view
+
+    
+    /* set all saved OSCProfiles 'isSelected' property to NO since the new profile you're adding will be set as the selected profile */
+    NSMutableArray *profiles = [self getAllProfiles];
+    for (OSCProfile *profile in profiles) {
+        profile.isSelected = NO;
+    }
+    [self replaceProfile:[self getSelectedProfile] withProfile:newProfile];
+    return true;
+}
+
+
+- (void) saveProfileWithName:(NSString*)name andButtonLayers:(NSMutableArray *)oscButtonLayers {
+    NSMutableArray* buttonStatesEncoded = [self convertOnscreenButtonsToButtonStates:oscButtonLayers];
+    OSCProfile *newProfile = [[OSCProfile alloc] initWithName:name
+                            buttonStates:buttonStatesEncoded isSelected:YES];        // create a new 'OSCProfile'. Set the array of encoded button states created above to the 'buttonStates' property of the new profile, along with a 'name'. Set 'isSelected' argument to YES which will set this saved profile as the one that will show up in the game stream view
+    /* set all saved OSCProfiles 'isSelected' property to NO since the new profile you're adding will be set as the selected profile */
+    NSMutableArray *profiles = [self getAllProfiles];
+    for (OSCProfile *profile in profiles) {
+        
+        profile.isSelected = NO;
+    }
+    
+    if ([self profileNameAlreadyExist:name]) {  // if a saved profile with the same 'name' already exists in persistent storage then overwrite it and save the change to persistent storage
+        [self replaceProfile:[self OSCProfileWithName:name] withProfile:newProfile];
+    }
+    else {  // otherwise encode then add the new profile to the end of the OSCProfiles array
+        NSData *newProfileEncoded = [NSKeyedArchiver archivedDataWithRootObject:newProfile requiringSecureCoding:YES error:nil];
+        NSMutableArray *profilesEncoded = [self encodedProfilesFromArray:profiles];
+        [profilesEncoded addObject:newProfileEncoded];
+        
+        /* Encode the 'profilesEncoded' array itself, NOT the objects in the 'profilesEncoded' array, all of which are already encoded by this point */
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:profilesEncoded requiringSecureCoding:YES error:nil];
+        [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"OSCProfiles"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+}
+
+
+- (NSMutableArray* ) convertOnscreenButtonsToButtonStates:(NSMutableArray *) oscButtonLayers {
     /* iterate through each OSC button the user sees on screen, create an 'OnScreenButtonState' object from each button, encode each object, and then add each object to an array */
     /*
     NSSet *validPositionButtonNames = [NSSet setWithObjects:
@@ -223,101 +267,23 @@ static NSMutableDictionary *onScreenKeyViewsDict;
         OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:oscButtonLayer.name buttonType:GameControllerButton andPosition:oscButtonLayer.position];
         // add hidden attr here
         buttonState.isHidden = oscButtonLayer.isHidden;
-        
-        /* //-------------------------------------
-        NSLog(@"buttonName to be saved: %@", buttonState.name);
-        if([validPositionButtonNames containsObject:buttonState.name]) buttonState.hasValidPosition = true; // this is for setting up DZ for custom OSC buttons.
-        else buttonState.hasValidPosition = false;
-        //------------------------------------- */
         NSData *buttonStateEncoded = [NSKeyedArchiver archivedDataWithRootObject:buttonState requiringSecureCoding:YES error:nil];
         [buttonStatesEncoded addObject: buttonStateEncoded];
     }
     
-    // save keyboard button as buttonstate
+    // save keyboard button as buttonstate, this is for the new onscreen keyboard buttons:
     [onScreenKeyViewsDict enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) { // this dict is passed from the layout tool VC, as a static obj in this class.
-        OnScreenKeyView *keyView = value;
+        OnScreenKeyboardButtonView *keyView = value;
         OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:keyView.keyString buttonType:KeyboardButton andPosition:keyView.frame.origin];
         buttonState.alias = keyView.keyLabel;
         buttonState.timestamp = keyView.timestamp;
         NSData *buttonStateEncoded = [NSKeyedArchiver archivedDataWithRootObject:buttonState requiringSecureCoding:YES error:nil];
         [buttonStatesEncoded addObject: buttonStateEncoded];
     }];
-    
-    
-    
-    if([self getIndexOfSelectedProfile]==0) return false;
-    OSCProfile *newProfile = [[OSCProfile alloc] initWithName:[self getSelectedProfile].name
-                            buttonStates:buttonStatesEncoded isSelected:YES];        // create a new 'OSCProfile'. Set the array of encoded button states created above to the 'buttonStates' property of the new profile, along with a 'name'. Set 'isSelected' argument to YES which will set this saved profile as the one that will show up in the game stream view
-
-    
-    /* set all saved OSCProfiles 'isSelected' property to NO since the new profile you're adding will be set as the selected profile */
-    NSMutableArray *profiles = [self getAllProfiles];
-    for (OSCProfile *profile in profiles) {
-        profile.isSelected = NO;
-    }
-    [self replaceProfile:[self getSelectedProfile] withProfile:newProfile];
-    return true;
+    return buttonStatesEncoded;
 }
 
 
-
-- (void) saveProfileWithName:(NSString*)name andButtonLayers:(NSMutableArray *)buttonLayers {
-    /* iterate through each OSC button the user sees on screen, create an 'OnScreenButtonState' object from each button, encode each object, and then add each object to an array */
-    /*
-    NSSet *validPositionButtonNames = [NSSet setWithObjects:
-        @"l2Button",
-        @"l1Button",
-        @"dPad",
-        @"selectButton",
-        @"leftStickBackground",
-        @"rightStickBackground",
-        @"r2Button",
-        @"r1Button",
-        @"aButton",
-        @"bButton",
-        @"xButton",
-        @"yButton",
-        @"startButton",
-        nil]; */
-    NSMutableArray *buttonStatesEncoded = [[NSMutableArray alloc] init];
-    for (CALayer *buttonLayer in buttonLayers) {
-        OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:buttonLayer.name buttonType:GameControllerButton andPosition:buttonLayer.position];
-        // add hidden attr here
-        buttonState.isHidden = buttonLayer.isHidden;
-        /* //-------------------------------------
-        NSLog(@"buttonName to be saved: %@", buttonState.name);
-        if([validPositionButtonNames containsObject:buttonState.name]) buttonState.hasValidPosition = true; // this is for setting up DZ for custom OSC buttons.
-        else buttonState.hasValidPosition = false;
-        //------------------------------------- */
-        NSData *buttonStateEncoded = [NSKeyedArchiver archivedDataWithRootObject:buttonState requiringSecureCoding:YES error:nil];
-        [buttonStatesEncoded addObject: buttonStateEncoded];
-    }
-
-    OSCProfile *newProfile = [[OSCProfile alloc] initWithName:name
-                            buttonStates:buttonStatesEncoded isSelected:YES];        // create a new 'OSCProfile'. Set the array of encoded button states created above to the 'buttonStates' property of the new profile, along with a 'name'. Set 'isSelected' argument to YES which will set this saved profile as the one that will show up in the game stream view
-
-    
-    /* set all saved OSCProfiles 'isSelected' property to NO since the new profile you're adding will be set as the selected profile */
-    NSMutableArray *profiles = [self getAllProfiles];
-    for (OSCProfile *profile in profiles) {
-        
-        profile.isSelected = NO;
-    }
-    
-    if ([self profileNameAlreadyExist:name]) {  // if a saved profile with the same 'name' already exists in persistent storage then overwrite it and save the change to persistent storage
-        [self replaceProfile:[self OSCProfileWithName:name] withProfile:newProfile];
-    }
-    else {  // otherwise encode then add the new profile to the end of the OSCProfiles array
-        NSData *newProfileEncoded = [NSKeyedArchiver archivedDataWithRootObject:newProfile requiringSecureCoding:YES error:nil];
-        NSMutableArray *profilesEncoded = [self encodedProfilesFromArray:profiles];
-        [profilesEncoded addObject:newProfileEncoded];
-        
-        /* Encode the 'profilesEncoded' array itself, NOT the objects in the 'profilesEncoded' array, all of which are already encoded by this point */
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:profilesEncoded requiringSecureCoding:YES error:nil];
-        [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"OSCProfiles"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-    }
-}
 
 #pragma mark - Queries
 

@@ -35,7 +35,7 @@
 
 
 - (void) viewWillDisappear:(BOOL)animated{
-    OnScreenKeyView.editMode = false;
+    OnScreenKeyboardButtonView.editMode = false;
     [super viewWillDisappear:animated];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"OscLayoutCloseNotification" object:self];
 }
@@ -48,7 +48,7 @@
     
     for (UIView *subview in self.view.subviews) {
         // 检查子视图是否是特定类型的实例
-        if ([subview isKindOfClass:[OnScreenKeyView class]]) {
+        if ([subview isKindOfClass:[OnScreenKeyboardButtonView class]]) {
             // 如果是，就添加到将要被移除的数组中
             [subview removeFromSuperview];
         }
@@ -63,7 +63,7 @@
     for (NSData *buttonStateEncoded in oscProfile.buttonStates) {
         OnScreenButtonState* buttonState = [NSKeyedUnarchiver unarchivedObjectOfClass:[OnScreenButtonState class] fromData:buttonStateEncoded error:nil];
         if(buttonState.buttonType == KeyboardButton){
-            OnScreenKeyView* keyView = [[OnScreenKeyView alloc] initWithKeyString:buttonState.name keyLabel:buttonState.alias]; //reconstruct keyView
+            OnScreenKeyboardButtonView* keyView = [[OnScreenKeyboardButtonView alloc] initWithKeyString:buttonState.name keyLabel:buttonState.alias]; //reconstruct keyView
             keyView.translatesAutoresizingMaskIntoConstraints = NO; // weird but this is mandatory, or you will find no key views added to the right place
             keyView.timestamp = buttonState.timestamp; // will be set as key in in the dict.
             // Add the KeyView to the view controller's view
@@ -165,7 +165,7 @@
 
 
 - (void) viewDidAppear:(BOOL)animated {
-    OnScreenKeyView.editMode = true;
+    OnScreenKeyboardButtonView.editMode = true;
     [super viewWillAppear:animated];
     [self profileRefresh];
 }
@@ -282,14 +282,58 @@
 }
 
 - (IBAction) addTapped:(id)sender{
-    OnScreenKeyView* keyView = [[OnScreenKeyView alloc] initWithKeyString:@"ALT" keyLabel:@"test"];
-    keyView.translatesAutoresizingMaskIntoConstraints = NO; // weird but this is mandatory, or you will find no key views added to the right place
     
-    keyView.timestamp = CACurrentMediaTime(); // will be set as key in in the dict.
-    [self.onScreenKeyViewsDict setObject:keyView forKey:@(keyView.timestamp)];
-    // Add the KeyView to the view controller's view
-    [self.view addSubview:keyView];
-    [keyView setKeyLocationWithXOffset:50 yOffset:50];
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[LocalizationHelper localizedStringForKey:@"New Keyboard Button"]
+                                                                             message:[LocalizationHelper localizedStringForKey:@"Enter the command & key label"]
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.placeholder = [LocalizationHelper localizedStringForKey:@"Command"];
+        textField.keyboardType = UIKeyboardTypeASCIICapable;
+        textField.autocorrectionType = UITextAutocorrectionTypeNo;
+        textField.spellCheckingType = UITextSpellCheckingTypeNo;
+    }];
+    
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.placeholder = [LocalizationHelper localizedStringForKey:@"Key label (optional)"];
+        textField.keyboardType = UIKeyboardTypeASCIICapable;
+        textField.autocorrectionType = UITextAutocorrectionTypeNo;
+        textField.spellCheckingType = UITextSpellCheckingTypeNo;
+    }];
+
+    
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Cancel"]
+                                                           style:UIAlertActionStyleCancel
+                                                         handler:nil];
+    
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"OK"]
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction *action) {
+        /*
+        alertController.textFields[0].keyboardType = UIKeyboardTypeASCIICapable;
+        alertController.textFields[0].autocorrectionType = UITextAutocorrectionTypeNo;
+        alertController.textFields[0].spellCheckingType = UITextSpellCheckingTypeNo;
+        alertController.textFields[1].keyboardType = UIKeyboardTypeASCIICapable;
+        alertController.textFields[1].autocorrectionType = UITextAutocorrectionTypeNo;
+        alertController.textFields[1].spellCheckingType = UITextSpellCheckingTypeNo;*/
+        
+        NSString *keyboardCmdString = [alertController.textFields[0].text uppercaseString]; // convert to uppercase
+        NSString *keyLabel = alertController.textFields[1].text;
+        if([keyLabel isEqualToString:@""]) keyLabel = [[keyboardCmdString lowercaseString] capitalizedString];
+        if([CommandManager.shared extractKeyStringsFrom:keyboardCmdString] == nil) return; // this is a invalid string.
+        
+        //saving & present the keyboard button:
+        OnScreenKeyboardButtonView* keyView = [[OnScreenKeyboardButtonView alloc] initWithKeyString:keyboardCmdString keyLabel:keyLabel];
+        keyView.translatesAutoresizingMaskIntoConstraints = NO; // weird but this is mandatory, or you will find no key views added to the right place
+        keyView.timestamp = CACurrentMediaTime(); // will be set as key in in the dict.
+        [self.onScreenKeyViewsDict setObject:keyView forKey:@(keyView.timestamp)];
+        // Add the KeyView to the view controller's view
+        [self.view addSubview:keyView];
+        [keyView setKeyLocationWithXOffset:50 yOffset:50];
+    }];
+    [alertController addAction:cancelAction];
+    [alertController addAction:okAction];
+    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 
@@ -310,36 +354,6 @@
         }]];
         [self presentViewController:savedAlertController animated:YES completion:nil];
     }
-
-        /*
-        if ([self->profilesManager profileNameAlreadyExist:enteredProfileName] == YES) {  // if the entered profile name already exists then let the user know. Offer to allow them to overwrite the existing profile
-            UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"Another profile with the name '%@' already exists! Do you want to overwrite it?", enteredProfileName] preferredStyle:UIAlertControllerStyleAlert];
-            
-            [savedAlertController addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {    // overwrite existing profile
-                [self->profilesManager saveProfileWithName: enteredProfileName andButtonLayers:self.layoutOSC.OSCButtonLayers];
-            }]];
-            
-            [savedAlertController addAction:[UIAlertAction actionWithpinNo" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) { // don't overwrite the existing profile
-                [savedAlertController dismissViewControllerAnimated:NO completion:nil];
-            }]];
-            [self presentViewController:savedAlertController animated:YES completion:nil];
-        }
-        else {  // if user entered a valid name that doesn't already exist then save the profile to persistent storage
-            [self->profilesManager saveProfileWithName: enteredProfileName andButtonLayers:self.layoutOSC.OSCButtonLayers];
-            [self->profilesManager setProfileToSelected: enteredProfileName];
-            
-            UIAlertController * savedAlertController = [UIAlertController alertControllerWithTitle: [NSString stringWithFormat:@""] message: [NSString stringWithFormat:@"%@ profile saved and set as your active in-game controller profile layout", enteredProfileName] preferredStyle:UIAlertControllerStyleAlert];  // Let user know this profile has been saved and is now the selected controller layout
-            
-            [savedAlertController addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Ok"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-                [savedAlertController dismissViewControllerAnimated:NO completion:nil];
-            }]];
-            [self presentViewController:savedAlertController animated:YES completion:nil];
-        }
-    }]];
-    [inputNameAlertController addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Cancel"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) { // adds a button that allows user to decline the option to save the controller layout they currently see on screen
-        [inputNameAlertController dismissViewControllerAnimated:NO completion:nil];
-    }]];
-    [self presentViewController:inputNameAlertController animated:YES completion:nil]; */
 }
 
 
@@ -471,9 +485,9 @@
     // removing keyboard buttons objs
     UITouch *touch = [touches anyObject]; // Get the first touch in the set
     if([self touchWithinTashcanButton:touch]){
-        [self.onScreenKeyViewsDict[@(OnScreenKeyView.timestampOfButtonBeingDragged)] removeFromSuperview];
-        [self.onScreenKeyViewsDict removeObjectForKey:@(OnScreenKeyView.timestampOfButtonBeingDragged)];
-        OnScreenKeyView.timestampOfButtonBeingDragged = 0; //reset thie timestamp
+        [self.onScreenKeyViewsDict[@(OnScreenKeyboardButtonView.timestampOfButtonBeingDragged)] removeFromSuperview];
+        [self.onScreenKeyViewsDict removeObjectForKey:@(OnScreenKeyboardButtonView.timestampOfButtonBeingDragged)];
+        OnScreenKeyboardButtonView.timestampOfButtonBeingDragged = 0; //reset thie timestamp
     }
     
     

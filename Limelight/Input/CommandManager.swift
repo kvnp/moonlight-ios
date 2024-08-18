@@ -165,7 +165,7 @@ import UIKit
         "LEFT_WIN": 0x5B, // VK_LWIN
         "RIGHT_WIN": 0x5C, // VK_RWIN
         "APPS": 0x5D,        // VK_APPS
-
+        
         // macOS Key Codes
         "CMD": 0x37,     // ⌘ Command
         "OPT": 0x3A,      // ⌥ Option
@@ -222,7 +222,7 @@ import UIKit
     ]
     
     private var commands: [RemoteCommand] = []
-
+    
     public weak var viewController: CommandManagerViewController?
     
     private override init() {
@@ -255,7 +255,7 @@ import UIKit
             defaults.set(data, forKey: "savedCommands")
         }
     }
-
+    
     @objc public func createTestKeyMappings() -> [String: Int16] {
         return CommandManager.keyMappings
     }
@@ -278,7 +278,7 @@ import UIKit
         
         let matchedString = (input as NSString).substring(with: match.range(at: 0))
         let keyStrings = matchedString.split(separator: "+").map { String($0) }
-
+        
         guard !keyStrings.isEmpty else {
             print("No key strings found in the matched string")
             return nil
@@ -305,7 +305,7 @@ import UIKit
         }
         
         return validKeyStrings
-
+        
     }
     
     @objc public func addCommand(_ command: RemoteCommand) -> Bool {
@@ -349,11 +349,33 @@ import UIKit
             }
         }
     }
-
+    
     
     private func saveCommands() {
         if let data = try? NSKeyedArchiver.archivedData(withRootObject: commands, requiringSecureCoding: false) {
             UserDefaults.standard.set(data, forKey: "savedCommands")
+        }
+    }
+    
+    @objc public func sendKeyDownEventWithDelay(keyboardCmdStrings: [String], delay: TimeInterval = 0.05, index: Int = 0) {
+        guard index < keyboardCmdStrings.count else {
+            for keyStr in keyboardCmdStrings {
+                LiSendKeyboardEvent(CommandManager.keyMappings[keyStr]!,Int8(KEY_ACTION_UP), 0)
+            }
+            return
+        } // 如果已经处理完所有键，释放所有按键
+        
+        let keyCode = CommandManager.keyMappings[keyboardCmdStrings[index]]
+        guard let keyCode = keyCode else {
+            print("No mapping found for \(keyboardCmdStrings[index])")
+            sendKeyDownEventWithDelay(keyboardCmdStrings: keyboardCmdStrings, delay: delay, index: index+1) // 跳过当前键，继续下一个
+            return
+        }
+        // 发送当前键的键盘按下事件
+        LiSendKeyboardEvent(keyCode,Int8(KEY_ACTION_DOWN), 0)
+        // 使用 asyncAfter 在指定异步延迟后发送下一个键的键盘按下事件
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            self.sendKeyDownEventWithDelay(keyboardCmdStrings: keyboardCmdStrings, delay: delay, index: index+1) // 跳过当前键，继续下一个
         }
     }
 }

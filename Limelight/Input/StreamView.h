@@ -34,6 +34,9 @@
                           andConfig:(StreamConfiguration*)streamConfig;
 - (void) reloadOnScreenControlsWith:(ControllerSupport*)controllerSupport
                           andConfig:(StreamConfiguration*)streamConfig;
+- (void) clearOnScreenKeyboardButtons;
+- (void) reloadOnScreenKeyboardButtons;
+
 - (CGSize) getVideoAreaSize;
 - (CGPoint) adjustCoordinatesForVideoArea:(CGPoint)point;
 - (uint16_t)getRotationFromAzimuthAngle:(float)azimuthAngle;
