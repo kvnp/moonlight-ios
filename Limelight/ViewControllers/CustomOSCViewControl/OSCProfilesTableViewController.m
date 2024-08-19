@@ -46,7 +46,9 @@ const double NAV_BAR_HEIGHT = 50;
     [self.tableView registerNib:[UINib nibWithNibName:@"ProfileTableViewCell" bundle:nil]
          forCellReuseIdentifier:@"Cell"]; // Register the custom cell nib file with the table view
     self.tableView.alpha = 0.5;
-    self.tableView.backgroundColor = [[UIColor colorWithRed:0.5 green:0.7 blue:1.0 alpha:1.0] colorWithAlphaComponent:0.5]; // set background color & transparency
+    self.tableView.backgroundColor = [[UIColor colorWithRed:0.5 green:0.7 blue:1.0 alpha:1.0] colorWithAlphaComponent:0.2]; // set background color & transparency
+    // self.tableView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.2]; // set background color & transparency
+
 }
 
 - (void) viewDidAppear:(BOOL)animated {
@@ -79,6 +81,9 @@ const double NAV_BAR_HEIGHT = 50;
             textField.clearButtonMode = UITextFieldViewModeWhileEditing;
             textField.borderStyle = UITextBorderStyleNone;
         }];
+        [inputNameAlertController addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Cancel"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) { // adds a button that allows user to decline the option to save the controller layout they currently see on screen
+            [inputNameAlertController dismissViewControllerAnimated:NO completion:nil];
+        }]];
         [inputNameAlertController addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Save"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {   // add save button to allow user to save the on screen controller configuration
             NSArray *textFields = inputNameAlertController.textFields;
             UITextField *nameField = textFields[0];
@@ -127,9 +132,7 @@ const double NAV_BAR_HEIGHT = 50;
                 [self presentViewController:savedAlertController animated:YES completion:nil];
             }
         }]];
-        [inputNameAlertController addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Cancel"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) { // adds a button that allows user to decline the option to save the controller layout they currently see on screen
-            [inputNameAlertController dismissViewControllerAnimated:NO completion:nil];
-        }]];
+
         [self presentViewController:inputNameAlertController animated:YES completion:nil];
 }
 
@@ -164,22 +167,72 @@ const double NAV_BAR_HEIGHT = 50;
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     ProfileTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-    OSCProfile *profile = [[profilesManager getAllProfiles] objectAtIndex: indexPath.row];
+    OSCProfile *profile = [[profilesManager getAllProfiles] objectAtIndex:indexPath.row];
     cell.name.text = profile.name;
-    cell.backgroundColor = [[UIColor clearColor] colorWithAlphaComponent:0.99];
+    cell.name.backgroundColor = [UIColor clearColor];
+    cell.name.alpha = 1.0;
+    cell.name.textColor = [UIColor whiteColor];  // Opaque white text
+    cell.name.shadowColor = [UIColor blackColor];  // Black shadow
+    // Set the shadow offset
+    cell.name.shadowOffset = CGSizeMake(1.0, 1.5);
+
+    // Set cell and contentView background colors
+    cell.backgroundColor = [UIColor clearColor];
+    cell.contentView.backgroundColor = [UIColor clearColor];
     
-    if ([profile.name isEqualToString: [profilesManager getSelectedProfile].name]) { // if this cell contains the name of the currently selected OSC profile then add a checkmark to the right side of the cell
+    // Configure the checkmark accessory
+    if ([profile.name isEqualToString:[profilesManager getSelectedProfile].name]) {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
-    }
-    else {
+    } else {
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
+    
+    // Remove existing custom separators to avoid duplicates
+    UIView *existingSeparator = [cell.contentView viewWithTag:100];
+    if (existingSeparator) {
+        [existingSeparator removeFromSuperview];
+    }
+
+    // Add custom separator with increased height (thickness)
+    CGFloat separatorHeight = 1.0; // Adjust this value for thicker line
+    UIView *separatorView = [[UIView alloc] initWithFrame:CGRectMake(0, cell.contentView.frame.size.height - separatorHeight, cell.contentView.frame.size.width, separatorHeight)];
+    
+    separatorView.backgroundColor = [UIColor whiteColor];  // Set your desired color
+    separatorView.tag = 100;  // Assign a tag to identify the separator view
+    separatorView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+
+    [cell.contentView addSubview:separatorView];
+    [cell.contentView bringSubviewToFront:separatorView];
+
+
+    // Replace the default checkmark with a UILabel displaying a checkmark character
+    if ([profile.name isEqualToString:[profilesManager getSelectedProfile].name]) {
+        UILabel *checkmarkLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 20, 20)]; // Adjust size as needed
+        checkmarkLabel.text = @"✓";  // The checkmark character
+        checkmarkLabel.font = [UIFont systemFontOfSize:25]; // Adjust font size as needed
+        checkmarkLabel.textAlignment = NSTextAlignmentCenter;
+        checkmarkLabel.textColor = [UIColor greenColor];  // Set the color of the checkmark
+        cell.accessoryView = checkmarkLabel;
+        checkmarkLabel.layer.zPosition = 0; // Push checkmark to the back
+    } else {
+        cell.accessoryView = nil;  // Remove checkmark if not selected
+    }
+    [cell.contentView bringSubviewToFront:separatorView];
+    separatorView.layer.zPosition = 1; // Bring separator to the top layer
+
+    
     return cell;
 }
 
 - (BOOL) tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
 }
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 60.0; // Set your desired cell height here
+}
+
 
 - (void) tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     NSMutableArray *profiles = [profilesManager getAllProfiles];
@@ -235,6 +288,7 @@ const double NAV_BAR_HEIGHT = 50;
         /* Place checkmark on selected cell and set profile associated with cell as selected profile */
         UITableViewCell *selectedCell = [tableView cellForRowAtIndexPath: selectedIndexPath];
         selectedCell.accessoryType = UITableViewCellAccessoryCheckmark;  // add checkmark to the cell the user tapped
+        selectedCell.accessoryView.tintColor = [[UIColor colorWithRed:0.5 green:0.5 blue:1.0 alpha:0.85] colorWithAlphaComponent:1.0];
         OSCProfile *profile = [[profilesManager getAllProfiles] objectAtIndex:indexPath.row];
         [profilesManager setProfileToSelected: profile.name];   // set the profile associated with this cell's 'isSelected' property to YES
         
