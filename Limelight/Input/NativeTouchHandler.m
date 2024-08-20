@@ -23,6 +23,7 @@
     TemporarySettings* currentSettings;
     bool activateCoordSelector;
     bool notPureNativeTouchMode;
+    
     // Use a Dictionary to store UITouch object's memory address as key, and pointerId as value,字典存放UITouch对象地址和pointerId映射关系
     // pointerId will be generated from a pre-defined pool
     // Use a NSSet store active pointerId,
@@ -30,8 +31,11 @@
     NSMutableSet<NSNumber *> *activePointerIds; //pointerId Set for active touches.
     NSMutableSet<NSNumber *> *pointerIdPool; //pre-defined pool of pointerIds.
     NSMutableSet<NSNumber *> *unassignedPointerIds;
+    NSMutableSet<NSNumber *> *excludedPointerIds; // a NSSet of pointerIds of touches that will not be sent to the remote PC for better swipe gesture handling
+    CGFloat slideGestureVerticalThreshold;
+    CGFloat screenWidthWithThreshold;
+    CGFloat EDGE_TOLERANCE;
 }
-
 
 - (id)initWithView:(StreamView*)view andSettings:(TemporarySettings*)settings{
     self = [super init];
@@ -39,14 +43,18 @@
     self->currentSettings = settings;
     self->activateCoordSelector = currentSettings.pointerVelocityModeDivider.floatValue != 1.0;
     self->notPureNativeTouchMode = !(currentSettings.touchMode.intValue == PURE_NATIVE_TOUCH);
-    //_touchesCapturedByOnScreenButtons = [[NSMutableSet alloc] init];
     
-    pointerIdDict = [NSMutableDictionary dictionary];
-    pointerIdPool = [NSMutableSet set];
+    self->pointerIdDict = [NSMutableDictionary dictionary];
+    self->pointerIdPool = [NSMutableSet set];
     for (uint8_t i = 0; i <= 10; i++) { //ipadOS supports upto 11 finger touches
-        [pointerIdPool addObject:@(i)];
+        [self->pointerIdPool addObject:@(i)];
     }
-    activePointerIds = [NSMutableSet set];
+    self->activePointerIds = [NSMutableSet set];
+    self->excludedPointerIds = [[NSMutableSet alloc] init];
+    
+    EDGE_TOLERANCE = 5.0;
+    slideGestureVerticalThreshold = CGRectGetHeight([[UIScreen mainScreen] bounds]) * 0.4;
+    screenWidthWithThreshold = CGRectGetWidth([[UIScreen mainScreen] bounds]) - EDGE_TOLERANCE;
 
     [NativeTouchPointer setPointerVelocityDivider:settings.pointerVelocityModeDivider.floatValue];
     [NativeTouchPointer setPointerVelocityFactor:settings.touchPointerVelocityFactor.floatValue];
@@ -56,14 +64,20 @@
 }
 
 
+
 // generate & populate pointerId into NSDict & NSSet, called in touchesBegan
 - (void)populatePointerId:(UITouch*)touch{
+    //populate pointerId
     uintptr_t memAddrValue = (uintptr_t)touch;
     unassignedPointerIds = [pointerIdPool mutableCopy]; //reset unassignedPointerIds
     [unassignedPointerIds minusSet:activePointerIds];
     uint8_t pointerId = [[unassignedPointerIds anyObject] unsignedIntValue];
     [pointerIdDict setObject:@(pointerId) forKey:@(memAddrValue)];
     [activePointerIds addObject:@(pointerId)];
+    
+    //check if touch point is spawned on the left or right upper half screen edges, if so we'll populate the excluded pointer id NSSet and not send the touch event to remote PC. this is for better handling in-stream slide gesture
+    CGPoint initialPoint = [touch locationInView:self->streamView];
+    if(initialPoint.y < slideGestureVerticalThreshold && (initialPoint.x < EDGE_TOLERANCE || initialPoint.x > screenWidthWithThreshold)) [excludedPointerIds addObject:@(pointerId)];
 }
 
 // remove pointerId in touchesEnded or touchesCancelled
@@ -73,6 +87,7 @@
     if(pointerIdObj != nil){
         [activePointerIds removeObject:pointerIdObj];
         [pointerIdDict removeObjectForKey:@(memAddrValue)];
+        if([excludedPointerIds containsObject:pointerIdObj]) [excludedPointerIds removeObject:pointerIdObj]; // remove pointer id from excludedPointerId NSSet
     }
 }
 
@@ -85,13 +100,16 @@
 
 - (void)sendTouchEvent:(UITouch*)touch withTouchtype:(uint8_t)touchType{
     CGPoint targetCoords;
+    uint8_t pointerId = [self retrievePointerIdFromDict:touch];
+    NSLog(@"excluded count: %d", (uint32_t)[excludedPointerIds count]);
     if(activateCoordSelector && touch.phase == UITouchPhaseMoved) targetCoords = [NativeTouchPointer selectCoordsFor:touch]; // coordinates of touch pointer replaced to relative ones here.
+    
+    if([excludedPointerIds containsObject:@(pointerId)]) return; // if the pointerId has been excluded by edge check, we're done here. this touch event will not be sent to the remote PC. and this must be checked after coord selector finishes populating new relative coords, or the app will crash!
     else targetCoords = [touch locationInView:streamView];
     CGPoint location = [streamView adjustCoordinatesForVideoArea:targetCoords];
     CGSize videoSize = [streamView getVideoAreaSize];
     CGFloat normalizedX = location.x / videoSize.width;
     CGFloat normalizedY = location.y / videoSize.height;
-    uint8_t pointerId = [self retrievePointerIdFromDict:touch];
     
     if([NativeTouchPointer getPointerObjFromDict:touch].needResetCoords){ // access whether the current pointer has reached the boundary, and need a coord reset.
         LiSendTouchEvent(LI_TOUCH_EVENT_UP, pointerId, normalizedX, normalizedY, 0, 0, 0, 0);  //event must sent from the lowest level directy by LiSendTouchEvent to simulate continous dragging to another point on screen
