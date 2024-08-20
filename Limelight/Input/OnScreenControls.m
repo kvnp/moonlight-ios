@@ -57,7 +57,7 @@ static NSMutableSet* touchAddrsCapturedByOnScreenControls;
     Controller *_controller;
     NSMutableArray* _deadTouches;
     BOOL _swapABXY;
-    BOOL _visualFeedback;
+    BOOL _largerStickLR1;
     OSCProfilesManager *profilesManager;
     NSMutableDictionary *_activeCustomOscButtonPositionDict;
 }
@@ -146,8 +146,12 @@ static float L3_Y;
     _deadTouches = [[NSMutableArray alloc] init];
     if (streamConfig) {
         _swapABXY = streamConfig.swapABXYButtons;
-        _visualFeedback = streamConfig.oscVisualFeedback; // turn visual feedback of the OSC buttons on or off
     }
+    // we have to retrieve largerStickLR1 setting direct from the database, since streamConfig is invalid in LayoutOnScreenControls
+    DataManager* dataMan = [[DataManager alloc] init];
+    Settings* settings = [dataMan retrieveSettings];
+    _largerStickLR1 = settings.largerStickLR1;
+    
         
     _iPad = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad);
     _controlArea = CGRectMake(0, 0, _view.frame.size.width, _view.frame.size.height);
@@ -595,8 +599,12 @@ static float L3_Y;
 /**
  * Loads the selected OSC profile and lays out each button associated with that profile onto the screen
  */
+
+# define LR2_Y_UP_OFFSET 8
+# define LR1_Y_DOWN_OFFSET 3.5
 - (void) positionOSCButtons {
     OSCProfile *oscProfile = [profilesManager getSelectedProfile];
+    bool defaultProfileSelected = [profilesManager getIndexOfSelectedProfile] == 0;
     
     for (NSData *buttonStateEncoded in oscProfile.buttonStates) {
         
@@ -605,17 +613,20 @@ static float L3_Y;
         for (CALayer *buttonLayer in self.OSCButtonLayers) {    // iterate through each button layer on screen and position and hide/unhide each according to the instructions of its associated 'buttonState'
 
             if ([buttonLayer.name isEqualToString:buttonStateDecoded.name]) {
-                
                 if ([buttonLayer.name isEqualToString:@"upButton"] == NO &&
                     [buttonLayer.name isEqualToString:@"rightButton"] == NO &&
                     [buttonLayer.name isEqualToString:@"downButton"] == NO &&
                     [buttonLayer.name isEqualToString:@"leftButton"] == NO &&
                     [buttonLayer.name isEqualToString:@"leftStick"] == NO &&
                     [buttonLayer.name isEqualToString:@"rightStick"] == NO) {   // Don't move these buttons since they've already been positioned correctly in the 'drawButtons' and 'drawSticks' methods called before this method is called. The 'buttonStateDecoded' object associated with these buttons contains positions relative to a parent CALayer which only exists on 'LayoutOnScreenControls'. These positions relative to the parent layers would translate incorrectly when placed on the game stream VC's 'view' layer
-                    
                     buttonLayer.position = buttonStateDecoded.position;
                 }
                 buttonLayer.hidden = buttonStateDecoded.isHidden;
+                
+                // adjust default layout for largerStickLR1
+                if( defaultProfileSelected && _largerStickLR1)
+                    if([buttonLayer.name isEqualToString:@"l2Button"] || [buttonLayer.name isEqualToString:@"r2Button"]) buttonLayer.position = CGPointMake(buttonLayer.position.x, buttonLayer.position.y - LR2_Y_UP_OFFSET);
+                    if([buttonLayer.name isEqualToString:@"l1Button"] || [buttonLayer.name isEqualToString:@"r1Button"]) buttonLayer.position = CGPointMake(buttonLayer.position.x, buttonLayer.position.y + LR1_Y_DOWN_OFFSET);
             }
         }
     }
@@ -636,6 +647,9 @@ static float L3_Y;
 }
 
 - (void) drawBumpers {
+    // adjust layout for larger L2 & R2 button settings
+    if(_largerStickLR1) L1_Y = R1_Y = L1_Y + LR1_Y_DOWN_OFFSET;
+    
     // create L1 button
     UIImage* l1ButtonImage = [UIImage imageNamed:@"L1"];
     _l1Button.frame = CGRectMake(L1_X - l1ButtonImage.size.width / 2, L1_Y - l1ButtonImage.size.height / 2, l1ButtonImage.size.width, l1ButtonImage.size.height);
@@ -646,10 +660,20 @@ static float L3_Y;
     UIImage* r1ButtonImage = [UIImage imageNamed:@"R1"];
     _r1Button.frame = CGRectMake(R1_X - r1ButtonImage.size.width / 2, R1_Y - r1ButtonImage.size.height / 2, r1ButtonImage.size.width, r1ButtonImage.size.height);
     _r1Button.contents = (id) r1ButtonImage.CGImage;
+    
+    // make l1 r1 the same size as l2 r2
+    if(_largerStickLR1){
+        UIImage* l2ButtonImage = [UIImage imageNamed:@"L2"];
+        _l1Button.bounds = _r1Button.bounds = CGRectMake(0, 0, l2ButtonImage.size.width, l2ButtonImage.size.height);
+    }
+    
     [_view.layer addSublayer:_r1Button];
 }
 
 - (void) drawTriggers {
+    // adjust layout for larger L2 & R2 button settings
+    if(_largerStickLR1) L2_Y = R2_Y = L2_Y - LR2_Y_UP_OFFSET;
+    
     // create L2 button
     UIImage* l2ButtonImage = [UIImage imageNamed:@"L2"];
     _l2Button.frame = CGRectMake(L2_X - l2ButtonImage.size.width / 2, L2_Y - l2ButtonImage.size.height / 2, l2ButtonImage.size.width, l2ButtonImage.size.height);
@@ -681,13 +705,27 @@ static float L3_Y;
     _rightStickBackground.contents = (id) rightStickBgImage.CGImage;
     [_view.layer addSublayer:_rightStickBackground];
     
+    
+    
     UIImage* rightStickImage = [UIImage imageNamed:@"StickInner"];
     _rightStick.frame = CGRectMake(RS_CENTER_X - rightStickImage.size.width / 2, RS_CENTER_Y - rightStickImage.size.height / 2, rightStickImage.size.width, rightStickImage.size.height);
+    
     _rightStick.contents = (id) rightStickImage.CGImage;
     [_view.layer addSublayer:_rightStick];
     
-    STICK_INNER_SIZE = rightStickImage.size.width;
-    STICK_OUTER_SIZE = rightStickBgImage.size.width;
+    // make stick larger
+    if(_largerStickLR1){
+        STICK_INNER_SIZE = rightStickImage.size.width *1.37;
+        STICK_OUTER_SIZE = rightStickBgImage.size.width *1.17;
+        _rightStick.bounds = _leftStick.bounds = CGRectMake(0, 0, STICK_INNER_SIZE, STICK_INNER_SIZE);
+        _rightStickBackground.bounds = _leftStickBackground.bounds = CGRectMake(0, 0, STICK_OUTER_SIZE, STICK_OUTER_SIZE);
+    }
+    else{
+        STICK_INNER_SIZE = rightStickImage.size.width;
+        STICK_OUTER_SIZE = rightStickBgImage.size.width;
+        _rightStick.bounds = _leftStick.bounds = CGRectMake(0, 0, STICK_INNER_SIZE, STICK_INNER_SIZE);
+        _rightStickBackground.bounds = _leftStickBackground.bounds = CGRectMake(0, 0, STICK_OUTER_SIZE, STICK_OUTER_SIZE);
+    }
 }
 
 - (void) drawL3R3 {
@@ -861,7 +899,6 @@ static float L3_Y;
 
 
 - (void)oscButtonTouchDownVisualEffect:(CALayer* )button{
-    if(_visualFeedback){
         [CATransaction begin];
         [CATransaction setDisableActions:YES]; // Disable implicit animations
         
@@ -883,7 +920,6 @@ static float L3_Y;
         button.shadowOpacity = 1.0;
         button.shadowRadius = 0.0; // Adjust the radius to simulate border thickness
         [CATransaction commit];
-    }
 }
 
 

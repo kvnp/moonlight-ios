@@ -441,10 +441,10 @@ BOOL isCustomResolution(CGSize res) {
     [self.onscreenControlSelector setSelectedSegmentIndex:onscreenControlsLevel];
     [self.onscreenControlSelector addTarget:self action:@selector(onscreenControlChanged) forControlEvents:UIControlEventValueChanged];
     [self onscreenControlChanged];
-    [self.oscVisualFeedbackSelector setSelectedSegmentIndex:currentSettings.oscVisualFeedback ? 1 : 0]; // load old setting of oscVisualFeedback
+    [self.largerStickLR1Selector setSelectedSegmentIndex:currentSettings.largerStickLR1 ? 1 : 0]; // load old setting of largerStickLR1
     
     // [self.touchModeSelector setSelectedSegmentIndex:currentSettings.absoluteTouchMode ? 1 : 0];
-    // this part will enable/disable oscSelector & the visual feedback selector
+    // this part will enable/disable oscSelector & the largerStickLR1 selector
     [self.touchModeSelector setSelectedSegmentIndex:currentSettings.touchMode.intValue]; //Load old touchMode setting
     [self.touchModeSelector addTarget:self action:@selector(touchModeChanged) forControlEvents:UIControlEventValueChanged];
     [self touchModeChanged];
@@ -635,7 +635,7 @@ BOOL isCustomResolution(CGSize res) {
     bool isNativeTouch = [self.touchModeSelector selectedSegmentIndex] == PURE_NATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == REGULAR_NATIVE_TOUCH;
     
     [self.onscreenControlSelector setEnabled:oscSelectorEnabled];
-    [self.oscVisualFeedbackSelector setEnabled:oscSelectorEnabled]; // this selector stay aligned with oscSelector
+    [self.largerStickLR1Selector setEnabled:oscSelectorEnabled]; // this selector stay aligned with oscSelector
     
     [self widget:self.pointerVelocityModeDividerSlider setEnabled:isNativeTouch]; // pointer velocity scaling works only in native touch mode.
     [self widget:self.touchPointerVelocityFactorSlider setEnabled:isNativeTouch]; // pointer velocity scaling works only in native touch mode.
@@ -945,7 +945,7 @@ BOOL isCustomResolution(CGSize res) {
     CGFloat pointerVelocityModeDivider = (CGFloat)(uint8_t)self.pointerVelocityModeDividerSlider.value/100;
     CGFloat touchPointerVelocityFactor =(CGFloat)(uint16_t)[self map_velocFactorDisplay_fromSliderValue:self.touchPointerVelocityFactorSlider.value]/100;
     CGFloat mousePointerVelocityFactor =(CGFloat)(uint16_t)self.mousePointerVelocityFactorSlider.value/100;
-    BOOL oscVisualFeedback = [self.oscVisualFeedbackSelector selectedSegmentIndex] == 1;
+    BOOL largerStickLR1 = [self.largerStickLR1Selector selectedSegmentIndex] == 1;
     BOOL liftStreamViewForKeyboard = [self.liftStreamViewForKeyboardSelector selectedSegmentIndex] == 1;
     BOOL showKeyboardToolbar = [self.showKeyboardToolbarSelector selectedSegmentIndex] == 1;
     BOOL optimizeGames = [self.optimizeSettingsSelector selectedSegmentIndex] == 1;
@@ -973,7 +973,7 @@ BOOL isCustomResolution(CGSize res) {
           pointerVelocityModeDivider:pointerVelocityModeDivider
           touchPointerVelocityFactor:touchPointerVelocityFactor
           mousePointerVelocityFactor:mousePointerVelocityFactor
-                   oscVisualFeedback:oscVisualFeedback
+                   largerStickLR1:largerStickLR1
            liftStreamViewForKeyboard:liftStreamViewForKeyboard
                  showKeyboardToolbar:showKeyboardToolbar
                        optimizeGames:optimizeGames

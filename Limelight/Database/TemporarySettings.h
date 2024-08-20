@@ -38,7 +38,7 @@
     CODEC_PREF_HEVC,
     CODEC_PREF_AV1,
 } preferredCodec;
-@property (nonatomic) BOOL oscVisualFeedback;
+@property (nonatomic) BOOL largerStickLR1;
 @property (nonatomic) BOOL useFramePacing;
 @property (nonatomic) BOOL multiController;
 @property (nonatomic) BOOL swapABXYButtons;

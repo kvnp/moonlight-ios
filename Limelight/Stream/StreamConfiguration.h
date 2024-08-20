@@ -26,7 +26,7 @@
 @property BOOL optimizeGameSettings;
 @property BOOL playAudioOnPC;
 @property BOOL swapABXYButtons;
-@property BOOL oscVisualFeedback;
+@property BOOL largerStickLR1;
 @property int audioConfiguration;
 @property int supportedVideoFormats;
 @property BOOL multiController;

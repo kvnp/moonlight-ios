@@ -82,7 +82,7 @@
     self.multiController = settings.multiController;
     self.swapABXYButtons = settings.swapABXYButtons;
     self.onscreenControls = settings.onscreenControls;
-    self.oscVisualFeedback = settings.oscVisualFeedback;
+    self.largerStickLR1 = settings.largerStickLR1;
     self.btMouseSupport = settings.btMouseSupport;
     // self.absoluteTouchMode = settings.absoluteTouchMode;
     self.touchMode = settings.touchMode;

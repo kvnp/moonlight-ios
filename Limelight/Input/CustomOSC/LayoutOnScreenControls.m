@@ -50,6 +50,7 @@
 - (void) drawButtons {
     [super setDPadCenter];    // Set custom position for D-Pad here
     [super setAnalogStickPositions]; // Set custom position for analog sticks here
+    [super drawBumpers];
     [super drawButtons];
     
     UIImage* downButtonImage = [UIImage imageNamed:@"DownButton"];

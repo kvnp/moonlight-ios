@@ -552,6 +552,7 @@ ICAgICAgICAgICAgIA
                         <outlet property="hdrSelector" destination="9xD-GL-9xq" id="5Rf-R7-5TO"/>
                         <outlet property="keyboardToggleFingerNumLabel" destination="PD9-1O-J34" id="EvS-vA-dJD"/>
                         <outlet property="keyboardToggleFingerNumSlider" destination="9rm-7X-TVH" id="SOR-7r-clv"/>
+                        <outlet property="largerStickLR1Selector" destination="XbO-CV-orB" id="7vF-xY-n4F"/>
                         <outlet property="liftStreamViewForKeyboardSelector" destination="pQE-vU-Nr7" id="avO-LL-zes"/>
                         <outlet property="mousePointerVelocityFactorSlider" destination="cS3-8R-rEd" id="pcU-fp-Fzg"/>
                         <outlet property="mousePointerVelocityFactorUILabel" destination="ecG-dC-PT1" id="MCr-m1-WHm"/>
@@ -559,7 +560,6 @@ ICAgICAgICAgICAgIA
                         <outlet property="onscreenControlSelector" destination="WGf-9d-eAm" id="hob-se-4Sn"/>
                         <outlet property="onscreenControllerLabel" destination="HZT-dd-DuQ" id="xyM-q6-IAK"/>
                         <outlet property="optimizeSettingsSelector" destination="Gob-Lu-b1y" id="9Wl-yp-0Ou"/>
-                        <outlet property="oscVisualFeedbackSelector" destination="XbO-CV-orB" id="7vF-xY-n4F"/>
                         <outlet property="pointerVelocityModeDividerSlider" destination="xet-C9-l5y" id="GnQ-xU-e0N"/>
                         <outlet property="pointerVelocityModeDividerUILabel" destination="VlN-ZW-1gm" id="vbe-QK-hZb"/>
                         <outlet property="resolutionDisplayView" destination="Dej-Bj-F6i" id="bi4-N6-snx"/>

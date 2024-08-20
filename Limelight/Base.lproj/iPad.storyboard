@@ -500,8 +500,8 @@ ICAgICAgICAgICAgICA
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Turn on On-Screen Controls Visual Feedback                          " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="2Bp-XZ-cCw">
-                                <rect key="frame" x="15" y="644" width="456" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Larger Sticks &amp; L1/R1 Buttons" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="2Bp-XZ-cCw">
+                                <rect key="frame" x="15" y="644" width="223" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.93902439019999995" green="0.9625305918" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -535,6 +535,7 @@ ICAgICAgICAgICAgICA
                         <outlet property="hdrSelector" destination="OA2-SA-bBO" id="uUL-mc-4We"/>
                         <outlet property="keyboardToggleFingerNumLabel" destination="nh6-cn-z23" id="ong-b0-2ST"/>
                         <outlet property="keyboardToggleFingerNumSlider" destination="4wJ-Gd-Dmp" id="fbp-o8-KRA"/>
+                        <outlet property="largerStickLR1Selector" destination="sIU-PH-H7V" id="YWg-40-eKd"/>
                         <outlet property="liftStreamViewForKeyboardSelector" destination="hm3-EV-h6d" id="fHG-J1-eQL"/>
                         <outlet property="mousePointerVelocityFactorSlider" destination="Ei2-FJ-9oC" id="1T3-QA-Jua"/>
                         <outlet property="mousePointerVelocityFactorUILabel" destination="oPM-G6-u5O" id="Eco-5u-PRR"/>
@@ -542,7 +543,6 @@ ICAgICAgICAgICAgICA
                         <outlet property="onscreenControlSelector" destination="qSU-wh-tqA" id="j8d-fB-Z2c"/>
                         <outlet property="onscreenControllerLabel" destination="LGV-5y-piG" id="GsV-fS-lX9"/>
                         <outlet property="optimizeSettingsSelector" destination="nCO-OT-dV1" id="FB0-Rt-C44"/>
-                        <outlet property="oscVisualFeedbackSelector" destination="sIU-PH-H7V" id="YWg-40-eKd"/>
                         <outlet property="pointerVelocityModeDividerSlider" destination="AcZ-2i-GI4" id="dGf-ZU-w3S"/>
                         <outlet property="pointerVelocityModeDividerUILabel" destination="DkI-w6-jku" id="edY-gX-2Cw"/>
                         <outlet property="resolutionDisplayView" destination="9cG-JD-glb" id="TT1-hy-MUC"/>

@@ -75,6 +75,7 @@ typedef NS_ENUM(NSInteger, OnScreenControlsLevel) {
 - (void) show;
 - (void) setupComplexControls;
 - (void) drawButtons;
+- (void) drawBumpers;
 - (void) updateControls;
 - (OnScreenControlsLevel) getLevel;
 - (void) setDPadCenter;
