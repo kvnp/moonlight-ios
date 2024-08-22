@@ -47,22 +47,22 @@ import UIKit
     
     private func setupView() {
         label.text = self.keyLabel
-        label.font = UIFont.systemFont(ofSize: 19)
+        label.font = UIFont.boldSystemFont(ofSize: 19)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.adjustsFontSizeToFitWidth = true
         label.minimumScaleFactor = 0.1  // Adjust the scale factor as needed
         
-        label.textColor = UIColor(white: 1.0, alpha: 0.9)
+        label.textColor = UIColor(white: 1.0, alpha: 0.82)
         label.textAlignment = .center
         label.shadowColor = .black
         label.shadowOffset = CGSize(width: 1, height: 1)
         label.translatesAutoresizingMaskIntoConstraints = false // enable auto alignment for the label
         
         self.translatesAutoresizingMaskIntoConstraints = true // this is mandatory to prevent unexpected key view location change
-        self.layer.borderColor = UIColor.black.cgColor
-        self.layer.borderWidth = 0
+        self.layer.borderColor = UIColor(white: 0.2, alpha: 0.86).cgColor
+        self.layer.borderWidth = 1
         self.layer.cornerRadius = 20
-        self.backgroundColor = UIColor(white: 0.2, alpha: 0.5)
+        self.backgroundColor = UIColor(white: 0.2, alpha: 0.57)
         self.layer.shadowColor = UIColor.clear.cgColor
         self.layer.shadowRadius = 8
         self.layer.shadowOpacity = 0.5
@@ -97,6 +97,7 @@ import UIKit
         self.layer.shadowOffset = CGSize.zero
         self.layer.shadowOpacity = 1.0
         self.layer.shadowRadius = 0.0
+        self.layer.borderWidth = 0
     }
     
     // Touch event handling
@@ -107,13 +108,16 @@ import UIKit
         if !OnScreenKeyboardButtonView.editMode {
             // self.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.7)
             self.buttonDownVisualEffect()
-            
+            self.layer.borderWidth = 0
+
             // if the command(keystring contains "+", it's a multi-key command or a quick triggering key, rather than a physical button
             if(self.keyString.contains("+")){
                 let keyboardCmdStrings = CommandManager.shared.extractKeyStrings(from: self.keyString)!
                 CommandManager.shared.sendKeyDownEventWithDelay(keyboardCmdStrings: keyboardCmdStrings) // send multi-key command
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) { // reset shadow color immediately 50ms later
                     self.layer.shadowColor = UIColor.clear.cgColor
+                    self.layer.borderWidth = 1
+
                 }
             }
             // if there's no "+" in the keystring, treat it as a regular button:
@@ -155,9 +159,12 @@ import UIKit
             LiSendKeyboardEvent(CommandManager.keyMappings[self.keyString]!,Int8(KEY_ACTION_UP), 0)
             // self.backgroundColor = self.originalBackgroundColor
             self.layer.shadowColor = UIColor.clear.cgColor
+            self.layer.borderWidth = 1
+            return;
         }
         // self.backgroundColor = self.originalBackgroundColor
         self.layer.shadowColor = UIColor.clear.cgColor
+        self.layer.borderWidth = 1
 
         guard let superview = superview else { return }
 

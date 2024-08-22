@@ -474,7 +474,7 @@
     // Convert the location to the button's coordinate system
     CGPoint locationInButton = [self.view convertPoint:locationInView toView:trashCanButton];
     bool ret = CGRectContainsPoint(trashCanButton.bounds, locationInButton);
-    NSLog(@"within button: %d", ret);
+    // NSLog(@"within button: %d", ret);
     // Check if the location is within the button's bounds
     return ret;
 }
