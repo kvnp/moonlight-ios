@@ -198,8 +198,8 @@
                                 <color key="tintColor" red="0.6716768742" green="0.61711704730000005" blue="0.99902987480000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <color key="selectedSegmentTintColor" red="0.6716768742" green="0.61711704730000005" blue="0.99902987480000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </segmentedControl>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="On-Screen Controls                                                                     " lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LGV-5y-piG">
-                                <rect key="frame" x="16" y="573" width="452" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="On-Screen Controls &amp; Button                                                     " lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LGV-5y-piG">
+                                <rect key="frame" x="16" y="573" width="454" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="tintColor" red="0.81533776120000001" green="0.85979419950000002" blue="0.91372549020000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -852,7 +852,7 @@ ICAgICAgICAgICAgICA
                                     <constraint firstAttribute="height" constant="44" id="lQr-5u-g05"/>
                                 </constraints>
                                 <items>
-                                    <navigationItem title="OSC Layout Profiles" id="Q2V-XF-4jq">
+                                    <navigationItem title="Controller &amp; Button Profiles" id="Q2V-XF-4jq">
                                         <barButtonItem key="leftBarButtonItem" title="Exit" width="90" style="plain" id="Bhn-IO-Wlt" userLabel="Delete">
                                             <connections>
                                                 <action selector="exitTapped:" destination="Atv-Nj-0qv" id="pwG-sO-9he"/>

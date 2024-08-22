@@ -560,7 +560,7 @@ BOOL isCustomResolution(CGSize res) {
         //if (self.layoutOnScreenControlsVC.isBeingPresented == NO)
     }
     else{
-        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"On-Screen Controls"]];
+        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"On-Screen Controls & Buttons"]];
     }
     justEnteredSettingsViewDoNotOpenOscLayoutTool = false;
 }
@@ -628,7 +628,7 @@ BOOL isCustomResolution(CGSize res) {
 }
 
 - (void) touchModeChanged {
-    // Disable on-screen controls in non-relative touch mode
+    // Disable On-Screen Controls & Buttons in non-relative touch mode
     bool oscEnabled = ([self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == REGULAR_NATIVE_TOUCH) && [self.onscreenControlSelector selectedSegmentIndex] != OnScreenControlsLevelOff;
     bool oscSelectorEnabled = [self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == REGULAR_NATIVE_TOUCH;
     bool customOscEnabled = oscEnabled && [self.onscreenControlSelector selectedSegmentIndex] == OnScreenControlsLevelCustom;
@@ -652,7 +652,7 @@ BOOL isCustomResolution(CGSize res) {
         //if (self.layoutOnScreenControlsVC.isBeingPresented == NO)
     }
     else{
-        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"On-Screen Controls"]];
+        [self.onscreenControllerLabel setText:[LocalizationHelper localizedStringForKey: @"On-Screen Controls & Buttons"]];
     }
     [self updateTouchModeLabel];
 }

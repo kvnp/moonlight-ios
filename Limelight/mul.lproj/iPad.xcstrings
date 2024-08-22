@@ -1256,30 +1256,30 @@
       }
     },
     "LGV-5y-piG.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"On-Screen Controls                                                                     \"; ObjectID = \"LGV-5y-piG\";",
+      "comment" : "Class = \"UILabel\"; text = \"On-Screen Controls & Button                                                     \"; ObjectID = \"LGV-5y-piG\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "On-Screen Controls                                                                     "
+            "value" : "On-Screen Controls & Button                                                     "
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "屏幕虚拟手柄"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "屏幕虚拟手柄"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "屏幕虚拟手柄"
           }
         }
@@ -1706,31 +1706,31 @@
       }
     },
     "Q2V-XF-4jq.title" : {
-      "comment" : "Class = \"UINavigationItem\"; title = \"OSC Layout Profiles\"; ObjectID = \"Q2V-XF-4jq\";",
+      "comment" : "Class = \"UINavigationItem\"; title = \"Controller & Button Profiles\"; ObjectID = \"Q2V-XF-4jq\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "OSC Layout Profiles"
+            "value" : "Controller & Button Profiles"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "虚拟手柄布局文件"
+            "value" : "屏显手柄与按键布局"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "虚拟手柄布局文件"
+            "value" : "屏显手柄与按键布局"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "虚拟手柄布局文件"
+            "value" : "屏显手柄与按键布局"
           }
         }
       }

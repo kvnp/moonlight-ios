@@ -272,31 +272,31 @@
       }
     },
     "5pN-Sn-SCN.title" : {
-      "comment" : "Class = \"UINavigationItem\"; title = \"OSC Layout Profiles\"; ObjectID = \"5pN-Sn-SCN\";",
+      "comment" : "Class = \"UINavigationItem\"; title = \"Controller & Button Profiles\"; ObjectID = \"5pN-Sn-SCN\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "OSC Layout Profiles"
+            "value" : "Controller & Button Profiles"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "虚拟手柄布局文件"
+            "value" : "屏显手柄与按键布局"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "虚拟手柄布局文件"
+            "value" : "屏显手柄与按键布局"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "虚拟手柄布局文件"
+            "value" : "屏显手柄与按键布局"
           }
         }
       }
@@ -1130,13 +1130,13 @@
       }
     },
     "HZT-dd-DuQ.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"On-Screen Controls                                                                      \"; ObjectID = \"HZT-dd-DuQ\";",
+      "comment" : "Class = \"UILabel\"; text = \"On-Screen Controls & Buttons                                                \"; ObjectID = \"HZT-dd-DuQ\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "On-Screen Controls                                                                      "
+            "value" : "On-Screen Controls & Buttons                                                "
           }
         },
         "zh-Hans" : {

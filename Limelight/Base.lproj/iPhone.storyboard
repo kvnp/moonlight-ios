@@ -218,8 +218,8 @@ ICAgICAgICAgICAgIA
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="tintColor" red="0.6716768742" green="0.61711704730000005" blue="0.99902987480000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </slider>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="On-Screen Controls                                                                      " lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HZT-dd-DuQ">
-                                <rect key="frame" x="19" y="570" width="439" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="On-Screen Controls &amp; Buttons                                                " lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HZT-dd-DuQ">
+                                <rect key="frame" x="19" y="570" width="436" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" red="0.9513210654258728" green="0.97490358352661133" blue="0.99987185001373291" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -832,7 +832,7 @@ ICAgICAgICAgICAgIA
                                     <constraint firstAttribute="height" constant="44" id="R90-2b-UrU"/>
                                 </constraints>
                                 <items>
-                                    <navigationItem title="OSC Layout Profiles" id="5pN-Sn-SCN">
+                                    <navigationItem title="Controller &amp; Button Profiles" id="5pN-Sn-SCN">
                                         <barButtonItem key="leftBarButtonItem" title="Exit" id="D9X-7p-9oc">
                                             <connections>
                                                 <action selector="exitTapped:" destination="0K8-kQ-xlN" id="Sam-Ct-kqC"/>

@@ -1515,25 +1515,25 @@
         }
       }
     },
-    "On-Screen Controls" : {
+    "On-Screen Controls & Buttons" : {
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "屏显虚拟手柄"
+            "value" : "屏显虚拟手柄与按键"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "屏显虚拟手柄"
+            "value" : "屏显虚拟手柄与按键"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "屏显虚拟手柄"
+            "value" : "屏显虚拟手柄与按键"
           }
         }
       }
