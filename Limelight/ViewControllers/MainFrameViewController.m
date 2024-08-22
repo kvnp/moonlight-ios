@@ -27,7 +27,7 @@
 #import "IdManager.h"
 #import "ConnectionHelper.h"
 #import "LocalizationHelper.h"
-#import "CustomEdgeSwipeGestureRecognizer.h"
+#import "CustomEdgeSlideGestureRecognizer.h"
 #import "DataManager.h"
 #import "Moonlight-Swift.h" // not used yet.
 

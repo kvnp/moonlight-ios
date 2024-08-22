@@ -12,7 +12,7 @@
 #import "StreamManager.h"
 #import "ControllerSupport.h"
 #import "DataManager.h"
-#import "CustomEdgeSwipeGestureRecognizer.h"
+#import "CustomEdgeSlideGestureRecognizer.h"
 #import "CustomTapGestureRecognizer.h"
 #import "LocalizationHelper.h"
 #import "Moonlight-Swift.h"
@@ -55,8 +55,8 @@
     BOOL _userIsInteracting;
     CGSize _keyboardSize;
 #if !TARGET_OS_TV
-    CustomEdgeSwipeGestureRecognizer *_slideToSettingsRecognizer;
-    CustomEdgeSwipeGestureRecognizer *_slideToCmdToolRecognizer;
+    CustomEdgeSlideGestureRecognizer *_slideToSettingsRecognizer;
+    CustomEdgeSlideGestureRecognizer *_slideToCmdToolRecognizer;
     CustomTapGestureRecognizer *_oscLayoutTapRecoginizer;
     LayoutOnScreenControlsViewController *_layoutOnScreenControlsVC;
 #endif
@@ -95,7 +95,7 @@
 }
 
 - (void)configSwipeGestures{
-    _slideToSettingsRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(edgeSwiped)];
+    _slideToSettingsRecognizer = [[CustomEdgeSlideGestureRecognizer alloc] initWithTarget:self action:@selector(edgeSwiped)];
     _slideToSettingsRecognizer.edges = _settings.slideToSettingsScreenEdge.intValue;
     _slideToSettingsRecognizer.normalizedThresholdDistance = _settings.slideToSettingsDistance.floatValue;
     _slideToSettingsRecognizer.delaysTouchesBegan = NO;
@@ -103,7 +103,7 @@
     [self.view addGestureRecognizer:_slideToSettingsRecognizer];
     
     
-    _slideToCmdToolRecognizer = [[CustomEdgeSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(presentCommandManagerViewController)];
+    _slideToCmdToolRecognizer = [[CustomEdgeSlideGestureRecognizer alloc] initWithTarget:self action:@selector(presentCommandManagerViewController)];
     if(_settings.slideToSettingsScreenEdge.intValue == UIRectEdgeLeft) _slideToCmdToolRecognizer.edges = UIRectEdgeRight;
     else _slideToCmdToolRecognizer.edges = UIRectEdgeLeft;  // _commandManager triggered by sliding from another side.
     _slideToCmdToolRecognizer.normalizedThresholdDistance = _settings.slideToSettingsDistance.floatValue;

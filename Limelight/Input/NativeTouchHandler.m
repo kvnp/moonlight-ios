@@ -52,7 +52,7 @@
     self->activePointerIds = [NSMutableSet set];
     self->excludedPointerIds = [[NSMutableSet alloc] init];
     
-    EDGE_TOLERANCE = 5.0;
+    EDGE_TOLERANCE = 15.0;
     slideGestureVerticalThreshold = CGRectGetHeight([[UIScreen mainScreen] bounds]) * 0.4;
     screenWidthWithThreshold = CGRectGetWidth([[UIScreen mainScreen] bounds]) - EDGE_TOLERANCE;
 
@@ -66,7 +66,7 @@
 
 
 // generate & populate pointerId into NSDict & NSSet, called in touchesBegan
-- (void)populatePointerId:(UITouch*)touch{
+- (void)handleTouchDown:(UITouch*)touch{
     //populate pointerId
     uintptr_t memAddrValue = (uintptr_t)touch;
     unassignedPointerIds = [pointerIdPool mutableCopy]; //reset unassignedPointerIds
@@ -101,7 +101,7 @@
 - (void)sendTouchEvent:(UITouch*)touch withTouchtype:(uint8_t)touchType{
     CGPoint targetCoords;
     uint8_t pointerId = [self retrievePointerIdFromDict:touch];
-    NSLog(@"excluded count: %d", (uint32_t)[excludedPointerIds count]);
+    // NSLog(@"excluded count: %d", (uint32_t)[excludedPointerIds count]);
     if(activateCoordSelector && touch.phase == UITouchPhaseMoved) targetCoords = [NativeTouchPointer selectCoordsFor:touch]; // coordinates of touch pointer replaced to relative ones here.
     
     if([excludedPointerIds containsObject:@(pointerId)]) return; // if the pointerId has been excluded by edge check, we're done here. this touch event will not be sent to the remote PC. and this must be checked after coord selector finishes populating new relative coords, or the app will crash!
@@ -121,7 +121,7 @@
     for (UITouch* touch in touches){
         // continue to the next loop if current touch is already captured by OSC. works only in regular native touch
         if(notPureNativeTouchMode && [OnScreenControls.touchAddrsCapturedByOnScreenControls containsObject:@((uintptr_t)touch)]) continue;
-        [self populatePointerId:touch]; //generate & populate pointerId
+        [self handleTouchDown:touch]; //generate & populate pointerId
         if(activateCoordSelector) [NativeTouchPointer populatePointerObjIntoDict:touch];
         [self sendTouchEvent:touch withTouchtype:LI_TOUCH_EVENT_DOWN];
     }

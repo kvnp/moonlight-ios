@@ -10,7 +10,7 @@
 #import "AppDelegate.h"
 #import "CustomOSCViewControl/LayoutOnScreenControlsViewController.h"
 #import "MainFrameViewController.h"
-#import "CustomEdgeSwipeGestureRecognizer.h"
+#import "CustomEdgeSlideGestureRecognizer.h"
 
 @interface SettingsViewController : UIViewController
 @property (strong, nonatomic) IBOutlet UILabel *bitrateLabel;

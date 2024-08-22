@@ -212,31 +212,31 @@
       }
     },
     "2LZ-cX-teZ.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"Turn on On-Screen Controls Visual Feedback                         \"; ObjectID = \"2LZ-cX-teZ\";",
+      "comment" : "Class = \"UILabel\"; text = \"Larger Sticks & L1/R1 Buttons                                                     \"; ObjectID = \"2LZ-cX-teZ\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Turn on On-Screen Controls Visual Feedback                         "
+            "value" : "Larger Sticks & L1/R1 Buttons                                                     "
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "打开屏显手柄视觉反馈"
+            "value" : "更大的摇杆和L1/R1按键"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "打开屏显手柄视觉反馈"
+            "value" : "更大的摇杆和L1/R1按键"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "打开屏显手柄视觉反馈"
+            "value" : "更大的摇杆和L1/R1按键"
           }
         }
       }
@@ -1838,30 +1838,30 @@
       }
     },
     "stX-s7-H2W.text" : {
-      "comment" : "Class = \"UILabel\"; text = \"Open Command Tool in Stream View by Sliding from:        \"; ObjectID = \"stX-s7-H2W\";",
+      "comment" : "Class = \"UILabel\"; text = \"Open Command Tool in Stream View by Sliding from:            \"; ObjectID = \"stX-s7-H2W\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Open Command Tool in Stream View by Sliding from:        "
+            "value" : "Open Command Tool in Stream View by Sliding from:            "
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "串流中从以下屏幕边缘滑动打开命令工具"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "串流中从以下屏幕边缘滑动打开命令工具"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "串流中从以下屏幕边缘滑动打开命令工具"
           }
         }

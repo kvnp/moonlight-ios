@@ -1,5 +1,5 @@
 //
-//  CustomEdgeSwipeGestureRecognizer.m
+//  CustomEdgeSlideGestureRecognizer.m
 //  Moonlight-ZWM
 //
 //  Created by ZWM on 2024/4/30.
@@ -8,10 +8,10 @@
 
 // #import <Foundation/Foundation.h>
 
-#import "CustomEdgeSwipeGestureRecognizer.h"
+#import "CustomEdgeSlideGestureRecognizer.h"
 #import <UIKit/UIGestureRecognizerSubclass.h>
 
-@implementation CustomEdgeSwipeGestureRecognizer
+@implementation CustomEdgeSlideGestureRecognizer
 UITouch* capturedUITouch;
 CGFloat startPointX;
 static CGFloat screenWidthInPoints;

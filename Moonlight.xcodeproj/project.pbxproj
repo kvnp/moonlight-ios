@@ -23,7 +23,7 @@
 		843E93BE2C41528700B1651F /* OrientationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843E93BD2C41528700B1651F /* OrientationHelper.swift */; };
 		8454AC662C31907F00F0A302 /* iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8454AC682C31907F00F0A302 /* iPad.storyboard */; };
 		8454AC6A2C319BDA00F0A302 /* iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8454AC6C2C319BDA00F0A302 /* iPhone.storyboard */; };
-		84591A512BE1625E006AAB10 /* CustomEdgeSwipeGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 84591A502BE1625E006AAB10 /* CustomEdgeSwipeGestureRecognizer.m */; };
+		84591A512BE1625E006AAB10 /* CustomEdgeSlideGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 84591A502BE1625E006AAB10 /* CustomEdgeSlideGestureRecognizer.m */; };
 		84E1CDEC2C4F67D300547904 /* CommandManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E1CDEB2C4F67D300547904 /* CommandManager.swift */; };
 		84E1CDEF2C4F688E00547904 /* CommandManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E1CDEE2C4F688E00547904 /* CommandManagerViewController.swift */; };
 		84E1CDFA2C4FE83400547904 /* SwiftLocalizationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E1CDF92C4FE83400547904 /* SwiftLocalizationHelper.swift */; };
@@ -153,8 +153,8 @@
 		8454AC692C31907F00F0A302 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/iPad.xcstrings; sourceTree = "<group>"; };
 		8454AC6B2C319BDA00F0A302 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/iPhone.storyboard; sourceTree = "<group>"; };
 		8454AC6D2C319BDA00F0A302 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/iPhone.xcstrings; sourceTree = "<group>"; };
-		84591A4F2BE16240006AAB10 /* CustomEdgeSwipeGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomEdgeSwipeGestureRecognizer.h; sourceTree = "<group>"; };
-		84591A502BE1625E006AAB10 /* CustomEdgeSwipeGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomEdgeSwipeGestureRecognizer.m; sourceTree = "<group>"; };
+		84591A4F2BE16240006AAB10 /* CustomEdgeSlideGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomEdgeSlideGestureRecognizer.h; sourceTree = "<group>"; };
+		84591A502BE1625E006AAB10 /* CustomEdgeSlideGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomEdgeSlideGestureRecognizer.m; sourceTree = "<group>"; };
 		84D8EB932C5146AD00FC10A9 /* Moonlight-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Moonlight-Bridging-Header.h"; sourceTree = "<group>"; };
 		84E1CDEB2C4F67D300547904 /* CommandManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandManager.swift; sourceTree = "<group>"; };
 		84E1CDEE2C4F688E00547904 /* CommandManagerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandManagerViewController.swift; sourceTree = "<group>"; };
@@ -677,8 +677,8 @@
 			isa = PBXGroup;
 			children = (
 				84351B242C29AD2E00A77989 /* CustomOSCViewControl */,
-				84591A502BE1625E006AAB10 /* CustomEdgeSwipeGestureRecognizer.m */,
-				84591A4F2BE16240006AAB10 /* CustomEdgeSwipeGestureRecognizer.h */,
+				84591A502BE1625E006AAB10 /* CustomEdgeSlideGestureRecognizer.m */,
+				84591A4F2BE16240006AAB10 /* CustomEdgeSlideGestureRecognizer.h */,
 				FBD3495119FF36FB002D2A60 /* SWRevealViewController.h */,
 				FBD3495219FF36FB002D2A60 /* SWRevealViewController.m */,
 				FB89462419F646E200339C8A /* MainFrameViewController.h */,
@@ -1011,7 +1011,7 @@
 				9819CC22254F180F008A7C8E /* AbsoluteTouchHandler.m in Sources */,
 				9819CC14254F107A008A7C8E /* RelativeTouchHandler.m in Sources */,
 				FB1A674D2131E65900507771 /* KeyboardSupport.m in Sources */,
-				84591A512BE1625E006AAB10 /* CustomEdgeSwipeGestureRecognizer.m in Sources */,
+				84591A512BE1625E006AAB10 /* CustomEdgeSlideGestureRecognizer.m in Sources */,
 				843CC7F62C1E7A1700BBC475 /* NativeTouchHandler.m in Sources */,
 				FB89463219F646E200339C8A /* VideoDecoderRenderer.m in Sources */,
 				FB290D0419B2C406004C83CF /* AppDelegate.m in Sources */,

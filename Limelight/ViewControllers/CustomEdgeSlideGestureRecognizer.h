@@ -1,17 +1,17 @@
 //
-//  CustomEdgeSwipeGestureRecognizer.h
+//  CustomEdgeSlideGestureRecognizer.h
 //  Moonlight-ZWM
 //
 //  Created by ZWM on 2024/4/30.
 //  Copyright © 2024 Moonlight Game Streaming Project. All rights reserved.
 //
 
-#ifndef CustomEdgeSwipeGestureRecognizer_h
-#define CustomEdgeSwipeGestureRecognizer_h
-// CustomEdgeSwipeGestureRecognizer.h
+#ifndef CustomEdgeSlideGestureRecognizer_h
+#define CustomEdgeSlideGestureRecognizer_h
+// CustomEdgeSlideGestureRecognizer.h
 #import <UIKit/UIKit.h>
 
-@interface CustomEdgeSwipeGestureRecognizer : UIGestureRecognizer
+@interface CustomEdgeSlideGestureRecognizer : UIGestureRecognizer
 
 @property (nonatomic, assign) UIRectEdge edges; // Specify the edge(s) you want to recognize the swipe gesture on
 @property (nonatomic, assign) CGFloat normalizedThresholdDistance; // Distance from the edge to start recognizing the gesture
@@ -19,4 +19,4 @@
 @property (nonatomic, assign) CGFloat EDGE_TOLERANCE;
 
 @end
-#endif /* CustomEdgeSwipeGestureRecognizer_h */
+#endif /* CustomEdgeSlideGestureRecognizer_h */
