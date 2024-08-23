@@ -105,6 +105,7 @@ static float LS_CENTER_X;
 static float LS_CENTER_Y;
 static float RS_CENTER_X;
 static float RS_CENTER_Y;
+static const float STICK_OPACITY = 0.63;
 
 static float START_X;
 static float START_Y;
@@ -697,6 +698,7 @@ static float L3_Y;
     UIImage* leftStickImage = [UIImage imageNamed:@"StickInner"];
     _leftStick.frame = CGRectMake(LS_CENTER_X - leftStickImage.size.width / 2, LS_CENTER_Y - leftStickImage.size.height / 2, leftStickImage.size.width, leftStickImage.size.height);
     _leftStick.contents = (id) leftStickImage.CGImage;
+    _leftStick.opacity = STICK_OPACITY; // make stick half transparent when it's idle
     [_view.layer addSublayer:_leftStick];
     
     // create right analog stick
@@ -711,12 +713,13 @@ static float L3_Y;
     _rightStick.frame = CGRectMake(RS_CENTER_X - rightStickImage.size.width / 2, RS_CENTER_Y - rightStickImage.size.height / 2, rightStickImage.size.width, rightStickImage.size.height);
     
     _rightStick.contents = (id) rightStickImage.CGImage;
+    _rightStick.opacity = STICK_OPACITY; // make stick half transparent when it's idle
     [_view.layer addSublayer:_rightStick];
     
     // make stick larger
     if(_largerStickLR1){
-        STICK_INNER_SIZE = rightStickImage.size.width *1.37;
-        STICK_OUTER_SIZE = rightStickBgImage.size.width *1.17;
+        STICK_INNER_SIZE = rightStickImage.size.width *1.33;
+        STICK_OUTER_SIZE = rightStickBgImage.size.width *1.10;
         _rightStick.bounds = _leftStick.bounds = CGRectMake(0, 0, STICK_INNER_SIZE, STICK_INNER_SIZE);
         _rightStickBackground.bounds = _leftStickBackground.bounds = CGRectMake(0, 0, STICK_OUTER_SIZE, STICK_OUTER_SIZE);
     }
@@ -907,7 +910,8 @@ static float L3_Y;
         button.cornerRadius = 45;
         
         // 使用 shadowPath 定义阴影形状和扩展范围
-        CGFloat spread = 15;  // 扩散的大小
+        CGFloat spread = 15;  // 扩散的大小gggkkkoooovv
+        if([button.name isEqualToString:@"leftStick"] || [button.name isEqualToString:@"rightStick"]) spread = 12;
         CGRect largerRect = CGRectInset(button.bounds, -spread, -spread);
         UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRoundedRect:largerRect cornerRadius:button.cornerRadius];
         button.shadowPath = shadowPath.CGPath;
@@ -1044,6 +1048,7 @@ static float L3_Y;
             _r3Touch = touch;
             updated = true;
         } else if ([_leftStick.presentationLayer hitTest:touchLocation]) {
+            _leftStick.opacity = 1.0; // make stick opaque while being moved
             if (l3TouchStart != nil) {
                 // Find elapsed time and convert to milliseconds
                 // Use (-) modifier to conversion since receiver is earlier than now
@@ -1059,6 +1064,7 @@ static float L3_Y;
             _lsTouch = touch;
             stickTouch = true;
         } else if ([_rightStick.presentationLayer hitTest:touchLocation]) {
+            _rightStick.opacity = 1.0; // make stick opaque while being moved
             if (r3TouchStart != nil) {
                 // Find elapsed time and convert to milliseconds
                 // Use (-) modifier to conversion since receiver is earlier than now
@@ -1173,6 +1179,7 @@ static float L3_Y;
         } else if (touch == _lsTouch) {
             _leftStick.frame = CGRectMake(LS_CENTER_X - STICK_INNER_SIZE / 2, LS_CENTER_Y - STICK_INNER_SIZE / 2, STICK_INNER_SIZE, STICK_INNER_SIZE);
             _leftStick.shadowOpacity = 0.0;
+            _leftStick.opacity = STICK_OPACITY; // reset stick to half transparent
             [_controllerSupport updateLeftStick:_controller x:0 y:0];
             [_controllerSupport clearButtonFlag:_controller flags:LS_CLK_FLAG];
             l3TouchStart = [NSDate date];
@@ -1181,6 +1188,7 @@ static float L3_Y;
         } else if (touch == _rsTouch) {
             _rightStick.frame = CGRectMake(RS_CENTER_X - STICK_INNER_SIZE / 2, RS_CENTER_Y - STICK_INNER_SIZE / 2, STICK_INNER_SIZE, STICK_INNER_SIZE);
             _rightStick.shadowOpacity = 0.0;
+            _rightStick.opacity = STICK_OPACITY;
             [_controllerSupport updateRightStick:_controller x:0 y:0];
             [_controllerSupport clearButtonFlag:_controller flags:RS_CLK_FLAG];
             r3TouchStart = [NSDate date];

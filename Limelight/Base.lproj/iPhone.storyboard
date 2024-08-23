@@ -702,25 +702,27 @@ ICAgICAgICAgICAgIA
                                             </button>
                                             <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RDI-on-aPY">
                                                 <rect key="frame" x="240" y="0.0" width="50" height="50"/>
+                                                <subviews>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LPA-ea-YHC" userLabel="Save">
+                                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="50" id="Lot-pn-o60"/>
+                                                            <constraint firstAttribute="height" constant="50" id="uWO-So-qxr"/>
+                                                        </constraints>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                        <color key="tintColor" red="0.6705882353" green="0.61568627450000002" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                        <state key="normal" image="SquareAndArrowDown">
+                                                            <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="64"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="saveTapped:" destination="ZYS-Zm-PJs" eventType="touchUpInside" id="cSe-fN-UWC"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
                                             </stackView>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LPA-ea-YHC" userLabel="Save">
-                                                <rect key="frame" x="360" y="0.0" width="50" height="50"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="50" id="Lot-pn-o60"/>
-                                                    <constraint firstAttribute="height" constant="50" id="uWO-So-qxr"/>
-                                                </constraints>
-                                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                <color key="tintColor" red="0.6705882353" green="0.61568627450000002" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                <state key="normal" image="SquareAndArrowDown">
-                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="64"/>
-                                                </state>
-                                                <connections>
-                                                    <action selector="saveTapped:" destination="ZYS-Zm-PJs" eventType="touchUpInside" id="cSe-fN-UWC"/>
-                                                </connections>
-                                            </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rXW-Ms-2cJ" userLabel="Load">
-                                                <rect key="frame" x="480" y="0.0" width="50" height="50"/>
+                                                <rect key="frame" x="360" y="0.0" width="50" height="50"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="50" id="91g-27-mVH"/>
                                                     <constraint firstAttribute="height" constant="50" id="kRj-b6-Bx1"/>
@@ -732,6 +734,28 @@ ICAgICAgICAgICAgIA
                                                 </state>
                                                 <connections>
                                                     <action selector="loadTapped:" destination="ZYS-Zm-PJs" eventType="touchUpInside" id="DVp-Xi-K27"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Up4-28-sgF" userLabel="Add">
+                                                <rect key="frame" x="480" y="0.0" width="50" height="50"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="50" id="rWU-US-9dl"/>
+                                                    <constraint firstAttribute="width" constant="50" id="wWj-wB-MRd"/>
+                                                </constraints>
+                                                <color key="tintColor" red="0.6705882353" green="0.61568627450000002" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <state key="normal">
+                                                    <attributedString key="attributedTitle">
+                                                        <fragment content="+">
+                                                            <attributes>
+                                                                <font key="NSFont" size="50" name="Arial-BoldMT"/>
+                                                                <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                                            </attributes>
+                                                        </fragment>
+                                                    </attributedString>
+                                                </state>
+                                                <connections>
+                                                    <action selector="addTapped:" destination="ZYS-Zm-PJs" eventType="touchUpInside" id="idY-3m-m01"/>
                                                 </connections>
                                             </button>
                                         </subviews>
