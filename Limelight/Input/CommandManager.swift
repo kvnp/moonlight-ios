@@ -363,7 +363,7 @@ import UIKit
         }
     }
     
-    @objc public func sendKeyDownEventWithDelay(keyboardCmdStrings: [String], delay: TimeInterval = 0.05, index: Int = 0) {
+    @objc public func sendKeyDownEventWithDelay(keyboardCmdStrings: [String], delay: TimeInterval = 0.2, index: Int = 0) { // we need a large delay for WAN streaming
         guard index < keyboardCmdStrings.count else {
             for keyStr in keyboardCmdStrings {
                 LiSendKeyboardEvent(CommandManager.keyMappings[keyStr]!,Int8(KEY_ACTION_UP), 0)

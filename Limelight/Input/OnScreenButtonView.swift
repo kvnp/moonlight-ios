@@ -106,6 +106,7 @@ import UIKit
     
     // Touch event handling
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // print("touchDown: %f", CACurrentMediaTime())
         self.pressed = true
         super.touchesBegan(touches, with: event)
         //self.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 0.7)
@@ -114,7 +115,6 @@ import UIKit
             // self.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.7)
             self.buttonDownVisualEffect()
             self.layer.borderWidth = 0
-
             // if the command(keystring contains "+", it's a multi-key command or a quick triggering key, rather than a physical button
             if(self.keyString.contains("+")){
                 let keyboardCmdStrings = CommandManager.shared.extractKeyStrings(from: self.keyString)!
