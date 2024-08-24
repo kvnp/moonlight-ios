@@ -13,7 +13,7 @@
 
 @implementation OSCProfilesManager
 
-static NSMutableDictionary *onScreenKeyViewsDict;
+static NSMutableDictionary *onScreenButtonViewsDict;
 
 #pragma mark - Initializer
 
@@ -31,8 +31,8 @@ static NSMutableDictionary *onScreenKeyViewsDict;
 #pragma mark - Class Helper Methods
 
 
-+ (void) setOnScreenKeyViewsDict:(NSMutableDictionary* )dict{
-    onScreenKeyViewsDict = dict;
++ (void) setOnScreenButtonViewsDict:(NSMutableDictionary* )dict{
+    onScreenButtonViewsDict = dict;
 }
 
 /**
@@ -272,11 +272,11 @@ static NSMutableDictionary *onScreenKeyViewsDict;
     }
     
     // save keyboard button as buttonstate, this is for the new onscreen keyboard buttons:
-    [onScreenKeyViewsDict enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) { // this dict is passed from the layout tool VC, as a static obj in this class.
-        OnScreenKeyboardButtonView *keyView = value;
-        OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:keyView.keyString buttonType:KeyboardButton andPosition:keyView.frame.origin];
-        buttonState.alias = keyView.keyLabel;
-        buttonState.timestamp = keyView.timestamp;
+    [onScreenButtonViewsDict enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) { // this dict is passed from the layout tool VC, as a static obj in this class.
+        OnScreenButtonView *buttonView = value;
+        OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:buttonView.keyString buttonType:KeyboardOrMouseButton andPosition:buttonView.frame.origin];
+        buttonState.alias = buttonView.keyLabel;
+        buttonState.timestamp = buttonView.timestamp;
         NSData *buttonStateEncoded = [NSKeyedArchiver archivedDataWithRootObject:buttonState requiringSecureCoding:YES error:nil];
         [buttonStatesEncoded addObject: buttonStateEncoded];
     }];

@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 + (OSCProfilesManager *) sharedManager;
-+ (void) setOnScreenKeyViewsDict:(NSMutableDictionary* )dict;
++ (void) setOnScreenButtonViewsDict:(NSMutableDictionary* )dict;
 
 #pragma mark - Getters
 /**

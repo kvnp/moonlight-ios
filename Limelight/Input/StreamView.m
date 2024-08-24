@@ -343,7 +343,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 - (void) clearOnScreenKeyboardButtons{
     for (UIView *subview in self.superview.subviews) {
         // 检查子视图是否是特定类型的实例
-        if ([subview isKindOfClass:[OnScreenKeyboardButtonView class]]) {
+        if ([subview isKindOfClass:[OnScreenButtonView class]]) {
             // 如果是，就添加到将要被移除的数组中
             [subview removeFromSuperview];
         }
@@ -364,15 +364,15 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     OSCProfilesManager* profilesManager = [OSCProfilesManager sharedManager];
     OSCProfile *oscProfile = [profilesManager getSelectedProfile]; //returns the currently selected OSCProfile
 
-    if(!OnScreenKeyboardButtonView.editMode){ // in edit mode, keyboard button view will be updated within layoutool view controller.
+    if(!OnScreenButtonView.editMode){ // in edit mode, keyboard button view will be updated within layoutool view controller.
         for (NSData *buttonStateEncoded in oscProfile.buttonStates) {
             OnScreenButtonState* buttonState = [NSKeyedUnarchiver unarchivedObjectOfClass:[OnScreenButtonState class] fromData:buttonStateEncoded error:nil];
-            if(buttonState.buttonType == KeyboardButton){
-                OnScreenKeyboardButtonView* keyView = [[OnScreenKeyboardButtonView alloc] initWithKeyString:buttonState.name keyLabel:buttonState.alias]; //reconstruct keyView
-                keyView.translatesAutoresizingMaskIntoConstraints = NO; // weird but this is mandatory, or you will find no key views added to the right place
-                // Add the KeyView to the view controller's view
-                [self.superview addSubview:keyView]; // add keyboard button to the stream frame view. must add it to the target view before setting location.
-                [keyView setKeyLocationWithXOffset:buttonState.position.x yOffset:buttonState.position.y];
+            if(buttonState.buttonType == KeyboardOrMouseButton){
+                OnScreenButtonView* buttonView = [[OnScreenButtonView alloc] initWithKeyString:buttonState.name keyLabel:buttonState.alias]; //reconstruct buttonView
+                buttonView.translatesAutoresizingMaskIntoConstraints = NO; // weird but this is mandatory, or you will find no key views added to the right place
+                // Add the buttonView to the view controller's view
+                [self.superview addSubview:buttonView]; // add keyboard button to the stream frame view. must add it to the target view before setting location.
+                [buttonView setKeyLocationWithXOffset:buttonState.position.x yOffset:buttonState.position.y];
             }
         }
     }

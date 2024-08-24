@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)reloadOnScreenKeyboardButtons;
 
 @property LayoutOnScreenControls *layoutOSC;    // object that contains a view which contains the on screen controller buttons that allows the user to drag and positions each button on the screen using touch
-@property (nonatomic) NSMutableDictionary* onScreenKeyViewsDict;
+@property (nonatomic) NSMutableDictionary* onScreenButtonViewsDict;
 
 @property int OSCSegmentSelected;
 

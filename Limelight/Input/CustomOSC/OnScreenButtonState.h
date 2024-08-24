@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, OnScreenButtonType) {
     GameControllerButton,
-    KeyboardButton
+    KeyboardOrMouseButton
 };
 
 - (id) initWithButtonName:(NSString*)name buttonType:(uint8_t)buttonType andPosition:(CGPoint)position;

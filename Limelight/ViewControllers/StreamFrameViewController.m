@@ -174,33 +174,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    //[self layoutOnScreenKeyboardButtons];
-
-    
-    // onscreen keyView test
-    /*
-    OnScreenKeyView *keyView = [[OnScreenKeyView alloc] initWithKeyString:@"WIN" keyLabel:@"WIN"];
-    keyView.translatesAutoresizingMaskIntoConstraints = NO;
-    
-    // Add the KeyView to the view controller's view
-    [self.view addSubview:keyView];
-    
-    // Configure the KeyView's layout
-    
-    CGFloat xOffset = 50;
-    CGFloat yOffset = 550;
-    CGFloat spacing = 10.0;
-    
-    [keyView setKeyLocationWithXOffset:500 yOffset:(CGFloat)550]; */
-     
-    
-    
-    
-    
-    
-    
-    
-    
+   
 #if !TARGET_OS_TV
     [[self revealViewController] setPrimaryViewController:self];
     [[NSNotificationCenter defaultCenter] addObserver:self

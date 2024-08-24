@@ -9,12 +9,14 @@
 import UIKit
 
 
-@objc class OnScreenKeyboardButtonView: UIView {
+@objc class OnScreenButtonView: UIView {
     @objc static public var editMode: Bool = false
     @objc static public var timestampOfButtonBeingDragged: TimeInterval = 0
     @objc public var keyLabel: String
     @objc public var keyString: String
     @objc public var timestamp: TimeInterval
+
+    
     private let label: UILabel
     private let originalBackgroundColor: UIColor
     private var storedLocation: CGPoint = .zero
@@ -42,7 +44,7 @@ import UIKit
     }
     
     @objc public func enableRelocationMode(enabled: Bool){
-        OnScreenKeyboardButtonView.editMode = enabled
+        OnScreenButtonView.editMode = enabled
     }
     
     private func setupView() {
@@ -105,7 +107,7 @@ import UIKit
         super.touchesBegan(touches, with: event)
         //self.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 0.7)
         
-        if !OnScreenKeyboardButtonView.editMode {
+        if !OnScreenButtonView.editMode {
             // self.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.7)
             self.buttonDownVisualEffect()
             self.layer.borderWidth = 0
@@ -122,7 +124,12 @@ import UIKit
             }
             // if there's no "+" in the keystring, treat it as a regular button:
             else{
-                LiSendKeyboardEvent(CommandManager.keyMappings[self.keyString]!,Int8(KEY_ACTION_DOWN), 0)
+                if(CommandManager.mouseButtonMappings.keys.contains(self.keyString)){
+                    LiSendMouseButtonEvent(CChar(BUTTON_ACTION_PRESS), Int32(CommandManager.mouseButtonMappings[self.keyString]!))
+                }
+                else{
+                    LiSendKeyboardEvent(CommandManager.keyMappings[self.keyString]!,Int8(KEY_ACTION_DOWN), 0)
+                }
             }
         }
         else {
@@ -136,10 +143,10 @@ import UIKit
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesMoved(touches, with: event)
-        OnScreenKeyboardButtonView.timestampOfButtonBeingDragged = self.timestamp
+        OnScreenButtonView.timestampOfButtonBeingDragged = self.timestamp
         
-        // Move the KeyView based on touch movement in relocation mode
-        if OnScreenKeyboardButtonView.editMode {
+        // Move the buttonView based on touch movement in relocation mode
+        if OnScreenButtonView.editMode {
             if let touch = touches.first {
                 let currentLocation = touch.location(in: superview)
                 let offsetX = currentLocation.x - storedLocation.x
@@ -155,8 +162,15 @@ import UIKit
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
-        if !OnScreenKeyboardButtonView.editMode && !self.keyString.contains("+") { // if the command(keystring contains "+", it's a multi-key command rather than a single key button
-            LiSendKeyboardEvent(CommandManager.keyMappings[self.keyString]!,Int8(KEY_ACTION_UP), 0)
+        if !OnScreenButtonView.editMode && !self.keyString.contains("+") { // if the command(keystring contains "+", it's a multi-key command rather than a single key button
+            
+            if(CommandManager.mouseButtonMappings.keys.contains(self.keyString)){
+                LiSendMouseButtonEvent(CChar(BUTTON_ACTION_RELEASE), Int32(CommandManager.mouseButtonMappings[self.keyString]!))
+            }
+            else{
+                LiSendKeyboardEvent(CommandManager.keyMappings[self.keyString]!,Int8(KEY_ACTION_UP), 0)
+            }
+            
             // self.backgroundColor = self.originalBackgroundColor
             self.layer.shadowColor = UIColor.clear.cgColor
             self.layer.borderWidth = 1
@@ -184,6 +198,6 @@ import UIKit
         // Trigger layout update
         superview.layoutIfNeeded()
 
-        setupView(); //re-setup keyview style
+        setupView(); //re-setup buttonView style
     }
 }

@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		840751B32BF49C050096B657 /* CustomTapGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 840751B22BF49C050096B657 /* CustomTapGestureRecognizer.m */; };
-		84203F232C5F24C00032EEED /* OnScreenKeyboardButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84203F222C5F24C00032EEED /* OnScreenKeyboardButtonView.swift */; };
+		84203F232C5F24C00032EEED /* OnScreenButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84203F222C5F24C00032EEED /* OnScreenButtonView.swift */; };
 		84351B0E2C29ACCB00A77989 /* LayoutOnScreenControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 84351B072C29ACCA00A77989 /* LayoutOnScreenControls.m */; };
 		84351B0F2C29ACCB00A77989 /* OnScreenButtonState.m in Sources */ = {isa = PBXBuildFile; fileRef = 84351B092C29ACCA00A77989 /* OnScreenButtonState.m */; };
 		84351B102C29ACCB00A77989 /* OSCProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 84351B0A2C29ACCA00A77989 /* OSCProfile.m */; };
@@ -126,7 +126,7 @@
 		693B3A9A218638CD00982F7B /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		840751B12BF49B5A0096B657 /* CustomTapGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomTapGestureRecognizer.h; sourceTree = "<group>"; };
 		840751B22BF49C050096B657 /* CustomTapGestureRecognizer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomTapGestureRecognizer.m; sourceTree = "<group>"; };
-		84203F222C5F24C00032EEED /* OnScreenKeyboardButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnScreenKeyboardButtonView.swift; sourceTree = "<group>"; };
+		84203F222C5F24C00032EEED /* OnScreenButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnScreenButtonView.swift; sourceTree = "<group>"; };
 		84351B062C29ACCA00A77989 /* OnScreenButtonState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OnScreenButtonState.h; sourceTree = "<group>"; };
 		84351B072C29ACCA00A77989 /* LayoutOnScreenControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LayoutOnScreenControls.m; sourceTree = "<group>"; };
 		84351B082C29ACCA00A77989 /* OSCProfilesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSCProfilesManager.h; sourceTree = "<group>"; };
@@ -625,7 +625,7 @@
 				988FCD3F293B091B003050E2 /* KeyboardInputField.h */,
 				988FCD40293B091B003050E2 /* KeyboardInputField.m */,
 				84E1CDEB2C4F67D300547904 /* CommandManager.swift */,
-				84203F222C5F24C00032EEED /* OnScreenKeyboardButtonView.swift */,
+				84203F222C5F24C00032EEED /* OnScreenButtonView.swift */,
 			);
 			path = Input;
 			sourceTree = "<group>";
@@ -1031,7 +1031,7 @@
 				FBDE86E019F7A837001C18A8 /* UIComputerView.m in Sources */,
 				FB89463019F646E200339C8A /* StreamConfiguration.m in Sources */,
 				FBD3495319FF36FB002D2A60 /* SWRevealViewController.m in Sources */,
-				84203F232C5F24C00032EEED /* OnScreenKeyboardButtonView.swift in Sources */,
+				84203F232C5F24C00032EEED /* OnScreenButtonView.swift in Sources */,
 				84FD0B512C31338D006B5BE5 /* LocalizationHelper.m in Sources */,
 				FB1D59971BBCCB6400F482CA /* ComputerScrollView.m in Sources */,
 				FBD3495019FF2174002D2A60 /* SettingsViewController.m in Sources */,

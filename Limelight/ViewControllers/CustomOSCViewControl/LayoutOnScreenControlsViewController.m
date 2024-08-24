@@ -35,26 +35,21 @@
 
 
 - (void) viewWillDisappear:(BOOL)animated{
-    OnScreenKeyboardButtonView.editMode = false;
+    OnScreenButtonView.editMode = false;
     [super viewWillDisappear:animated];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"OscLayoutCloseNotification" object:self];
 }
 
 - (void) reloadOnScreenKeyboardButtons {
-    /*
-    [self.onScreenKeyViewsDict enumerateKeysAndObjectsUsingBlock:^(id timeIntervalKey, id keyView, BOOL *stop) {
-        [keyView removeFromSuperview];
-    }];*/
-    
     for (UIView *subview in self.view.subviews) {
         // 检查子视图是否是特定类型的实例
-        if ([subview isKindOfClass:[OnScreenKeyboardButtonView class]]) {
+        if ([subview isKindOfClass:[OnScreenButtonView class]]) {
             // 如果是，就添加到将要被移除的数组中
             [subview removeFromSuperview];
         }
     }
     
-    [self.onScreenKeyViewsDict removeAllObjects];
+    [self.onScreenButtonViewsDict removeAllObjects];
     
     NSLog(@"reload os Key here");
     
@@ -62,32 +57,25 @@
     OSCProfile *oscProfile = [profilesManager getSelectedProfile]; //returns the currently selected OSCProfile
     for (NSData *buttonStateEncoded in oscProfile.buttonStates) {
         OnScreenButtonState* buttonState = [NSKeyedUnarchiver unarchivedObjectOfClass:[OnScreenButtonState class] fromData:buttonStateEncoded error:nil];
-        if(buttonState.buttonType == KeyboardButton){
-            OnScreenKeyboardButtonView* keyView = [[OnScreenKeyboardButtonView alloc] initWithKeyString:buttonState.name keyLabel:buttonState.alias]; //reconstruct keyView
-            keyView.translatesAutoresizingMaskIntoConstraints = NO; // weird but this is mandatory, or you will find no key views added to the right place
-            keyView.timestamp = buttonState.timestamp; // will be set as key in in the dict.
-            // Add the KeyView to the view controller's view
-            [self.view addSubview:keyView];
-            [keyView setKeyLocationWithXOffset:buttonState.position.x yOffset:buttonState.position.y];
+        if(buttonState.buttonType == KeyboardOrMouseButton){
+            OnScreenButtonView* buttonView = [[OnScreenButtonView alloc] initWithKeyString:buttonState.name keyLabel:buttonState.alias]; //reconstruct buttonView
+            buttonView.translatesAutoresizingMaskIntoConstraints = NO; // weird but this is mandatory, or you will find no key views added to the right place
+            buttonView.timestamp = buttonState.timestamp; // will be set as key in in the dict.
+            // Add the buttonView to the view controller's view
+            [self.view addSubview:buttonView];
+            [buttonView setKeyLocationWithXOffset:buttonState.position.x yOffset:buttonState.position.y];
             
-            [self.onScreenKeyViewsDict setObject:keyView forKey:@(keyView.timestamp)];
+            [self.onScreenButtonViewsDict setObject:buttonView forKey:@(buttonView.timestamp)];
         }
     }
-        
-    //////////////////
-    /*
-    [self.onScreenKeyViewsDict enumerateKeysAndObjectsUsingBlock:^(id timeIntervalKey, id keyView, BOOL *stop) {
-        [self.view addSubview:keyView];
-    }];*/
-    
 }
 
 
 - (void) viewDidLoad {
     [super viewDidLoad];
     profilesManager = [OSCProfilesManager sharedManager];
-    self.onScreenKeyViewsDict = [[NSMutableDictionary alloc] init]; // will be revised to read persisted data , somewhere else
-    [OSCProfilesManager setOnScreenKeyViewsDict:self.onScreenKeyViewsDict];   // pass the keyboard button dict to profiles manager
+    self.onScreenButtonViewsDict = [[NSMutableDictionary alloc] init]; // will be revised to read persisted data , somewhere else
+    [OSCProfilesManager setOnScreenButtonViewsDict:self.onScreenButtonViewsDict];   // pass the keyboard button dict to profiles manager
 
     isToolbarHidden = NO;   // keeps track if the toolbar is hidden up above the screen so that we know whether to hide or show it when the user taps the toolbar's hide/show button
             
@@ -165,7 +153,7 @@
 
 
 - (void) viewDidAppear:(BOOL)animated {
-    OnScreenKeyboardButtonView.editMode = true;
+    OnScreenButtonView.editMode = true;
     [super viewWillAppear:animated];
     [self profileRefresh];
 }
@@ -317,19 +305,21 @@
         alertController.textFields[1].autocorrectionType = UITextAutocorrectionTypeNo;
         alertController.textFields[1].spellCheckingType = UITextSpellCheckingTypeNo;*/
         
-        NSString *keyboardCmdString = [alertController.textFields[0].text uppercaseString]; // convert to uppercase
+        NSString *cmdString = [alertController.textFields[0].text uppercaseString]; // convert to uppercase
         NSString *keyLabel = alertController.textFields[1].text;
-        if([keyLabel isEqualToString:@""]) keyLabel = [[keyboardCmdString lowercaseString] capitalizedString];
-        if([CommandManager.shared extractKeyStringsFrom:keyboardCmdString] == nil) return; // this is a invalid string.
+        if([keyLabel isEqualToString:@""]) keyLabel = [[cmdString lowercaseString] capitalizedString];
+        bool noValidKeyboardString = [CommandManager.shared extractKeyStringsFrom:cmdString] == nil; // this is a invalid string.
+        bool noVliadMouseButtongString = ![CommandManager.mouseButtonMappings.allKeys containsObject:cmdString];
+        if(noValidKeyboardString && noVliadMouseButtongString) return;
         
         //saving & present the keyboard button:
-        OnScreenKeyboardButtonView* keyView = [[OnScreenKeyboardButtonView alloc] initWithKeyString:keyboardCmdString keyLabel:keyLabel];
-        keyView.translatesAutoresizingMaskIntoConstraints = NO; // weird but this is mandatory, or you will find no key views added to the right place
-        keyView.timestamp = CACurrentMediaTime(); // will be set as key in in the dict.
-        [self.onScreenKeyViewsDict setObject:keyView forKey:@(keyView.timestamp)];
-        // Add the KeyView to the view controller's view
-        [self.view addSubview:keyView];
-        [keyView setKeyLocationWithXOffset:50 yOffset:50];
+        OnScreenButtonView* buttonView = [[OnScreenButtonView alloc] initWithKeyString:cmdString keyLabel:keyLabel];
+        buttonView.translatesAutoresizingMaskIntoConstraints = NO; // weird but this is mandatory, or you will find no key views added to the right place
+        buttonView.timestamp = CACurrentMediaTime(); // will be set as key in in the dict.
+        [self.onScreenButtonViewsDict setObject:buttonView forKey:@(buttonView.timestamp)];
+        // Add the buttonView to the view controller's view
+        [self.view addSubview:buttonView];
+        [buttonView setKeyLocationWithXOffset:50 yOffset:50];
     }];
     [alertController addAction:cancelAction];
     [alertController addAction:okAction];
@@ -485,9 +475,9 @@
     // removing keyboard buttons objs
     UITouch *touch = [touches anyObject]; // Get the first touch in the set
     if([self touchWithinTashcanButton:touch]){
-        [self.onScreenKeyViewsDict[@(OnScreenKeyboardButtonView.timestampOfButtonBeingDragged)] removeFromSuperview];
-        [self.onScreenKeyViewsDict removeObjectForKey:@(OnScreenKeyboardButtonView.timestampOfButtonBeingDragged)];
-        OnScreenKeyboardButtonView.timestampOfButtonBeingDragged = 0; //reset thie timestamp
+        [self.onScreenButtonViewsDict[@(OnScreenButtonView.timestampOfButtonBeingDragged)] removeFromSuperview];
+        [self.onScreenButtonViewsDict removeObjectForKey:@(OnScreenButtonView.timestampOfButtonBeingDragged)];
+        OnScreenButtonView.timestampOfButtonBeingDragged = 0; //reset thie timestamp
     }
     
     
