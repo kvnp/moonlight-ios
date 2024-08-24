@@ -1100,7 +1100,7 @@ static float L3_Y;
             if ([gesture isKindOfClass:[CustomTapGestureRecognizer class]]) {
                 // This is a CustomTapGestureRecognizer
                 CustomTapGestureRecognizer *tapGesture = (CustomTapGestureRecognizer *)gesture;
-                tapGesture.areOnScreenButtonTaps = true;
+                tapGesture.areOnScreenControllerTaps = true;
                 // Perform actions with tapGesture
             }
         }

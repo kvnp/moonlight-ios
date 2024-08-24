@@ -15,6 +15,7 @@ import UIKit
     @objc public var keyLabel: String
     @objc public var keyString: String
     @objc public var timestamp: TimeInterval
+    @objc public var pressed: Bool
 
     
     private let label: UILabel
@@ -27,7 +28,8 @@ import UIKit
         self.keyLabel = keyLabel
         self.label = UILabel()
         self.originalBackgroundColor = UIColor(white: 0.2, alpha: 0.7)
-        self.timestamp = 0;
+        self.timestamp = 0
+        self.pressed = false
         super.init(frame: .zero)
         setupView()
     }
@@ -104,6 +106,7 @@ import UIKit
     
     // Touch event handling
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.pressed = true
         super.touchesBegan(touches, with: event)
         //self.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 0.7)
         
@@ -161,6 +164,7 @@ import UIKit
     
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // self.pressed = false // will be reset outside the class
         super.touchesEnded(touches, with: event)
         if !OnScreenButtonView.editMode && !self.keyString.contains("+") { // if the command(keystring contains "+", it's a multi-key command rather than a single key button
             

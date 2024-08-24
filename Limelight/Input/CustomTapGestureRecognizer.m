@@ -9,9 +9,10 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIGestureRecognizerSubclass.h>
 #import "CustomTapGestureRecognizer.h"
+#import "Moonlight-Swift.h"
 
 // The most accurate & reliable tap gesture recognizer of iOS:
-// - Almost 100% recoginition rate. UITapGestureRecognizer of Apple API fails frequently, just intractable.
+// - Almost 100% recoginition rate. UITapGestureRecognizer of Apple API fails frequently, just a piece of crap.
 // - When immediateTriggering is set to false (for native multi-touch):
 //   Gesture signal will be triggered on touchesEnded stage, multi finger touch operations will not be interrupted by the arising keyboard.
 //   Instances of different [numberOfTouchesRequired] barely compete with each other, for example, the chance of 3-finger gesture get triggered by 4 or 5 finger tap is very small.
@@ -32,7 +33,7 @@ static CGFloat screenWidthInPoints;
     _immediateTriggering = false;
     _tapDownTimeThreshold = 0.3;
     _gestureCaptured = false;
-    _areOnScreenButtonTaps = false;
+    _areOnScreenControllerTaps = false;
     return self;
 }
 
@@ -73,14 +74,38 @@ static CGFloat screenWidthInPoints;
         _gestureCaptured = false;
         self.state = UIGestureRecognizerStateFailed;
     }
-    else if(_gestureCaptured && allTouchesCount == [touches count] && !_areOnScreenButtonTaps){  //must exclude virtual controller taps here to prevent stucked button, _areVirtualControllerTaps flag is set by onscreencontrols or anyother related classes.
+    else if(_gestureCaptured && allTouchesCount == [touches count] && !_areOnScreenControllerTaps && ![self areOnScreenButtonsTaps]){  //must exclude virtual controller & onscreen button taps here to prevent stucked button, _areVirtualControllerTaps flag is set by onscreencontrols, areOnScreenButtonsTaps will be done by iterating all button views in streamframview
         _gestureCaptured = false; //reset for next recognition
         if((CACurrentMediaTime() - _gestureCapturedTime) < _tapDownTimeThreshold){
             lowestTouchPointYCoord = 0.0; //reset for next recognition
             self.state = UIGestureRecognizerStateRecognized;
         }
     }
-    if (allTouchesCount == [touches count]) _areOnScreenButtonTaps = false; // need to reset this flag anyway, when all fingers are lefting
+    if (allTouchesCount == [touches count]) _areOnScreenControllerTaps = false; // need to reset this flag anyway, when all fingers are lefting
+}
+
+
+// it was a not a perfect choice to code OnScreenButtonView in Swift...
+// we're unable to import this class to swift codebase by the bridging header,and have to exlucde the onscreen button taps here
+// by iterating every button view instances. but it's basically ok since the number of buttonViews are always limited.
+// and this method will only be called when the recognizer is active & and the taps passes all the checks and is about to ge triggered.
+- (bool)areOnScreenButtonsTaps {
+    NSTimeInterval t1 = CACurrentMediaTime();
+    bool gotOneButtonPressed = false;
+    for(UIView* view in self.view.subviews){
+        if ([view isKindOfClass:[OnScreenButtonView class]]) {
+            OnScreenButtonView* buttonView = (OnScreenButtonView*) view;
+            if(gotOneButtonPressed){ // once we have just 1 button pressed already, reset pressed flag for the all the buttonViews
+                buttonView.pressed = false; //reset the flag for buttonView
+                continue;
+            }
+            if(buttonView.pressed){
+                gotOneButtonPressed = true; //got one button pressed
+                buttonView.pressed = false; // reset the flag for current buttonView
+            }
+        }
+    }
+    return gotOneButtonPressed;
 }
 
 @end
