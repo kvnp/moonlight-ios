@@ -102,10 +102,12 @@
     CGPoint targetCoords;
     uint8_t pointerId = [self retrievePointerIdFromDict:touch];
     // NSLog(@"excluded count: %d", (uint32_t)[excludedPointerIds count]);
-    if(activateCoordSelector && touch.phase == UITouchPhaseMoved) targetCoords = [NativeTouchPointer selectCoordsFor:touch]; // coordinates of touch pointer replaced to relative ones here.
     
     if([excludedPointerIds containsObject:@(pointerId)]) return; // if the pointerId has been excluded by edge check, we're done here. this touch event will not be sent to the remote PC. and this must be checked after coord selector finishes populating new relative coords, or the app will crash!
+
+    if(activateCoordSelector && touch.phase == UITouchPhaseMoved) targetCoords = [NativeTouchPointer selectCoordsFor:touch]; // coordinates of touch pointer replaced to relative ones here.
     else targetCoords = [touch locationInView:streamView];
+
     CGPoint location = [streamView adjustCoordinatesForVideoArea:targetCoords];
     CGSize videoSize = [streamView getVideoAreaSize];
     CGFloat normalizedX = location.x / videoSize.width;
