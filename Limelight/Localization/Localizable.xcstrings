@@ -450,6 +450,29 @@
         }
       }
     },
+    "Contact Developer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "联系开发者"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "联系开发者"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "联系开发者"
+          }
+        }
+      }
+    },
     "Current profile updated successfully" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1131,29 +1154,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法执行网络测试. 请检查网络连接后重试."
-          }
-        }
-      }
-    },
-    "Modified by: True砖家 on Bilibili" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "由 Bilibili Up主 True砖家 修改、汉化"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "由 Bilibili Up主 True砖家 修改、汉化"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "由 Bilibili Up主 True砖家 修改、汉化"
           }
         }
       }

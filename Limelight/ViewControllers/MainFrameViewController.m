@@ -1007,7 +1007,7 @@ static NSMutableSet* hostList;
 
 - (void)waterMarkTapped {
     // Handle the tap action here, e.g., open a URL
-    NSURL *url = [NSURL URLWithString:@"https://www.bilibili.com/video/BV1K4421D7Be"];
+    NSURL *url = [NSURL URLWithString:@"https://www.wolai.com/k8RVqMrgYgC9NB4tXdz46H"];
     if ([[UIApplication sharedApplication] canOpenURL:url]) {
         [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
     }
@@ -1019,10 +1019,10 @@ static NSMutableSet* hostList;
         [self->waterMark removeFromSuperview];
         self->waterMark = [[UILabel alloc] init];
         self->waterMark.translatesAutoresizingMaskIntoConstraints = NO;
-        self->waterMark.text = [LocalizationHelper localizedStringForKey:@"Modified by: True砖家 on Bilibili"];
+        self->waterMark.text = [LocalizationHelper localizedStringForKey:@"Contact Developer"];
         self->waterMark.textColor = UIColor.blackColor;
         self->waterMark.alpha = 0.2;
-        self->waterMark.font = [UIFont systemFontOfSize:20];
+        self->waterMark.font = [UIFont systemFontOfSize:22];
         self->waterMark.textAlignment = NSTextAlignmentCenter;
         self->waterMark.backgroundColor = [UIColor clearColor];
         self->waterMark.userInteractionEnabled = YES; // Enable user interaction for tap gesture
@@ -1033,7 +1033,7 @@ static NSMutableSet* hostList;
         [self.view addSubview:self->waterMark];
         // Set up constraints
         [NSLayoutConstraint activateConstraints:@[
-            [self->waterMark.centerXAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-250], // Aligns the horizontal center of label to the horizontal center of view
+            [self->waterMark.centerXAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-120], // Aligns the horizontal center of label to the horizontal center of view
             [self->waterMark.centerYAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-50], // Aligns the vertical center of label to the vertical center of view
             [self->waterMark.widthAnchor constraintEqualToConstant:500],                     // Sets the width of label to 200 points
             [self->waterMark.heightAnchor constraintEqualToConstant:60]                      // Sets the height of label to 50 points
