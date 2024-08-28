@@ -21,6 +21,7 @@
 		843CC7F02C1E757D00BBC475 /* NativeTouchPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 843CC7EF2C1E757D00BBC475 /* NativeTouchPointer.m */; };
 		843CC7F62C1E7A1700BBC475 /* NativeTouchHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 843CC7F52C1E7A1700BBC475 /* NativeTouchHandler.m */; };
 		843E93BE2C41528700B1651F /* OrientationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843E93BD2C41528700B1651F /* OrientationHelper.swift */; };
+		844CD0EB2C7F8500004861A7 /* PureNativeTouchHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 844CD0EA2C7F8500004861A7 /* PureNativeTouchHandler.m */; };
 		8454AC662C31907F00F0A302 /* iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8454AC682C31907F00F0A302 /* iPad.storyboard */; };
 		8454AC6A2C319BDA00F0A302 /* iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8454AC6C2C319BDA00F0A302 /* iPhone.storyboard */; };
 		84591A512BE1625E006AAB10 /* CustomEdgeSlideGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 84591A502BE1625E006AAB10 /* CustomEdgeSlideGestureRecognizer.m */; };
@@ -149,6 +150,8 @@
 		843CC7F42C1E778000BBC475 /* NativeTouchHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NativeTouchHandler.h; sourceTree = "<group>"; };
 		843CC7F52C1E7A1700BBC475 /* NativeTouchHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NativeTouchHandler.m; sourceTree = "<group>"; };
 		843E93BD2C41528700B1651F /* OrientationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationHelper.swift; sourceTree = "<group>"; };
+		844CD0E82C7F847E004861A7 /* PureNativeTouchHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PureNativeTouchHandler.h; sourceTree = "<group>"; };
+		844CD0EA2C7F8500004861A7 /* PureNativeTouchHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PureNativeTouchHandler.m; sourceTree = "<group>"; };
 		8454AC672C31907F00F0A302 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/iPad.storyboard; sourceTree = "<group>"; };
 		8454AC692C31907F00F0A302 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/iPad.xcstrings; sourceTree = "<group>"; };
 		8454AC6B2C319BDA00F0A302 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/iPhone.storyboard; sourceTree = "<group>"; };
@@ -618,6 +621,8 @@
 				840751B22BF49C050096B657 /* CustomTapGestureRecognizer.m */,
 				9819CC12254F107A008A7C8E /* RelativeTouchHandler.h */,
 				843CC7F42C1E778000BBC475 /* NativeTouchHandler.h */,
+				844CD0E82C7F847E004861A7 /* PureNativeTouchHandler.h */,
+				844CD0EA2C7F8500004861A7 /* PureNativeTouchHandler.m */,
 				843CC7F52C1E7A1700BBC475 /* NativeTouchHandler.m */,
 				9819CC13254F107A008A7C8E /* RelativeTouchHandler.m */,
 				9819CC20254F180F008A7C8E /* AbsoluteTouchHandler.h */,
@@ -1050,6 +1055,7 @@
 				9827E7A32514366900F25707 /* HapticContext.m in Sources */,
 				9832D1361BBCD5C50036EF48 /* TemporaryApp.m in Sources */,
 				84E1CDEF2C4F688E00547904 /* CommandManagerViewController.swift in Sources */,
+				844CD0EB2C7F8500004861A7 /* PureNativeTouchHandler.m in Sources */,
 				84351B102C29ACCB00A77989 /* OSCProfile.m in Sources */,
 				84351B2C2C29AD6100A77989 /* OSCProfilesTableViewController.m in Sources */,
 				98D585701C0ED0E800F6CC00 /* TemporarySettings.m in Sources */,

@@ -110,7 +110,7 @@ static StreamView* _streamView;
 
 + (CGPoint)selectCoordsFor:(UITouch *)touch{
     NativeTouchPointer *pointer = [pointerObjDict objectForKey:@((uintptr_t)touch)];
-    if(pointer == nil) return CGPointMake(0, 0); // THIS will PREVENT CRASH caused by slide gesture!
+    if(pointer == nil) return CGPointMake(0, 0); 
     if((pointer -> initialPoint).x > pointerVelocityDividerLocationByPoints){  //if first contact coords locates on the right side of divider.
         pointer -> useRelativeCoords = true;
         return pointer->latestRelativePoint;
