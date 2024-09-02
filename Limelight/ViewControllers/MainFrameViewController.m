@@ -579,16 +579,7 @@ static NSMutableSet* hostList;
     [alertController addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Cancel"] style:UIAlertActionStyleCancel handler:nil]];
     [alertController addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Ok"] style:UIAlertActionStyleDefault handler:^(UIAlertAction* action){
         NSString* hostAddress = [((UITextField*)[[alertController textFields] objectAtIndex:0]).text trim];
-        
-        //handles public IP
-        NSString *publicIpBackdoor = @"-666";
-        if ([hostAddress rangeOfString:publicIpBackdoor].location != NSNotFound) {
-            hostAddress = [hostAddress stringByReplacingOccurrencesOfString:publicIpBackdoor withString:@""];
-            [DiscoveryManager setBackdoorHostAddress:hostAddress];
-        } else {
-            [DiscoveryManager setBackdoorHostAddress:nil];
-        }
-        
+                
         [self showLoadingFrame:^{
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
                 [self->_discMan discoverHost:hostAddress withCallback:^(TemporaryHost* host, NSString* error){

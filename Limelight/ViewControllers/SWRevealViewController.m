@@ -733,7 +733,7 @@ const int FrontViewPositionNone = 0xff;
 // tested on iOS17. this method does not call back on iOS14, runtime orientation limitation not working for iOS14. Probably depends on iOS16 or higher.
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations {
     // Return the supported interface orientations based on the current state
-    NSLog(@"supportedInterfaceOrientations called back 666");
+    // NSLog(@"supportedInterfaceOrientations called back 666");
     //lock the orientation accordingly after streaming is started
     DataManager* dataMan = [[DataManager alloc] init];
     Settings *currentSettings = [dataMan retrieveSettings];

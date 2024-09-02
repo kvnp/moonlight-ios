@@ -21,8 +21,6 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
-static NSString* backdoorHostAddress;
-
 @implementation DiscoveryManager {
     NSMutableArray* _hostQueue;
     NSMutableSet* _pausedHosts;
@@ -117,21 +115,12 @@ static NSString* backdoorHostAddress;
     //BOOL ret = NO;
     freeaddrinfo(result);
     
-    NSLog(@"backDoorHostAddress: %@", backdoorHostAddress);
-    if(ret){
-        if([address isEqualToString:backdoorHostAddress]) ret = NO;
-    }
-    backdoorHostAddress = nil;
     NSLog(@"IP Check, is prohibited: %d", ret);
 
     return NO;
 //#else
 //    return NO;
 //#endif
-}
-
-+ (void)setBackdoorHostAddress: (NSString* )address{
-    backdoorHostAddress = address;
 }
 
 - (ServerInfoResponse*) getServerInfoResponseForAddress:(NSString*)address {

@@ -27,6 +27,5 @@
 - (void) pauseDiscoveryForHost:(TemporaryHost *)host;
 - (void) resumeDiscoveryForHost:(TemporaryHost *)host;
 - (void) discoverHost:(NSString*)hostAddress withCallback:(void (^)(TemporaryHost*, NSString*))callback;
-+ (void) setBackdoorHostAddress: (NSString*)address;
 
 @end
