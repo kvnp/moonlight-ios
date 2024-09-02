@@ -84,7 +84,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     isInputingText = false;
     keyboardToggleRecognizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleKeyboard)];
     keyboardToggleRecognizer.numberOfTouchesRequired = settings.keyboardToggleFingers.intValue; //will be changed accordinly by touch modes.
-    keyboardToggleRecognizer.tapDownTimeThreshold = 0.3; // tap down time threshold in seconds.
+    keyboardToggleRecognizer.tapDownTimeThreshold = 0.2; // tap down time threshold in seconds.
     keyboardToggleRecognizer.delaysTouchesBegan = NO;
     keyboardToggleRecognizer.delaysTouchesEnded = NO;
     [[NSNotificationCenter defaultCenter] addObserver:self

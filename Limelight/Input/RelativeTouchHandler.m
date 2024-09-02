@@ -10,7 +10,6 @@
 #import "DataManager.h"
 
 #include <Limelight.h>
-#define RIGHTCLICK_TAP_DOWN_TIME_THRESHOLD_S 0.15
 
 
 static const int REFERENCE_WIDTH = 1280;
@@ -59,6 +58,37 @@ static const int REFERENCE_HEIGHT = 720;
     
     return self;
 }
+
+- (bool)containOnScreenControllerTaps: (NSSet* )touches{
+    for(UITouch* touch in touches){
+        if([OnScreenControls.touchAddrsCapturedByOnScreenControls containsObject:@((uintptr_t)touch)]) return true;
+    }
+    return false;
+}
+
+
+- (bool)containOnScreenButtonTaps {
+    bool gotOneButtonPressed = false;
+    for(UIView* view in self->view.superview.subviews){  // iterates all on-screen button views in StreamFrameView
+        if ([view isKindOfClass:[OnScreenButtonView class]]) {
+            OnScreenButtonView* buttonView = (OnScreenButtonView*) view;
+            if(buttonView.pressed){
+                gotOneButtonPressed = true; //got one button pressed
+            }
+        }
+    }
+    return gotOneButtonPressed;
+}
+
+- (void)resetAllPressedFlagsForOnscreenButtonViews {
+    for(UIView* view in self->view.superview.subviews){  // iterates all on-screen button views in StreamFrameView
+        if ([view isKindOfClass:[OnScreenButtonView class]]) {
+            OnScreenButtonView* buttonView = (OnScreenButtonView*) view;
+            buttonView.pressed = false;
+        }
+    }
+}
+
 
 - (void)mouseRightClick {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
@@ -128,11 +158,13 @@ static const int REFERENCE_HEIGHT = 720;
         }
     } else if ([[event allTouches] count] == 2) { // mouse wheel scroll & right button click are both triggered by 2 finger gesture, some times cause competing (right click fails & scroll view jumps around).
         //I'll deal with this in coming code.
-        CGPoint firstLocation = [[[[event allTouches] allObjects] objectAtIndex:0] locationInView:view];
-        CGPoint secondLocation = [[[[event allTouches] allObjects] objectAtIndex:1] locationInView:view];
+        NSSet* twoTouches = [event allTouches];
+        CGPoint firstLocation = [[[twoTouches allObjects] objectAtIndex:0] locationInView:view];
+        CGPoint secondLocation = [[[twoTouches allObjects] objectAtIndex:1] locationInView:view];
         
         CGPoint avgLocation = CGPointMake((firstLocation.x + secondLocation.x) / 2, (firstLocation.y + secondLocation.y) / 2);
-        if ((CACurrentMediaTime() - _mouseRightClickTapRecognizer.gestureCapturedTime > RIGHTCLICK_TAP_DOWN_TIME_THRESHOLD_S) && touchLocation.y != avgLocation.y) { //prevent sending scrollevent while right click gesture is being recognized. The time threshold is only 150ms, resulting in a barely noticeable delay before the scroll event is activated.
+        if ((CACurrentMediaTime() - _mouseRightClickTapRecognizer.gestureCapturedTime > RIGHTCLICK_TAP_DOWN_TIME_THRESHOLD_S) && touchLocation.y != avgLocation.y && ![self containOnScreenButtonTaps] && ![self containOnScreenControllerTaps:twoTouches]) { //prevent sending scrollevent while right click gesture is being recognized. The time threshold is only 150ms, resulting in a barely noticeable delay before the scroll event is activated.
+            // and we must exclude onscreen button taps & on-screen controller taps
             LiSendHighResScrollEvent((avgLocation.y - touchLocation.y) * 10);
         }
 
@@ -141,7 +173,6 @@ static const int REFERENCE_HEIGHT = 720;
         if ([self isConfirmedMove:firstLocation from:originalLocation]) {
             touchMoved = true;
         }
-        
         touchLocation = avgLocation;
     }
 }
@@ -193,6 +224,8 @@ static const int REFERENCE_HEIGHT = 720;
         // right clicks without moving their other finger.
         touchMoved = true;
     }
+    
+    if([[event allTouches] count] == [touches count]) [self resetAllPressedFlagsForOnscreenButtonViews]; // reset all pressed flag for on-screen button views after all fingers lifted from screen.
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {

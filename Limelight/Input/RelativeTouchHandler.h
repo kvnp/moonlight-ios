@@ -10,6 +10,7 @@
 #import "DataManager.h"
 #import "CustomTapGestureRecognizer.h"
 
+#define RIGHTCLICK_TAP_DOWN_TIME_THRESHOLD_S 0.15
 
 NS_ASSUME_NONNULL_BEGIN
 

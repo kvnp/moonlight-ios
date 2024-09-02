@@ -910,7 +910,7 @@ static float L3_Y;
         button.cornerRadius = 45;
         
         // 使用 shadowPath 定义阴影形状和扩展范围
-        CGFloat spread = 15;  // 扩散的大小gggkkkoooovv
+        CGFloat spread = 15;  // 扩散的大小
         if([button.name isEqualToString:@"leftStick"] || [button.name isEqualToString:@"rightStick"]) spread = 12;
         CGRect largerRect = CGRectInset(button.bounds, -spread, -spread);
         UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRoundedRect:largerRect cornerRadius:button.cornerRadius];
@@ -1100,7 +1100,7 @@ static float L3_Y;
             if ([gesture isKindOfClass:[CustomTapGestureRecognizer class]]) {
                 // This is a CustomTapGestureRecognizer
                 CustomTapGestureRecognizer *tapGesture = (CustomTapGestureRecognizer *)gesture;
-                tapGesture.areOnScreenControllerTaps = true;
+                tapGesture.containOnScreenControllerTaps = true;
                 // Perform actions with tapGesture
             }
         }

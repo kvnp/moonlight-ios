@@ -33,7 +33,7 @@ static CGFloat screenWidthInPoints;
     _immediateTriggering = false;
     _tapDownTimeThreshold = 0.3;
     _gestureCaptured = false;
-    _areOnScreenControllerTaps = false;
+    _containOnScreenControllerTaps = false;
     return self;
 }
 
@@ -74,14 +74,14 @@ static CGFloat screenWidthInPoints;
         _gestureCaptured = false;
         self.state = UIGestureRecognizerStateFailed;
     }
-    else if(_gestureCaptured && allTouchesCount == [touches count] && !_areOnScreenControllerTaps && ![self areOnScreenButtonsTaps]){  //must exclude virtual controller & onscreen button taps here to prevent stucked button, _areVirtualControllerTaps flag is set by onscreencontrols, areOnScreenButtonsTaps will be done by iterating all button views in streamframview
+    else if(_gestureCaptured && allTouchesCount == [touches count] && !_containOnScreenControllerTaps && ![self containOnScreenButtonTaps]){  //must exclude virtual controller & onscreen button taps here to prevent stucked button, _areVirtualControllerTaps flag is set by onscreencontrols, containOnScreenButtonsTaps will be returned by iterating all button views in streamframeview
         _gestureCaptured = false; //reset for next recognition
         if((CACurrentMediaTime() - _gestureCapturedTime) < _tapDownTimeThreshold){
             lowestTouchPointYCoord = 0.0; //reset for next recognition
             self.state = UIGestureRecognizerStateRecognized;
         }
     }
-    if (allTouchesCount == [touches count]) _areOnScreenControllerTaps = false; // need to reset this flag anyway, when all fingers are lefting
+    if (allTouchesCount == [touches count]) _containOnScreenControllerTaps = false; // need to reset this flag anyway, when all fingers are lefting
 }
 
 
@@ -89,19 +89,19 @@ static CGFloat screenWidthInPoints;
 // we're unable to import this class to swift codebase by the bridging header,and have to exlucde the onscreen button taps here
 // by iterating every button view instances. but it's basically ok since the number of buttonViews are always limited.
 // and this method will only be called when the recognizer is active & and the taps passes all the checks and is about to ge triggered.
-- (bool)areOnScreenButtonsTaps {
-    NSTimeInterval t1 = CACurrentMediaTime();
+- (bool)containOnScreenButtonTaps {
+    NSTimeInterval allFingersTapDownTime = CACurrentMediaTime() - _gestureCapturedTime; //RIGHTCLICK_TAP_DOWN_TIME_THRESHOLD_S has been passed to this recognizer as _tapDownTimeShreshold, we'll decide how to deal with pressed flag of on-screen button views based on tapDownTime
     bool gotOneButtonPressed = false;
     for(UIView* view in self.view.subviews){
         if ([view isKindOfClass:[OnScreenButtonView class]]) {
             OnScreenButtonView* buttonView = (OnScreenButtonView*) view;
-            if(gotOneButtonPressed){ // once we have just 1 button pressed already, reset pressed flag for the all the buttonViews
+            if(gotOneButtonPressed && allFingersTapDownTime <= _tapDownTimeThreshold){ // once we have just 1 button pressed already,& the tapDownTime has not exceeded the threshold, we'll reset pressed flag for the all the buttonViews.
                 buttonView.pressed = false; //reset the flag for buttonView
                 continue;
             }
             if(buttonView.pressed){
                 gotOneButtonPressed = true; //got one button pressed
-                buttonView.pressed = false; // reset the flag for current buttonView
+                if(allFingersTapDownTime <= _tapDownTimeThreshold) buttonView.pressed = false; // reset the flag for current buttonView if tapDowntime is still within the threshold, if not, leave the flag for mouse scroller gesture in relative touch mode.
             }
         }
     }

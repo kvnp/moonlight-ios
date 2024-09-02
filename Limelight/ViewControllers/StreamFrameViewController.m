@@ -67,7 +67,7 @@
     if((_settings.touchMode.intValue == RELATIVE_TOUCH || _settings.touchMode.intValue == REGULAR_NATIVE_TOUCH) && _settings.onscreenControls.intValue == OnScreenControlsLevelCustom){
         _oscLayoutTapRecoginizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(layoutOSC)];
         _oscLayoutTapRecoginizer.numberOfTouchesRequired = _settings.oscLayoutToolFingers.intValue; //tap a predefined number of fingers to open osc layout tool
-        _oscLayoutTapRecoginizer.tapDownTimeThreshold = 1;
+        _oscLayoutTapRecoginizer.tapDownTimeThreshold = 0.2;
         _oscLayoutTapRecoginizer.delaysTouchesBegan = NO;
         _oscLayoutTapRecoginizer.delaysTouchesEnded = NO;
         
