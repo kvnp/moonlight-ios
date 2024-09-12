@@ -2131,20 +2131,20 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "帧间距控制"
+            "state" : "translated",
+            "value" : "帧步进控制"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "帧间距控制"
+            "state" : "translated",
+            "value" : "帧步进控制"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "帧间距控制"
+            "state" : "translated",
+            "value" : "帧步进控制"
           }
         }
       }
