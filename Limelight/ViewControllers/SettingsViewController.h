@@ -31,6 +31,7 @@
 @property (strong, nonatomic) IBOutlet UISegmentedControl *hdrSelector;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *framePacingSelector;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *btMouseSelector;
+@property (strong, nonatomic) IBOutlet UISegmentedControl *reverseMouseWheelDirectionSelector;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *statsOverlaySelector;
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (strong, nonatomic) IBOutlet UILabel *keyboardToggleFingerNumLabel;
@@ -38,6 +39,9 @@
 @property (strong, nonatomic) IBOutlet UISegmentedControl *liftStreamViewForKeyboardSelector;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *showKeyboardToolbarSelector;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *slideToSettingsScreenEdgeSelector;
+
+@property (strong, nonatomic) IBOutlet UILabel *oscTapExlusionAreaSizeLabel;
+@property (strong, nonatomic) IBOutlet UISlider *oscTapExlusionAreaSizeSlider;
 @property (strong, nonatomic) IBOutlet UILabel *slideToSettingsScreenEdgeUILabel;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *cmdToolScreenEdgeSelector;
 @property (strong, nonatomic) IBOutlet UILabel *slideToSettingsDistanceUILabel;

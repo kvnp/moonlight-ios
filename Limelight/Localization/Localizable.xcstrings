@@ -2257,6 +2257,29 @@
         }
       }
     },
+    "Tap Exclusion Area Size for Custom OSC: %d%%" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义屏显手柄触控无响应区面积: %d%%"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义屏显手柄触控无响应区面积: %d%%"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义屏显手柄触控无响应区面积: %d%%"
+          }
+        }
+      }
+    },
     "Test Network" : {
       "extractionState" : "manual",
       "localizations" : {

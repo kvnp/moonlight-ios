@@ -28,6 +28,7 @@
 @property (nonatomic, retain) NSNumber * oscLayoutToolFingers;
 @property (nonatomic, retain) NSNumber * slideToSettingsScreenEdge;
 @property (nonatomic, retain) NSNumber * slideToSettingsDistance;
+@property (nonatomic, retain) NSNumber * oscTapExlusionAreaSize;
 @property (nonatomic, retain) NSNumber * touchPointerVelocityFactor;
 @property (nonatomic, retain) NSNumber * mousePointerVelocityFactor;
 @property (nonatomic, retain) NSNumber * pointerVelocityModeDivider;
@@ -38,6 +39,7 @@
     CODEC_PREF_HEVC,
     CODEC_PREF_AV1,
 } preferredCodec;
+@property (nonatomic) BOOL reverseMouseWheelDirection;
 @property (nonatomic) BOOL largerStickLR1;
 @property (nonatomic) BOOL useFramePacing;
 @property (nonatomic) BOOL multiController;

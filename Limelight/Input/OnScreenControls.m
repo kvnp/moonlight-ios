@@ -58,6 +58,7 @@ static NSMutableSet* touchAddrsCapturedByOnScreenControls;
     NSMutableArray* _deadTouches;
     BOOL _swapABXY;
     BOOL _largerStickLR1;
+    CGFloat _oscTapExlusionAreaSizeFactor;
     OSCProfilesManager *profilesManager;
     NSMutableDictionary *_activeCustomOscButtonPositionDict;
 }
@@ -152,7 +153,7 @@ static float L3_Y;
     DataManager* dataMan = [[DataManager alloc] init];
     Settings* settings = [dataMan retrieveSettings];
     _largerStickLR1 = settings.largerStickLR1;
-    
+    _oscTapExlusionAreaSizeFactor = settings.oscTapExlusionAreaSize.floatValue;
         
     _iPad = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad);
     _controlArea = CGRectMake(0, 0, _view.frame.size.width, _view.frame.size.height);
@@ -1230,51 +1231,51 @@ static float L3_Y;
             
             CGFloat dzHalfWidth;
             CGFloat dzHalfHeight;
-            CGFloat dzSizeFactor = 3.0; // the factor to resize the DZ
-            
-            
+            // CGFloat _oscTapExlusionAreaSizeFactor; // the factor to resize the DZ
+            // NSLog(@"_AreaSize: %f", _oscTapExlusionAreaSizeFactor);
+
             if ([key isEqualToString:@"l2Button"]) {
-                dzHalfWidth = _l2Button.bounds.size.width * 0.5 * dzSizeFactor;
-                dzHalfHeight = _l2Button.bounds.size.height * 0.5 * dzSizeFactor;
+                dzHalfWidth = _l2Button.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _l2Button.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
             } else if ([key isEqualToString:@"l1Button"]) {  // set the same DZ size as other buttons
-                dzHalfWidth = _l2Button.bounds.size.width * 0.5 * dzSizeFactor;
-                dzHalfHeight = _l2Button.bounds.size.height * 0.5 * dzSizeFactor;
+                dzHalfWidth = _l2Button.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _l2Button.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
             } else if ([key isEqualToString:@"dPad"]) {
                 dzHalfWidth = _leftButton.bounds.size.width * 2; // dPad specially handled
                 dzHalfHeight = _upButton.bounds.size.height * 2;
             } else if ([key isEqualToString:@"selectButton"]) {
-                dzHalfWidth = _selectButton.bounds.size.width * 0.5 * dzSizeFactor;
-                dzHalfHeight = _selectButton.bounds.size.height * 0.5 * dzSizeFactor;
+                dzHalfWidth = _selectButton.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _selectButton.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
             } else if ([key isEqualToString:@"leftStickBackground"]) {
-                dzHalfWidth = _leftStickBackground.bounds.size.width * 0.5 * dzSizeFactor;
-                dzHalfHeight = _leftStickBackground.bounds.size.height * 0.5 * dzSizeFactor;
+                dzHalfWidth = _l2Button.bounds.size.width * 0.7 * _oscTapExlusionAreaSizeFactor; // stick backgound size is too big to be the base line
+                dzHalfHeight = _l2Button.bounds.size.height * 0.7 * _oscTapExlusionAreaSizeFactor;
             } else if ([key isEqualToString:@"rightStickBackground"]) {
-                dzHalfWidth = _rightStickBackground.bounds.size.width * 0.5 * dzSizeFactor;
-                dzHalfHeight = _rightStickBackground.bounds.size.height * 0.5 * dzSizeFactor;
+                dzHalfWidth = _l2Button.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _l2Button.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
             } else if ([key isEqualToString:@"r2Button"]) {
-                dzHalfWidth = _r2Button.bounds.size.width * 0.5 * dzSizeFactor;
-                dzHalfHeight = _r2Button.bounds.size.height * 0.5 * dzSizeFactor;
+                dzHalfWidth = _r2Button.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _r2Button.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
             } else if ([key isEqualToString:@"r1Button"]) { // set the same DZ size as other buttons
-                dzHalfWidth = _l2Button.bounds.size.width * 0.5 * dzSizeFactor;
-                dzHalfHeight = _l2Button.bounds.size.height * 0.5 * dzSizeFactor;
+                dzHalfWidth = _l2Button.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _l2Button.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
             } else if ([key isEqualToString:@"aButton"]) {
-                dzHalfWidth = _aButton.bounds.size.width * 0.5 * dzSizeFactor;
-                dzHalfHeight = _aButton.bounds.size.height * 0.5 * dzSizeFactor;
+                dzHalfWidth = _aButton.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _aButton.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
             } else if ([key isEqualToString:@"bButton"]) {
-                dzHalfWidth = _bButton.bounds.size.width * 0.5 * dzSizeFactor;
-                dzHalfHeight = _bButton.bounds.size.height * 0.5 * dzSizeFactor;
+                dzHalfWidth = _bButton.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _bButton.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
             } else if ([key isEqualToString:@"xButton"]) {
-                dzHalfWidth = _xButton.bounds.size.width * 0.5 * dzSizeFactor;
-                dzHalfHeight = _xButton.bounds.size.height * 0.5 * dzSizeFactor;
+                dzHalfWidth = _xButton.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _xButton.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
             } else if ([key isEqualToString:@"yButton"]) {
-                dzHalfWidth = _yButton.bounds.size.width * 0.5 * dzSizeFactor;
-                dzHalfHeight = _yButton.bounds.size.height * 0.5 * dzSizeFactor;
+                dzHalfWidth = _yButton.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _yButton.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
             } else if ([key isEqualToString:@"startButton"]) {
-                dzHalfWidth = _startButton.bounds.size.width * 0.5 * dzSizeFactor;
-                dzHalfHeight = _startButton.bounds.size.height * 0.5 * dzSizeFactor;
+                dzHalfWidth = _startButton.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _startButton.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
             } else {
-                dzHalfWidth = _aButton.bounds.size.width * 0.5 * dzSizeFactor;
-                dzHalfHeight = _aButton.bounds.size.height * 0.5 * dzSizeFactor;
+                dzHalfWidth = _aButton.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _aButton.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
             }
             
             if (xOffset < dzHalfWidth && yOffset < dzHalfHeight) {

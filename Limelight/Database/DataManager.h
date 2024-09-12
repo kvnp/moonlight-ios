@@ -26,7 +26,9 @@
       pointerVelocityModeDivider:(CGFloat)pointerVelocityModeDivider
       touchPointerVelocityFactor:(CGFloat)touchPointerVelocityFactor
       mousePointerVelocityFactor:(CGFloat)mousePointerVelocityFactor
-               largerStickLR1:(BOOL)largerStickLR1
+          oscTapExlusionAreaSize:(CGFloat)oscTapExlusionAreaSize
+      reverseMouseWheelDirection:(BOOL)reverseMouseWheelDirection
+                  largerStickLR1:(BOOL)largerStickLR1
        liftStreamViewForKeyboard:(BOOL)liftStreamViewForKeyboard
              showKeyboardToolbar:(BOOL)showKeyboardToolbar
                    optimizeGames:(BOOL)optimizeGames

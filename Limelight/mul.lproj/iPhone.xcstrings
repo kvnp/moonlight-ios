@@ -859,6 +859,18 @@
         }
       }
     },
+    "Dfl-gL-00M.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Tap Exclusion Area Size for Custom OSC: 200%                      \"; ObjectID = \"Dfl-gL-00M\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tap Exclusion Area Size for Custom OSC: 200%                      "
+          }
+        }
+      }
+    },
     "dLF-qJ-2nY.segmentTitles[0]" : {
       "comment" : "Class = \"UISegmentedControl\"; dLF-qJ-2nY.segmentTitles[0] = \"30 FPS\"; ObjectID = \"dLF-qJ-2nY\";",
       "extractionState" : "extracted_with_value",
@@ -1429,6 +1441,66 @@
         }
       }
     },
+    "p2k-7u-PDc.segmentTitles[0]" : {
+      "comment" : "Class = \"UISegmentedControl\"; p2k-7u-PDc.segmentTitles[0] = \"No\"; ObjectID = \"p2k-7u-PDc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        }
+      }
+    },
+    "p2k-7u-PDc.segmentTitles[1]" : {
+      "comment" : "Class = \"UISegmentedControl\"; p2k-7u-PDc.segmentTitles[1] = \"Yes\"; ObjectID = \"p2k-7u-PDc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Yes"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用"
+          }
+        }
+      }
+    },
     "P8R-nu-8Ln.segmentTitles[0]" : {
       "comment" : "Class = \"UISegmentedControl\"; P8R-nu-8Ln.segmentTitles[0] = \"No\"; ObjectID = \"P8R-nu-8Ln\";",
       "extractionState" : "extracted_with_value",
@@ -1863,6 +1935,36 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "串流中从以下屏幕边缘滑动打开命令工具"
+          }
+        }
+      }
+    },
+    "svh-LO-bTr.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Reverse Wheel Direction for Physical Mouse                           \"; ObjectID = \"svh-LO-bTr\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Reverse Wheel Direction for Physical Mouse                           "
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "反转物理鼠标滚轮方向"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "反转物理鼠标滚轮方向"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "反转物理鼠标滚轮方向"
           }
         }
       }

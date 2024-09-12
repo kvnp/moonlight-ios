@@ -904,6 +904,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     
     {
         short translationDeltaY = ((currentScrollTranslation.y - lastScrollTranslation.y) / self.bounds.size.height) * translationMultiplier;
+        if(settings.reverseMouseWheelDirection) translationDeltaY = - translationDeltaY;
         if (translationDeltaY != 0) {
             LiSendHighResScrollEvent(translationDeltaY);
             lastScrollTranslation = currentScrollTranslation;
@@ -939,7 +940,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     
     {
         short translationDeltaY = currentScrollTranslation.y - lastScrollTranslation.y;
-        translationDeltaY = -translationDeltaY;
+        if(settings.reverseMouseWheelDirection) translationDeltaY = - translationDeltaY;
         if (translationDeltaY != 0) {
             LiSendScrollEvent(translationDeltaY > 0 ? 1 : -1);
         }
