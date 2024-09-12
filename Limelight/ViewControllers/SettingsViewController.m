@@ -582,8 +582,9 @@ BOOL isCustomResolution(CGSize res) {
 
 
 
-
-
+- (bool) isOnScreenControllerOrButtonEnabled{
+    return ([self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == REGULAR_NATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == ABSOLUTE_TOUCH) && [self.onscreenControlSelector selectedSegmentIndex] != OnScreenControlsLevelOff;
+}
 
 
 
@@ -600,8 +601,7 @@ BOOL isCustomResolution(CGSize res) {
         self.layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationFullScreen;
     }
     
-    bool oscEnabled = ([self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == REGULAR_NATIVE_TOUCH) && [self.onscreenControlSelector selectedSegmentIndex] != OnScreenControlsLevelOff;
-    bool customOscEnabled = oscEnabled && [self.onscreenControlSelector selectedSegmentIndex] == OnScreenControlsLevelCustom;
+    bool customOscEnabled = [self isOnScreenControllerOrButtonEnabled] && [self.onscreenControlSelector selectedSegmentIndex] == OnScreenControlsLevelCustom;
     // [self widget:self.keyboardToggleFingerNumSlider setEnabled:!customOscEnabled];
     if(customOscEnabled && !justEnteredSettingsViewDoNotOpenOscLayoutTool) {
         // [self.keyboardToggleFingerNumSlider setValue:3.0];
@@ -682,9 +682,8 @@ BOOL isCustomResolution(CGSize res) {
 
 - (void) touchModeChanged {
     // Disable On-Screen Controls & Buttons in non-relative touch mode
-    bool oscEnabled = ([self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == REGULAR_NATIVE_TOUCH) && [self.onscreenControlSelector selectedSegmentIndex] != OnScreenControlsLevelOff;
-    bool oscSelectorEnabled = [self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == REGULAR_NATIVE_TOUCH;
-    bool customOscEnabled = oscEnabled && [self.onscreenControlSelector selectedSegmentIndex] == OnScreenControlsLevelCustom;
+    bool oscSelectorEnabled = [self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == REGULAR_NATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == ABSOLUTE_TOUCH;
+    bool customOscEnabled = [self isOnScreenControllerOrButtonEnabled] && [self.onscreenControlSelector selectedSegmentIndex] == OnScreenControlsLevelCustom;
     bool isNativeTouch = [self.touchModeSelector selectedSegmentIndex] == PURE_NATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == REGULAR_NATIVE_TOUCH;
     
     [self.onscreenControlSelector setEnabled:oscSelectorEnabled];
@@ -898,8 +897,8 @@ BOOL isCustomResolution(CGSize res) {
 }
 
 - (void) keyboardToggleFingerNumSliderMoved{
-    bool oscEnabled = ([self.touchModeSelector selectedSegmentIndex] == RELATIVE_TOUCH || [self.touchModeSelector selectedSegmentIndex] == REGULAR_NATIVE_TOUCH) && [self.onscreenControlSelector selectedSegmentIndex] != OnScreenControlsLevelOff;
-    bool customOscEnabled = oscEnabled && [self.onscreenControlSelector selectedSegmentIndex] == OnScreenControlsLevelCustom;
+    // bool oscEnabled = [self isOnScreenControllerOrButtonEnabled];
+    bool customOscEnabled = [self isOnScreenControllerOrButtonEnabled] && [self.onscreenControlSelector selectedSegmentIndex] == OnScreenControlsLevelCustom;
     
     CGFloat sliderValue = self.keyboardToggleFingerNumSlider.value;
     if(customOscEnabled){

@@ -62,14 +62,18 @@
 #endif
 }
 
+- (bool)isOscLayoutToolEnabled{
+    return (_settings.touchMode.intValue == RELATIVE_TOUCH || _settings.touchMode.intValue == REGULAR_NATIVE_TOUCH || _settings.touchMode.intValue == ABSOLUTE_TOUCH) && _settings.onscreenControls.intValue == OnScreenControlsLevelCustom;
+}
 
 - (void)configOscLayoutTool{
-    if((_settings.touchMode.intValue == RELATIVE_TOUCH || _settings.touchMode.intValue == REGULAR_NATIVE_TOUCH) && _settings.onscreenControls.intValue == OnScreenControlsLevelCustom){
+    if([self isOscLayoutToolEnabled]){
         _oscLayoutTapRecoginizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(layoutOSC)];
         _oscLayoutTapRecoginizer.numberOfTouchesRequired = _settings.oscLayoutToolFingers.intValue; //tap a predefined number of fingers to open osc layout tool
         _oscLayoutTapRecoginizer.tapDownTimeThreshold = 0.2;
         _oscLayoutTapRecoginizer.delaysTouchesBegan = NO;
         _oscLayoutTapRecoginizer.delaysTouchesEnded = NO;
+        if(_settings.touchMode.intValue == ABSOLUTE_TOUCH) _oscLayoutTapRecoginizer.immediateTriggering = true; // make immediate triggering on for absolute touch mode
         
         [self.view addGestureRecognizer:_oscLayoutTapRecoginizer]; //
         /* sets a reference to the correct 'LayoutOnScreenControlsViewController' depending on whether the user is on an iPhone or iPad */
@@ -112,7 +116,7 @@
     [self.view addGestureRecognizer:_slideToCmdToolRecognizer];
 }
 
-- (void)configZoomGesture{
+- (void)configZoomGestureAndAddStreamView{
     if (_settings.touchMode.intValue == ABSOLUTE_TOUCH) {
         _scrollView = [[UIScrollView alloc] initWithFrame:self.view.frame];
 #if !TARGET_OS_TV
@@ -148,12 +152,12 @@
     _settings = [[[DataManager alloc] init] getSettings];  //StreamFrameViewController retrieve the settings here.
     [self configOscLayoutTool];
     [self configSwipeGestures];
-    [self configZoomGesture];
+    [self configZoomGestureAndAddStreamView];
     [self->_streamView disableOnScreenControls]; //don't know why but this must be called outside the streamview class, just put it here. execute in streamview class cause hang
     [self.mainFrameViewcontroller reloadStreamConfig]; // reload streamconfig
     
     _controllerSupport = [[ControllerSupport alloc] initWithConfig:self.streamConfig delegate:self]; // reload controllerSupport obj, this is mandatory for OSC reload,especially when the stream view is launched without OSC
-    [_streamView setupStreamView:_controllerSupport interactionDelegate:self config:self.streamConfig]; //reinitiate setupStreamView process.
+    [_streamView setupStreamView:_controllerSupport interactionDelegate:self config:self.streamConfig streamFrameTopLayerView:self.view]; //reinitiate setupStreamView process.
     [self->_streamView reloadOnScreenControlsRealtimeWith:(ControllerSupport*)_controllerSupport
                                         andConfig:(StreamConfiguration*)_streamConfig]; //reload OSC here.
     [self->_streamView reloadOnScreenKeyboardButtons]; //reload keyboard buttons here. the keyboard button view will be added to the streamframe view instead streamview, the highest layer, which saves a lot of reengineering

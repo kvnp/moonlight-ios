@@ -26,7 +26,9 @@
 
 - (void) setupStreamView:(ControllerSupport*)controllerSupport
      interactionDelegate:(id<UserInteractionDelegate>)interactionDelegate
-                  config:(StreamConfiguration*)streamConfig;
+                  config:(StreamConfiguration*)streamConfig
+ streamFrameTopLayerView:(UIView* )topLayerView
+;
 - (void) showOnScreenControls;
 - (void) setOnScreenControls;
 - (void) disableOnScreenControls;

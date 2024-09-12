@@ -25,6 +25,7 @@
 static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 
 @implementation StreamView {
+    UIView* streamFrameTopLayerView;
     TemporarySettings* settings;
     
     OnScreenControls* onScreenControls;
@@ -65,9 +66,10 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 
 - (void) setupStreamView:(ControllerSupport*)controllerSupport
      interactionDelegate:(id<UserInteractionDelegate>)interactionDelegate
-                  config:(StreamConfiguration*)streamConfig {
+                  config:(StreamConfiguration*)streamConfig
+ streamFrameTopLayerView:(UIView* )topLayerView{
 
-    
+    self->streamFrameTopLayerView = topLayerView;
     self->interactionDelegate = interactionDelegate;
     self->streamAspectRatio = (float)streamConfig.width / (float)streamConfig.height;
     
@@ -96,8 +98,8 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
-    if(settings.touchMode.intValue == PURE_NATIVE_TOUCH)    [self addGestureRecognizer:keyboardToggleRecognizer]; //keep legacy approach in pure native mode
-    else [self.superview addGestureRecognizer:keyboardToggleRecognizer]; //add to the superview in other modes
+    if(settings.touchMode.intValue == PURE_NATIVE_TOUCH) [self addGestureRecognizer:keyboardToggleRecognizer]; //keep legacy approach in pure native mode
+    else [self->streamFrameTopLayerView addGestureRecognizer:keyboardToggleRecognizer]; //add to the superview in other modes
     
     
 #if TARGET_OS_TV
@@ -315,8 +317,14 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 #endif
 }
 
+// we'll enable on screen buttons, and disable on screen controllers for absolute touch
 - (bool) isOscEnabled{
     return (settings.touchMode.intValue == RELATIVE_TOUCH || settings.touchMode.intValue == REGULAR_NATIVE_TOUCH) && settings.onscreenControls.intValue != OnScreenControlsLevelOff;
+}
+
+// we'll enable on screen buttons, and disable on screen controllers for absolute touch
+- (bool) isOnScreenButtonEnabled{
+    return (settings.touchMode.intValue == RELATIVE_TOUCH || settings.touchMode.intValue == REGULAR_NATIVE_TOUCH || settings.touchMode.intValue == ABSOLUTE_TOUCH) && settings.onscreenControls.intValue == OnScreenControlsLevelCustom;
 }
 
 - (void) reloadOnScreenControlsRealtimeWith:(ControllerSupport*)controllerSupport
@@ -337,12 +345,12 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
         RelativeTouchHandler* relativeTouchHandler = (RelativeTouchHandler *)touchHandler;
         onScreenControls.mouseRightClickTapRecognizer = relativeTouchHandler.mouseRightClickTapRecognizer;
     } */
-    [onScreenControls setLevel:(OnScreenControlsLevel)settings.onscreenControls.intValue];
+    if([self isOscEnabled]) [onScreenControls setLevel:(OnScreenControlsLevel)settings.onscreenControls.intValue];
 }
 
 
 - (void) clearOnScreenKeyboardButtons{
-    for (UIView *subview in self.superview.subviews) {
+    for (UIView *subview in self->streamFrameTopLayerView.subviews) {
         // 检查子视图是否是特定类型的实例
         if ([subview isKindOfClass:[OnScreenButtonView class]]) {
             // 如果是，就添加到将要被移除的数组中
@@ -358,9 +366,9 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     // remove all keyboard button views first
     [self clearOnScreenKeyboardButtons];
     
-    bool customOscEnabled = (settings.touchMode.intValue == RELATIVE_TOUCH || settings.touchMode.intValue == REGULAR_NATIVE_TOUCH) && settings.onscreenControls.intValue == OnScreenControlsLevelCustom;
+    // bool customOscEnabled = [self isOscEnabled] && settings.onscreenControls.intValue == OnScreenControlsLevelCustom;
     
-    if(!customOscEnabled) return; //returns if we're not in custom osc mode
+    if(![self isOnScreenButtonEnabled]) return;
     
     OSCProfilesManager* profilesManager = [OSCProfilesManager sharedManager];
     OSCProfile *oscProfile = [profilesManager getSelectedProfile]; //returns the currently selected OSCProfile
@@ -372,7 +380,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
                 OnScreenButtonView* buttonView = [[OnScreenButtonView alloc] initWithKeyString:buttonState.name keyLabel:buttonState.alias]; //reconstruct buttonView
                 buttonView.translatesAutoresizingMaskIntoConstraints = NO; // weird but this is mandatory, or you will find no key views added to the right place
                 // Add the buttonView to the view controller's view
-                [self.superview addSubview:buttonView]; // add keyboard button to the stream frame view. must add it to the target view before setting location.
+                [self->streamFrameTopLayerView addSubview:buttonView]; // add keyboard button to the stream frame view. must add it to the target view before setting location.
                 [buttonView setKeyLocationWithXOffset:buttonState.position.x yOffset:buttonState.position.y];
             }
         }
