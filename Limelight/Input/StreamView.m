@@ -70,6 +70,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
  streamFrameTopLayerView:(UIView* )topLayerView{
 
     self->streamFrameTopLayerView = topLayerView;
+    self.streamFrameTopLayerView = topLayerView; // this will be used as a read-only pointer for other class
     self->interactionDelegate = interactionDelegate;
     self->streamAspectRatio = (float)streamConfig.width / (float)streamConfig.height;
     
@@ -130,7 +131,8 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
             break;
     }
     
-    onScreenControls = [[OnScreenControls alloc] initWithView:self controllerSup:controllerSupport streamConfig:streamConfig];  // don't delete, this is mandatory
+    // we'll render on-screen controls on the toplayer too:
+    onScreenControls = [[OnScreenControls alloc] initWithView:self->streamFrameTopLayerView controllerSup:controllerSupport streamConfig:streamConfig];  // don't delete, this is mandatory
     /*
     // here we pass the tap recognizer to the onscreencontrols obj
     if (settings.touchMode.intValue == RELATIVE_TOUCH){
@@ -337,7 +339,9 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 
 - (void) reloadOnScreenControlsWith:(ControllerSupport*)controllerSupport
                          andConfig:(StreamConfiguration*)streamConfig {
-    onScreenControls = [[OnScreenControls alloc] initWithView:self controllerSup:controllerSupport streamConfig:streamConfig];
+    
+    // we'll render on-screen controllers on the toplayer too.
+    onScreenControls = [[OnScreenControls alloc] initWithView:self->streamFrameTopLayerView controllerSup:controllerSupport streamConfig:streamConfig];
     /*
     // pass mouseRightClickTapRecognizer to onScreenControls obj here:
     if([self isOscEnabled]){
@@ -568,7 +572,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     // Notify of user interaction and start expiration timer
     [self startInteractionTimer];
     
-    if(settings.touchMode.intValue == REGULAR_NATIVE_TOUCH){
+    if(settings.touchMode.intValue == REGULAR_NATIVE_TOUCH || settings.touchMode.intValue == RELATIVE_TOUCH){
         [onScreenControls handleTouchDownEvent:touches];
         [touchHandler touchesBegan:touches withEvent:event];
     }
@@ -634,6 +638,9 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
 }
 
 - (BOOL)handleMouseButtonEvent:(int)buttonAction forTouches:(NSSet *)touches withEvent:(UIEvent *)event {
+    
+    
+    // NSLog(@"mouse click time: %f", CACurrentMediaTime()*1000);
 #if !TARGET_OS_TV
     if (@available(iOS 13.4, *)) {
         UITouch* touch = [touches anyObject];
@@ -729,7 +736,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     }
     
     hasUserInteracted = YES;
-    if(settings.touchMode.intValue == REGULAR_NATIVE_TOUCH){
+    if(settings.touchMode.intValue == REGULAR_NATIVE_TOUCH || settings.touchMode.intValue == RELATIVE_TOUCH){
         [touchHandler touchesMoved:touches withEvent:event];
         [onScreenControls handleTouchMovedEvent:touches];
     }
@@ -802,7 +809,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     
     hasUserInteracted = YES;
     
-    if(settings.touchMode.intValue == REGULAR_NATIVE_TOUCH){
+    if(settings.touchMode.intValue == REGULAR_NATIVE_TOUCH || settings.touchMode.intValue == RELATIVE_TOUCH){
         [touchHandler touchesEnded:touches withEvent:event]; // when touches ended, must call the native touchhandler before onScreenControls, since the NSSet of touches captured by on screen button shall be updated later
         [onScreenControls handleTouchUpEvent:touches];
     }

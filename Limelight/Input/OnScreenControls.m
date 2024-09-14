@@ -50,7 +50,7 @@ static NSMutableSet* touchAddrsCapturedByOnScreenControls;
     
     BOOL _iPad;
     CGRect _controlArea;
-    UIView* _view;
+    UIView* _view; // the view passed to here, is the streamFrameTopLayerView
     BOOL _visible;
     
     ControllerSupport *_controllerSupport;
@@ -933,6 +933,9 @@ static float L3_Y;
     BOOL updated = false;
     BOOL stickTouch = false;
     for (UITouch* touch in touches) {
+        
+        bool touchEventCapturedByOsc = false; // this flag will be reset for every touch event in the for-loop
+        
         CGPoint touchLocation = [touch locationInView:_view];
         
         if ([_aButton.presentationLayer hitTest:touchLocation]) {
@@ -940,24 +943,28 @@ static float L3_Y;
             _aTouch = touch;
             [self oscButtonTouchDownVisualEffect:_aButton];
             updated = true;
+            touchEventCapturedByOsc = true;
             // NSLog(@"Captured OSC A");
         } else if ([_bButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:B_FLAG];
             _bTouch = touch;
             [self oscButtonTouchDownVisualEffect:_bButton];
             updated = true;
+            touchEventCapturedByOsc = true;
             // NSLog(@"Captured OSC B");
         } else if ([_xButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:X_FLAG];
             _xTouch = touch;
             [self oscButtonTouchDownVisualEffect:_xButton];
             updated = true;
+            touchEventCapturedByOsc = true;
             // NSLog(@"Captured OSC X");
         } else if ([_yButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:Y_FLAG];
             _yTouch = touch;
             [self oscButtonTouchDownVisualEffect:_yButton];
             updated = true;
+            touchEventCapturedByOsc = true;
             // NSLog(@"Captured OSC Y");
         } else if ([_upButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:UP_FLAG];
@@ -965,6 +972,7 @@ static float L3_Y;
             _upTouch = touch;
             [self oscButtonTouchDownVisualEffect:_upButton];
             updated = true;
+            touchEventCapturedByOsc = true;
             // NSLog(@"Captured OSC UP");
         } else if ([_downButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:DOWN_FLAG];
@@ -972,12 +980,14 @@ static float L3_Y;
             _downTouch = touch;
             [self oscButtonTouchDownVisualEffect:_downButton];
             updated = true;
+            touchEventCapturedByOsc = true;
         } else if ([_leftButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:LEFT_FLAG];
             _dpadTouch = touch;
             _leftTouch = touch;
             [self oscButtonTouchDownVisualEffect:_leftButton];
             updated = true;
+            touchEventCapturedByOsc = true;
             // NSLog(@"Captured OSC LEFT");
         } else if ([_rightButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:RIGHT_FLAG];
@@ -985,42 +995,49 @@ static float L3_Y;
             _rightTouch = touch;
             [self oscButtonTouchDownVisualEffect:_rightButton];
             updated = true;
+            touchEventCapturedByOsc = true;
             // NSLog(@"Captured OSC RIGHT");
         } else if ([_startButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:PLAY_FLAG];
             _startTouch = touch;
             [self oscButtonTouchDownVisualEffect:_startButton];
             updated = true;
+            touchEventCapturedByOsc = true;
             // NSLog(@"Captured OSC PLAY");
         } else if ([_selectButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:BACK_FLAG];
             _selectTouch = touch;
             [self oscButtonTouchDownVisualEffect:_selectButton];
             updated = true;
+            touchEventCapturedByOsc = true;
             // NSLog(@"Captured OSC BACK");
         } else if ([_l1Button.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:LB_FLAG];
             _l1Touch = touch;
             [self oscButtonTouchDownVisualEffect:_l1Button];
             updated = true;
+            touchEventCapturedByOsc = true;
             // NSLog(@"Captured OSC LB");
         } else if ([_r1Button.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:RB_FLAG];
             _r1Touch = touch;
             [self oscButtonTouchDownVisualEffect:_r1Button];
             updated = true;
+            touchEventCapturedByOsc = true;
             // NSLog(@"Captured OSC RB");
         } else if ([_l2Button.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport updateLeftTrigger:_controller left:0xFF];
             _l2Touch = touch;
             [self oscButtonTouchDownVisualEffect:_l2Button];
             updated = true;
+            touchEventCapturedByOsc = true;
             // NSLog(@"Captured OSC LeftTrigger");
         } else if ([_r2Button.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport updateRightTrigger:_controller right:0xFF];
             _r2Touch = touch;
             [self oscButtonTouchDownVisualEffect:_r2Button];
             updated = true;
+            touchEventCapturedByOsc = true;
             // NSLog(@"Captured OSC RightTrigger");
         } else if ([_l3Button.presentationLayer hitTest:touchLocation]) {
             if (l3Set) {
@@ -1035,6 +1052,7 @@ static float L3_Y;
             l3Set = !l3Set;
             _l3Touch = touch;
             updated = true;
+            touchEventCapturedByOsc = true;
         } else if ([_r3Button.presentationLayer hitTest:touchLocation]) {
             if (r3Set) {
                 [_controllerSupport clearButtonFlag:_controller flags:RS_CLK_FLAG];
@@ -1048,6 +1066,7 @@ static float L3_Y;
             r3Set = !r3Set;
             _r3Touch = touch;
             updated = true;
+            touchEventCapturedByOsc = true;
         } else if ([_leftStick.presentationLayer hitTest:touchLocation]) {
             _leftStick.opacity = 1.0; // make stick opaque while being moved
             if (l3TouchStart != nil) {
@@ -1058,12 +1077,14 @@ static float L3_Y;
                     [_controllerSupport setButtonFlag:_controller flags:LS_CLK_FLAG];
                     [self oscButtonTouchDownVisualEffect:_leftStick];
                     updated = true;
+                    touchEventCapturedByOsc = true;
                     // NSLog(@"Captured OSC LS_CLK3");
 
                 }
             }
             _lsTouch = touch;
             stickTouch = true;
+            touchEventCapturedByOsc = true;
         } else if ([_rightStick.presentationLayer hitTest:touchLocation]) {
             _rightStick.opacity = 1.0; // make stick opaque while being moved
             if (r3TouchStart != nil) {
@@ -1074,20 +1095,22 @@ static float L3_Y;
                     [_controllerSupport setButtonFlag:_controller flags:RS_CLK_FLAG];
                     [self oscButtonTouchDownVisualEffect:_rightStick];
                     updated = true;
+                    touchEventCapturedByOsc = true;
                     // NSLog(@"Captured OSC LS_CLK4");
                 }
             }
             _rsTouch = touch;
             stickTouch = true;
+            touchEventCapturedByOsc = true;
         }
         if (!updated && !stickTouch && [self isInDeadZone:touch]) {
             [_deadTouches addObject:touch];
             updated = true;
+            touchEventCapturedByOsc = true;
             // NSLog(@"blablablab updated true");
         }
-        
-        // additionally, populate the touchesCapturedByOSButton set, for native touch handler to deal with.
-        if(updated || stickTouch) [touchAddrsCapturedByOnScreenControls addObject:@((uintptr_t)touch)];
+        // additionally, populate the touchesCapturedByOSButton set, for native/relative touch handler to deal with.
+        if(touchEventCapturedByOsc) [touchAddrsCapturedByOnScreenControls addObject:@((uintptr_t)touch)];
     }
     if (updated) {
         [_controllerSupport updateFinished:_controller];
@@ -1097,7 +1120,7 @@ static float L3_Y;
     
     bool oscTouched = updated || stickTouch;
     if(oscTouched){
-        for (UIGestureRecognizer *gesture in _view.superview.gestureRecognizers) { // we'll iterate the superview(streamframe view, where all the custom gestures are added), instead the streamview, that the osc buttons are pressed
+        for (UIGestureRecognizer *gesture in _view.gestureRecognizers) { // we'll iterate the streamFrameTopLayerView, which was passed here as _view, where all the custom gestures are added) instead of the streamview, to check if that the osc buttons are pressed
             if ([gesture isKindOfClass:[CustomTapGestureRecognizer class]]) {
                 // This is a CustomTapGestureRecognizer
                 CustomTapGestureRecognizer *tapGesture = (CustomTapGestureRecognizer *)gesture;

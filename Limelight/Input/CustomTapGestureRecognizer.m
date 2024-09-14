@@ -92,6 +92,7 @@ static CGFloat screenWidthInPoints;
 - (bool)containOnScreenButtonTaps {
     NSTimeInterval allFingersTapDownTime = CACurrentMediaTime() - _gestureCapturedTime; //RIGHTCLICK_TAP_DOWN_TIME_THRESHOLD_S has been passed to this recognizer as _tapDownTimeShreshold, we'll decide how to deal with pressed flag of on-screen button views based on tapDownTime
     bool gotOneButtonPressed = false;
+    // the tap gestures are all added to the streamFrameTopLayerView, where all the onScreenButtonViews are added. so we can iterate them in this way:
     for(UIView* view in self.view.subviews){
         if ([view isKindOfClass:[OnScreenButtonView class]]) {
             OnScreenButtonView* buttonView = (OnScreenButtonView*) view;
