@@ -26,6 +26,13 @@ static const float QUICK_TAP_TIME_INTERVAL = 0.2;
     BOOL quickTapDetected;
     BOOL mouseLeftButtonHeldDown;
     BOOL isInMouseWheelScrollingMode;
+    
+    // upper screen check
+    bool touchPointSpawnedAtUpperScreenEdge;
+    CGFloat slideGestureVerticalThreshold;
+    CGFloat screenWidthWithThreshold;
+    CGFloat EDGE_TOLERANCE;
+
     UITouch* touchLockedForMouseMove;
     
 #if TARGET_OS_TV
@@ -53,6 +60,12 @@ static const float QUICK_TAP_TIME_INTERVAL = 0.2;
     mouseLeftButtonHeldDown = false;
     mousePointerTimestamp = 0;
     
+    // upper screen check
+    EDGE_TOLERANCE = 15.0;
+    slideGestureVerticalThreshold = CGRectGetHeight([[UIScreen mainScreen] bounds]) * 0.4;
+    screenWidthWithThreshold = CGRectGetWidth([[UIScreen mainScreen] bounds]) - EDGE_TOLERANCE;
+    self->touchPointSpawnedAtUpperScreenEdge = false;
+
 #if TARGET_OS_TV
     remotePressRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(remoteButtonPressed:)];
     remotePressRecognizer.allowedPressTypes = @[@(UIPressTypeSelect)];
@@ -122,7 +135,15 @@ static const float QUICK_TAP_TIME_INTERVAL = 0.2;
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     
-    if([[event allTouches] count] == 2 && [touches count] != 1 && ![self containOnScreenButtonTaps] && ![self containOnScreenControllerTaps:[event allTouches]]){
+    //check if touch point is spawned on the left or right upper half screen edges, this is the highest priority
+    CGPoint initialPoint = [[touches anyObject] locationInView:streamView];
+    if(initialPoint.y < slideGestureVerticalThreshold && (initialPoint.x < EDGE_TOLERANCE || initialPoint.x > screenWidthWithThreshold)) {
+        self->touchPointSpawnedAtUpperScreenEdge = true;
+        return;
+    }
+
+    
+    if([[event allTouches] count] == 2 && ![self containOnScreenButtonTaps] && ![self containOnScreenControllerTaps:[event allTouches]]){
         NSLog(@"get in scrolling mode");
         isInMouseWheelScrollingMode = true;
         return; // if we got 2 touches on the blank area, it's gonna be a mouse scroll touch, and must prevent UITtouch object for mouse pointer being captured & locked
@@ -142,13 +163,11 @@ static const float QUICK_TAP_TIME_INTERVAL = 0.2;
         }
         else candidateTouch = touch;
     }
-    
-    CGPoint currentTouchLocation = [candidateTouch locationInView:streamView];
-    NSTimeInterval clickTimeInterval = CACurrentMediaTime() - mousePointerTimestamp;
-    // NSLog(@"click interval: %f", clickTimeInterval);
-    
+
     // quick double tap detection for dragging. simulates a real notebook computer touchpad
-    if(clickTimeInterval < QUICK_TAP_TIME_INTERVAL && [self isAdjacentTouches:currentTouchLocation from:initialMousePointerLocation] ) {
+    CGPoint currentTouchLocation = [candidateTouch locationInView:streamView];
+    NSTimeInterval tapInterval = CACurrentMediaTime() - mousePointerTimestamp;
+    if(tapInterval < QUICK_TAP_TIME_INTERVAL && [self isAdjacentTouches:currentTouchLocation from:initialMousePointerLocation] ) {
         // NSLog(@"quick click detected");
         quickTapDetected = true;
         NSLog(@"quick Tap Detected");
@@ -167,7 +186,7 @@ static const float QUICK_TAP_TIME_INTERVAL = 0.2;
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
     
     //NSLog(@"%f, touchesMoved callback, is scrolling: %d, touches count: %d", CACurrentMediaTime(), isInMouseWheelScrollingMode, (uint32_t)[touches count]);
-
+    
     if(isInMouseWheelScrollingMode){
         NSSet* twoTouches = [event allTouches];
         CGPoint firstLocation = [[[twoTouches allObjects] objectAtIndex:0] locationInView:streamView];
@@ -219,11 +238,14 @@ static const float QUICK_TAP_TIME_INTERVAL = 0.2;
         touchLockedForMouseMove = nil;
         mousePointerMoved = false; // need to reset this anyway
         [self resetAllPressedFlagsForOnscreenButtonViews]; // reset all pressed flag for on-screen button views after all fingers lifted from screen.
+        touchPointSpawnedAtUpperScreenEdge = false;
     }
 }
 
 
 - (void)sendMouseMoveEvent:(UITouch* )touch{
+    if(touchPointSpawnedAtUpperScreenEdge) return; // we're done here. this touch event will not be sent to the remote PC. and this must be checked after coord selector finishes populating new relative coords, or the app will crash!
+
     CGPoint currentLocation = [touch locationInView:streamView];
     
     if (latestMousePointerLocation.x != currentLocation.x ||
