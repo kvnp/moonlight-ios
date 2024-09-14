@@ -141,7 +141,8 @@ static const float QUICK_TAP_TIME_INTERVAL = 0.2;
         self->touchPointSpawnedAtUpperScreenEdge = true;
         return;
     }
-
+    
+    touchPointSpawnedAtUpperScreenEdge = false; // reset this flag immediately if we get a touch event passing the check above, this fixes irresponsive touch after closing the command tool menu.
     
     if([[event allTouches] count] == 2 && ![self containOnScreenButtonTaps] && ![self containOnScreenControllerTaps:[event allTouches]]){
         NSLog(@"get in scrolling mode");
