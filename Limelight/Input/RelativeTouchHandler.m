@@ -27,7 +27,7 @@ static const float QUICK_TAP_TIME_INTERVAL = 0.2;
     BOOL mouseLeftButtonHeldDown;
     BOOL isInMouseWheelScrollingMode;
     
-    // upper screen check
+    // upper screen edge check
     bool touchPointSpawnedAtUpperScreenEdge;
     CGFloat slideGestureVerticalThreshold;
     CGFloat screenWidthWithThreshold;
@@ -245,7 +245,7 @@ static const float QUICK_TAP_TIME_INTERVAL = 0.2;
 
 
 - (void)sendMouseMoveEvent:(UITouch* )touch{
-    if(touchPointSpawnedAtUpperScreenEdge) return; // we're done here. this touch event will not be sent to the remote PC. and this must be checked after coord selector finishes populating new relative coords, or the app will crash!
+    if(touchPointSpawnedAtUpperScreenEdge) return; // we're done here. this touch event will not be sent to the remote PC.
 
     CGPoint currentLocation = [touch locationInView:streamView];
     

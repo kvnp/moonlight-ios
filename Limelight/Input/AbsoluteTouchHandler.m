@@ -23,18 +23,32 @@
 #define DOUBLE_TAP_DEAD_ZONE_DELTA 0.025f
 
 @implementation AbsoluteTouchHandler {
-    StreamView* view;
+    StreamView* streamView;
     
     NSTimer* longPressTimer;
     UITouch* lastTouchDown;
     CGPoint lastTouchDownLocation;
     UITouch* lastTouchUp;
     CGPoint lastTouchUpLocation;
+    
+    // upper screen edge check
+    bool touchPointSpawnedAtUpperScreenEdge;
+    CGFloat slideGestureVerticalThreshold;
+    CGFloat screenWidthWithThreshold;
+    CGFloat EDGE_TOLERANCE;
+
 }
 
 - (id)initWithView:(StreamView*)view {
     self = [self init];
-    self->view = view;
+    self->streamView = view;
+    
+    // upper screen check
+    EDGE_TOLERANCE = 15.0;
+    slideGestureVerticalThreshold = CGRectGetHeight([[UIScreen mainScreen] bounds]) * 0.4;
+    screenWidthWithThreshold = CGRectGetWidth([[UIScreen mainScreen] bounds]) - EDGE_TOLERANCE;
+    self->touchPointSpawnedAtUpperScreenEdge = false;
+    
     return self;
 }
 
@@ -45,19 +59,28 @@
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    
+    CGPoint initialPoint = [[touches anyObject] locationInView:streamView];
+    if(initialPoint.y < slideGestureVerticalThreshold && (initialPoint.x < EDGE_TOLERANCE || initialPoint.x > screenWidthWithThreshold)) {
+        self->touchPointSpawnedAtUpperScreenEdge = true;
+        return; // we're done here. this touch event will not be sent to the remote PC.
+    }
+    
+    touchPointSpawnedAtUpperScreenEdge = false; // reset this flag immediately if we get a touch event passing the check above, this fixes irresponsive touch after closing the command tool menu.
+
     // Ignore touch down events with more than one finger
     if ([[event allTouches] count] > 1) {
         return;
     }
     
     UITouch* touch = [touches anyObject];
-    CGPoint touchLocation = [touch locationInView:view];
+    CGPoint touchLocation = [touch locationInView:streamView];
     
     // Don't reposition for finger down events within the deadzone. This makes double-clicking easier.
     if (touch.timestamp - lastTouchUp.timestamp > DOUBLE_TAP_DEAD_ZONE_DELAY ||
-        sqrt(pow((touchLocation.x / view.bounds.size.width) - (lastTouchUpLocation.x / view.bounds.size.width), 2) +
-             pow((touchLocation.y / view.bounds.size.height) - (lastTouchUpLocation.y / view.bounds.size.height), 2)) > DOUBLE_TAP_DEAD_ZONE_DELTA) {
-        [view updateCursorLocation:touchLocation isMouse:NO];
+        sqrt(pow((touchLocation.x / streamView.bounds.size.width) - (lastTouchUpLocation.x / streamView.bounds.size.width), 2) +
+             pow((touchLocation.y / streamView.bounds.size.height) - (lastTouchUpLocation.y / streamView.bounds.size.height), 2)) > DOUBLE_TAP_DEAD_ZONE_DELTA) {
+        [streamView updateCursorLocation:touchLocation isMouse:NO];
     }
     
     // Press the left button down
@@ -75,25 +98,31 @@
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+    
+    if(touchPointSpawnedAtUpperScreenEdge) return; // we're done here. this touch event will not be sent to the remote PC.
+    
     // Ignore touch move events with more than one finger
     if ([[event allTouches] count] > 1) {
         return;
     }
     
     UITouch* touch = [touches anyObject];
-    CGPoint touchLocation = [touch locationInView:view];
+    CGPoint touchLocation = [touch locationInView:streamView];
     
-    if (sqrt(pow((touchLocation.x / view.bounds.size.width) - (lastTouchDownLocation.x / view.bounds.size.width), 2) +
-             pow((touchLocation.y / view.bounds.size.height) - (lastTouchDownLocation.y / view.bounds.size.height), 2)) > LONG_PRESS_ACTIVATION_DELTA) {
+    if (sqrt(pow((touchLocation.x / streamView.bounds.size.width) - (lastTouchDownLocation.x / streamView.bounds.size.width), 2) +
+             pow((touchLocation.y / streamView.bounds.size.height) - (lastTouchDownLocation.y / streamView.bounds.size.height), 2)) > LONG_PRESS_ACTIVATION_DELTA) {
         // Moved too far since touch down. Cancel the long press timer.
         [longPressTimer invalidate];
         longPressTimer = nil;
     }
     
-    [view updateCursorLocation:[[touches anyObject] locationInView:view] isMouse:NO];
+    [streamView updateCursorLocation:[[touches anyObject] locationInView:streamView] isMouse:NO];
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    
+    if(touchPointSpawnedAtUpperScreenEdge) return; // we're done here. this touch event will not be sent to the remote PC.
+
     // Only fire this logic if all touches have ended
     if ([[event allTouches] count] == [touches count]) {
         // Cancel the long press timer
@@ -108,7 +137,7 @@
         
         // Remember this last touch for touch-down deadzoning
         lastTouchUp = [touches anyObject];
-        lastTouchUpLocation = [lastTouchUp locationInView:view];
+        lastTouchUpLocation = [lastTouchUp locationInView:streamView];
     }
 }
 
