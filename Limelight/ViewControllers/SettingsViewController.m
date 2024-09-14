@@ -537,7 +537,7 @@ BOOL isCustomResolution(CGSize res) {
     NSString* labelText;
     switch([self.touchModeSelector selectedSegmentIndex]){
         case RELATIVE_TOUCH:
-            labelText = [LocalizationHelper localizedStringForKey:@"Touch Mode - On Screen Game Controller Available"];break;
+            labelText = [LocalizationHelper localizedStringForKey:@"Touch Mode - Double Tap to Drag, OSC Available"];break;
         case REGULAR_NATIVE_TOUCH:
             labelText = [LocalizationHelper localizedStringForKey:@"Touch Mode - With OSC & Mouse Support"];break;
         case PURE_NATIVE_TOUCH:

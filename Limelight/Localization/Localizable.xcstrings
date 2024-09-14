@@ -2401,6 +2401,29 @@
         }
       }
     },
+    "Touch Mode - Double Tap to Drag, OSC Available" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控模式 - 双击屏幕拖动, 支持屏显手柄"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控模式 - 双击屏幕拖动, 支持屏显手柄"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控模式 - 双击屏幕拖动, 支持屏显手柄"
+          }
+        }
+      }
+    },
     "Touch Mode - For MacOS Direct Touch" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2443,29 +2466,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "触控模式 - 不支持屏显手柄,鼠标"
-          }
-        }
-      }
-    },
-    "Touch Mode - On Screen Game Controller Available" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "触控模式 - 支持屏显手柄"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "触控模式 - 支持屏显手柄"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "触控模式 - 支持屏显手柄"
           }
         }
       }
