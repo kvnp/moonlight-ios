@@ -178,7 +178,7 @@ static const float QUICK_TAP_TIME_INTERVAL = 0.2;
     // we must use [event allTouches] to check if touchLockedForMouseMove is captured, because the UITouch object could be captured by upper layer of UIView(in cases like tap gestures), not passed to the touches callbacks in this class, but still available in [event allTouches]
     if(candidateTouch != nil && ![[event allTouches] containsObject:touchLockedForMouseMove]){
         touchLockedForMouseMove = candidateTouch;
-        NSLog(@"%f candidate touch for mouse movement locked, addr: %llu", CACurrentMediaTime(), (uintptr_t)touchLockedForMouseMove);
+        NSLog(@"Candidate touch for mouse movement locked");
         mousePointerTimestamp = CACurrentMediaTime();
         initialMousePointerLocation = latestMousePointerLocation = [touchLockedForMouseMove locationInView:streamView];
     }
@@ -188,13 +188,13 @@ static const float QUICK_TAP_TIME_INTERVAL = 0.2;
     
     //NSLog(@"%f, touchesMoved callback, is scrolling: %d, touches count: %d", CACurrentMediaTime(), isInMouseWheelScrollingMode, (uint32_t)[touches count]);
     
-    if(isInMouseWheelScrollingMode){
+    if(isInMouseWheelScrollingMode && [[event allTouches] count] == 2 && ![self containOnScreenButtonTaps] && ![self containOnScreenControllerTaps:touches]){
         NSSet* twoTouches = [event allTouches];
         CGPoint firstLocation = [[[twoTouches allObjects] objectAtIndex:0] locationInView:streamView];
         CGPoint secondLocation = [[[twoTouches allObjects] objectAtIndex:1] locationInView:streamView];
         
         CGPoint avgLocation = CGPointMake((firstLocation.x + secondLocation.x) / 2, (firstLocation.y + secondLocation.y) / 2);
-        if ((CACurrentMediaTime() - _mouseRightClickTapRecognizer.gestureCapturedTime > RIGHTCLICK_TAP_DOWN_TIME_THRESHOLD_S) && twoFingerTouchLocation.y != avgLocation.y && ![self containOnScreenButtonTaps] && ![self containOnScreenControllerTaps:twoTouches]) { //prevent sending scrollevent while right click gesture is being recognized. The time threshold is only 150ms, resulting in a barely noticeable delay before the scroll event is activated.
+        if ((CACurrentMediaTime() - _mouseRightClickTapRecognizer.gestureCapturedTime > RIGHTCLICK_TAP_DOWN_TIME_THRESHOLD_S) && twoFingerTouchLocation.y != avgLocation.y) { //prevent sending scrollevent while right click gesture is being recognized. The time threshold is only 150ms, resulting in a barely noticeable delay before the scroll event is activated.
             // and we must exclude onscreen button taps & on-screen controller taps
             LiSendHighResScrollEvent((avgLocation.y - twoFingerTouchLocation.y) * 10);
         }
@@ -287,6 +287,7 @@ static const float QUICK_TAP_TIME_INTERVAL = 0.2;
 
 - (void)sendShortMouseLeftButtonClickEvent{
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        usleep(50 * 1000);
         LiSendMouseButtonEvent(BUTTON_ACTION_PRESS, BUTTON_LEFT);
         usleep(50 * 1000);
         LiSendMouseButtonEvent(BUTTON_ACTION_RELEASE, BUTTON_LEFT);
