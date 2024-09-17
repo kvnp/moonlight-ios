@@ -1282,7 +1282,7 @@
 					"$(PROJECT_DIR)/libs/SDL2/lib/iOS-Sim",
 					"$(PROJECT_DIR)/libs/FFmpeg/lib/iOS-Sim",
 				);
-				MARKETING_VERSION = 9.0.256;
+				MARKETING_VERSION = 9.0.263;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.moonlight-trzj.iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -1340,7 +1340,7 @@
 					"$(PROJECT_DIR)/libs/SDL2/lib/iOS-Sim",
 					"$(PROJECT_DIR)/libs/FFmpeg/lib/iOS-Sim",
 				);
-				MARKETING_VERSION = 9.0.256;
+				MARKETING_VERSION = 9.0.263;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.moonlight-zwm-updated.iPadOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
