@@ -24,7 +24,6 @@ static const float QUICK_TAP_TIME_INTERVAL = 0.2;
     NSTimeInterval mousePointerTimestamp;
     BOOL mousePointerMoved;
     BOOL quickTapDetected;
-    BOOL mouseLeftButtonHeldDown;
     BOOL isInMouseWheelScrollingMode;
     
     // upper screen edge check
@@ -57,7 +56,6 @@ static const float QUICK_TAP_TIME_INTERVAL = 0.2;
     
     isInMouseWheelScrollingMode = false;
     mousePointerMoved = false;
-    mouseLeftButtonHeldDown = false;
     mousePointerTimestamp = 0;
     
     // upper screen check
@@ -206,11 +204,6 @@ static const float QUICK_TAP_TIME_INTERVAL = 0.2;
     
     if([touches containsObject:touchLockedForMouseMove]){
         mousePointerMoved = true;
-        if(self->quickTapDetected && !mouseLeftButtonHeldDown) {
-            NSLog(@"Sending mouse left button down event in touchesMoved callback ...");
-            mouseLeftButtonHeldDown = true;
-            LiSendMouseButtonEvent(BUTTON_ACTION_PRESS, BUTTON_LEFT); // start Dragging...
-        }
         [self sendMouseMoveEvent:touchLockedForMouseMove];
     }
 }
@@ -222,13 +215,15 @@ static const float QUICK_TAP_TIME_INTERVAL = 0.2;
     }
     
     if([touches containsObject:touchLockedForMouseMove]){
+        // dealing with a single first tap, whether the button will be released, is going to be decided in sendLongMouseLeftButtonClickEvent
         if(!mousePointerMoved && !self->quickTapDetected) [self sendLongMouseLeftButtonClickEvent];
+        
+        // dealing with a second quick tap following the first tap:
         if(self->quickTapDetected){
             // we're in at least the second tap release of the very short time interval after the first tap.
-            LiSendMouseButtonEvent(BUTTON_ACTION_RELEASE, BUTTON_LEFT); // must release the button first, because the button is likely being held down since the long click turned into a dragging event.
+            LiSendMouseButtonEvent(BUTTON_ACTION_RELEASE, BUTTON_LEFT); // must release the button anyway, because the button is likely being held down since the long click turned into a dragging event.
             if(!mousePointerMoved) [self sendShortMouseLeftButtonClickEvent]; // if it is a quick tap and the pointer was not moved, we must send another click to simulate double click.
             self->quickTapDetected = false; // reset flag
-            self->mouseLeftButtonHeldDown = false; // reset flag
         }
         touchLockedForMouseMove = nil;
         mousePointerMoved = false;
