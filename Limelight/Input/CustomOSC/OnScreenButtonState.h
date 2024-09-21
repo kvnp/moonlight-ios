@@ -25,6 +25,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL isHidden;
 @property (nonatomic, assign) uint8_t buttonType;
 @property (nonatomic, assign) NSTimeInterval timestamp;
+@property (nonatomic, assign) CGFloat widthFactor; // for OnScreenButtonView
+@property (nonatomic, assign) CGFloat heightFactor; // for OnScreenButtonView
+
 // @property (nonatomic, assign) BOOL hasValidPosition;
 
 typedef NS_ENUM(NSInteger, OnScreenButtonType) {

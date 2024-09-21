@@ -16,8 +16,9 @@ import UIKit
     @objc public var keyString: String
     @objc public var timestamp: TimeInterval
     @objc public var pressed: Bool
+    @objc public var widthFactor: CGFloat
+    @objc public var heightFactor: CGFloat
 
-    
     private let label: UILabel
     private let originalBackgroundColor: UIColor
     private var storedLocation: CGPoint = .zero
@@ -30,6 +31,8 @@ import UIKit
         self.originalBackgroundColor = UIColor(white: 0.2, alpha: 0.7)
         self.timestamp = 0
         self.pressed = false
+        self.widthFactor = 1.0
+        self.heightFactor = 1.0
         super.init(frame: .zero)
         setupView()
     }
@@ -38,7 +41,7 @@ import UIKit
         fatalError("init(coder:) has not been implemented")
     }
     
-    @objc public func setKeyLocation(xOffset:CGFloat, yOffset:CGFloat) {
+    @objc public func setLocation(xOffset:CGFloat, yOffset:CGFloat) {
         NSLayoutConstraint.activate([
             self.leadingAnchor.constraint(equalTo: self.superview!.leadingAnchor, constant: xOffset),
             self.topAnchor.constraint(equalTo: self.superview!.topAnchor, constant: yOffset),
@@ -49,7 +52,38 @@ import UIKit
         OnScreenButtonView.editMode = enabled
     }
     
-    private func setupView() {
+    @objc public func resizeButtonView(){
+        guard let superview = superview else { return }
+        
+        
+        // Deactivate existing constraints if necessary
+        NSLayoutConstraint.deactivate(self.constraints)
+        
+        // To resize the button, we must set this to false temporarily
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        
+        // replace invalid factor values
+        if(self.widthFactor == 0) {self.widthFactor = 1.0}
+        if(self.heightFactor == 0) {self.heightFactor = 1.0}
+
+        // Constraints for resizing
+        let newWidthConstraint = self.widthAnchor.constraint(equalToConstant: 70 * self.widthFactor)
+        let newHeightConstraint = self.heightAnchor.constraint(equalToConstant: 65 * self.heightFactor)
+        
+        NSLayoutConstraint.activate([
+            self.widthAnchor.constraint(equalToConstant: 70 * self.widthFactor),
+            self.heightAnchor.constraint(equalToConstant: 65 * self.heightFactor),
+        ])
+
+        // Trigger layout update
+        superview.layoutIfNeeded()
+
+        // Re-setup buttonView style
+        setupView()
+    }
+    
+    @objc public func setupView() {
         label.text = self.keyLabel
         label.font = UIFont.boldSystemFont(ofSize: 19)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -77,8 +111,8 @@ import UIKit
         NSLayoutConstraint.activate([
             //self.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.088),
             //self.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height * 0.1),
-            self.widthAnchor.constraint(equalToConstant: 70),
-            self.heightAnchor.constraint(equalToConstant: 65),
+            self.widthAnchor.constraint(equalToConstant: 70 * self.widthFactor),
+            self.heightAnchor.constraint(equalToConstant: 65 * self.widthFactor),
         ])
         
         NSLayoutConstraint.activate([
@@ -135,7 +169,9 @@ import UIKit
                 }
             }
         }
-        else {
+        // here is in edit mode:
+        else{
+            NotificationCenter.default.post(name: Notification.Name("OnScreenButtonViewSelected"),object: self) // inform layout tool controller to fetch button size factors. self will be passed as the object of the notification
             if let touch = touches.first {
                 let touchLocation = touch.location(in: superview)
                 storedLocation = touchLocation

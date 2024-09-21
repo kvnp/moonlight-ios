@@ -233,6 +233,14 @@ static float L3_Y;
     _downButton.name = @"downButton";
     _leftButton.name = @"leftButton";
     
+    
+    _standardRoundButtonBounds = CGRectMake(0, 0, [UIImage imageNamed:@"AButton"].size.width, [UIImage imageNamed:@"AButton"].size.height);
+    _standardRectangleButtonBounds = CGRectMake(0, 0, [UIImage imageNamed:@"StartButton"].size.width, [UIImage imageNamed:@"StartButton"].size.height);
+    _standardStickBounds = CGRectMake(0, 0, [UIImage imageNamed:@"StickInner"].size.width * 1.33, [UIImage imageNamed:@"StickInner"].size.height * 1.33);
+    _standardStickBackgroundBounds = CGRectMake(0, 0, [UIImage imageNamed:@"StickOuter"].size.width * 1.10, [UIImage imageNamed:@"StickOuter"].size.height * 1.10);
+    _standardUpDownButtonBounds = CGRectMake(0, 0, [UIImage imageNamed:@"UpButton"].size.width, [UIImage imageNamed:@"UpButton"].size.height);
+    _standardLeftRightButtonBounds = CGRectMake(0, 0, [UIImage imageNamed:@"LeftButton"].size.width, [UIImage imageNamed:@"LeftButton"].size.height);
+
     _activeCustomOscButtonPositionDict = [[NSMutableDictionary alloc] init];
     touchAddrsCapturedByOnScreenControls = [[NSMutableSet alloc] init];
     
@@ -1428,6 +1436,91 @@ static float L3_Y;
             && touchLocation.y > deadZoneStartY && touchLocation.y < deadZoneEndY);
     
 }
+
+- (void) resizeControllerLayersWith:(CALayer*)layer and:(CGFloat)sizeFactor{
+    // CALayer* superLayer = layer.superlayer;
+    // if(layerBeingDragged.name == @"")
+    if (layer == self._aButton ||
+        layer == self._bButton ||
+        layer == self._xButton ||
+        layer == self._yButton ||
+        layer == self._l1Button ||
+        layer == self._l2Button ||
+        layer == self._r1Button ||
+        layer == self._r2Button){
+        layer.bounds = CGRectMake(0, 0, self.standardRoundButtonBounds.size.width * sizeFactor, self.standardRoundButtonBounds.size.height * sizeFactor);
+    }
+    
+    if (layer == self._selectButton ||
+        layer == self._startButton) {
+        layer.bounds = CGRectMake(0, 0, self.standardRectangleButtonBounds.size.width * sizeFactor, self.standardRectangleButtonBounds.size.height * sizeFactor);
+    }
+    
+    if (layer == self._rightStickBackground) {
+        // Resize the rightStick & Background bounds
+        self._rightStickBackground.bounds = CGRectMake(0, 0, self.standardStickBackgroundBounds.size.width * sizeFactor, self.standardStickBackgroundBounds.size.height * sizeFactor);
+        self._rightStick.bounds = CGRectMake(0, 0, self.standardStickBounds.size.width * sizeFactor, self.standardStickBounds.size.height * sizeFactor);
+
+        // Retrieve the current frame to account for transformations, this will update the coords for new position CGPointMake
+        CGRect transformedBackgroundFrame = self._rightStickBackground.frame;
+
+        // Explicitly adjust the position of _rightStickBackground using the transformed frame
+        self._rightStickBackground.position = CGPointMake(CGRectGetMidX(transformedBackgroundFrame), CGRectGetMidY(transformedBackgroundFrame));
+
+        // Update the position of _rightStick to match the new center of the transformed _rightStickBackground
+        self._rightStick.position = CGPointMake(CGRectGetMidX(self._rightStickBackground.bounds), CGRectGetMidY(self._rightStickBackground.bounds));
+    }
+
+    if (layer == self._leftStickBackground){
+        // Resize the rightStick & Background bounds
+        self._leftStickBackground.bounds = CGRectMake(0, 0, self.standardStickBackgroundBounds.size.width * sizeFactor, self.standardStickBackgroundBounds.size.height * sizeFactor);
+        self._leftStick.bounds = CGRectMake(0, 0, self.standardStickBounds.size.width * sizeFactor, self.standardStickBounds.size.height * sizeFactor);
+
+        // Retrieve the current frame to account for transformations, this will update the coords for new position CGPointMake
+        CGRect transformedBackgroundFrame = self._leftStickBackground.frame;
+
+        // Explicitly adjust the position of _rightStickBackground using the transformed frame
+        self._leftStickBackground.position = CGPointMake(CGRectGetMidX(transformedBackgroundFrame), CGRectGetMidY(transformedBackgroundFrame));
+
+        // Update the position of _rightStick to match the new center of the transformed _rightStickBackground
+        self._leftStick.position = CGPointMake(CGRectGetMidX(self._leftStickBackground.bounds), CGRectGetMidY(self._leftStickBackground.bounds));
+    }
+
+    if (layer == self._dPadBackground){
+
+        // Calculate the distances of each button from the shared center based on their transformed positions
+        CGFloat newDPadDistFactor = 0.1/sizeFactor;
+
+        // 1. Resize and reposition the Down button
+        
+        CGFloat newLongSideLength = _standardLeftRightButtonBounds.size.width * sizeFactor;
+        CGFloat newShortSideLength = _standardLeftRightButtonBounds.size.height * sizeFactor;
+
+        CGPoint sharedCenter = CGPointMake(_standardLeftRightButtonBounds.size.width, _standardLeftRightButtonBounds.size.width); // this will anchor the center point of the dPad
+                
+        // Resize and reposition the Up button
+        _upButton.anchorPoint = CGPointMake(0.5, 1 + newDPadDistFactor);
+        _upButton.bounds = CGRectMake(0, 0, newShortSideLength, newLongSideLength);
+        _upButton.position = CGPointMake(sharedCenter.x, sharedCenter.y);
+
+        // Resize and reposition the Down button
+        _downButton.anchorPoint = CGPointMake(0.5, 0 - newDPadDistFactor);
+        _downButton.bounds = CGRectMake(0, 0, newShortSideLength, newLongSideLength);
+        _downButton.position = CGPointMake(sharedCenter.x, sharedCenter.y);
+
+        // Resize and reposition the Right button
+        _rightButton.anchorPoint = CGPointMake(0 - newDPadDistFactor, 0.5);
+        _rightButton.bounds = CGRectMake(0, 0, newLongSideLength, newShortSideLength);
+        _rightButton.position = CGPointMake(sharedCenter.x, sharedCenter.y);
+
+        // Resize and reposition the Left button
+        _leftButton.anchorPoint = CGPointMake(1 + newDPadDistFactor, 0.5);
+        _leftButton.bounds = CGRectMake(0, 0, newLongSideLength, newShortSideLength);
+        _leftButton.position = CGPointMake(sharedCenter.x, sharedCenter.y);
+    }
+    
+}
+
 
 
 @end

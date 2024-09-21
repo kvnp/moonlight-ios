@@ -113,7 +113,7 @@
 }
 
 /* returns reference to button layer object given the button's name*/
-- (CALayer*)buttonLayerFromName: (NSString*)name {
+- (CALayer*)controllerLayerFromName: (NSString*)name {
     for (CALayer *buttonLayer in self.OSCButtonLayers) {
         
         if ([buttonLayer.name isEqualToString:name]) {
@@ -159,9 +159,20 @@
         else if (layer == self._leftStick) {  // only let user drag left stick's background, not the inner analog stick itself
             layerBeingDragged = self._leftStickBackground;
         }
-        else {    // let user drag whatever other valid button they're touching
+        else if(layer == self._aButton ||
+                layer == self._bButton ||
+                layer == self._xButton ||
+                layer == self._yButton ||
+                layer == self._l1Button ||
+                layer == self._l2Button ||
+                layer == self._r1Button ||
+                layer == self._r2Button ||
+                layer == self._selectButton ||
+                layer == self._startButton){    // we must iterates all the controller button layers manually here, to prevent other widgets being dragged accidently
             layerBeingDragged = layer;
         }
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"ControllerCALayerSelected" object:layerBeingDragged]; // inform that a CALayer of onScreen controller has being selected
         
         /* save the name, position, and visibility of button being touched in array in case user wants to undo the change later */
         OnScreenButtonState *onScreenButtonState = [[OnScreenButtonState alloc] initWithButtonName:layerBeingDragged.name buttonType:GameControllerButton andPosition:layerBeingDragged.position];
@@ -237,6 +248,7 @@
     horizontalGuideline.backgroundColor = [UIColor blueColor];
     verticalGuideline.backgroundColor = [UIColor blueColor];
 }
+
 
 
 

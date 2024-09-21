@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (id) initWithView:(UIView*)view controllerSup:(ControllerSupport*)controllerSupport
        streamConfig:(StreamConfiguration*)streamConfig oscLevel:(int)oscLevel;
 
-- (CALayer*) buttonLayerFromName:(NSString*)name;
+- (CALayer*) controllerLayerFromName:(NSString*)name;
 - (BOOL) isLayer:(CALayer*)layer hoveringOverButton:(UIButton*)button;
 
 - (void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;

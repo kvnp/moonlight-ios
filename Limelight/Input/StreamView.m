@@ -383,9 +383,12 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
             if(buttonState.buttonType == KeyboardOrMouseButton){
                 OnScreenButtonView* buttonView = [[OnScreenButtonView alloc] initWithKeyString:buttonState.name keyLabel:buttonState.alias]; //reconstruct buttonView
                 buttonView.translatesAutoresizingMaskIntoConstraints = NO; // weird but this is mandatory, or you will find no key views added to the right place
+                buttonView.widthFactor = buttonState.widthFactor;
+                buttonView.heightFactor = buttonState.heightFactor;
                 // Add the buttonView to the view controller's view
                 [self->streamFrameTopLayerView addSubview:buttonView]; // add keyboard button to the stream frame view. must add it to the target view before setting location.
-                [buttonView setKeyLocationWithXOffset:buttonState.position.x yOffset:buttonState.position.y];
+                [buttonView setLocationWithXOffset:buttonState.position.x yOffset:buttonState.position.y];
+                [buttonView resizeButtonView]; // resize must be called after relocation
             }
         }
     }

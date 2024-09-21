@@ -33,6 +33,8 @@
     [encoder encodeInt:self.buttonType forKey:@"buttonType"];
     [encoder encodeCGPoint:self.position forKey:@"position"];
     [encoder encodeBool:self.isHidden forKey:@"isHidden"];
+    [encoder encodeFloat:self.widthFactor forKey:@"widthFactor"];
+    [encoder encodeFloat:self.heightFactor forKey:@"heightFactor"];
 }
 
 - (id) initWithCoder:(NSCoder*)decoder {
@@ -43,6 +45,8 @@
         self.buttonType = [decoder decodeIntForKey:@"buttonType"];
         self.position = [decoder decodeCGPointForKey:@"position"];
         self.isHidden = [decoder decodeBoolForKey:@"isHidden"];
+        self.widthFactor = [decoder decodeFloatForKey:@"widthFactor"];
+        self.heightFactor = [decoder decodeFloatForKey:@"heightFactor"];
     }
     
     return self;

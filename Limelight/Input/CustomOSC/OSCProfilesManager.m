@@ -200,7 +200,7 @@ static NSMutableDictionary *onScreenButtonViewsDict;
 
 
 - (bool) updateSelectedProfile:(NSMutableArray *) oscButtonLayers {
-    NSMutableArray* buttonStatesEncoded = [self convertOnscreenButtonsToButtonStates:oscButtonLayers];
+    NSMutableArray* buttonStatesEncoded = [self convertOnScreenControllerAndButtonsToButtonStates:oscButtonLayers];
     if([self getIndexOfSelectedProfile]==0) return false;
     OSCProfile *newProfile = [[OSCProfile alloc] initWithName:[self getSelectedProfile].name
                             buttonStates:buttonStatesEncoded isSelected:YES];        // create a new 'OSCProfile'. Set the array of encoded button states created above to the 'buttonStates' property of the new profile, along with a 'name'. Set 'isSelected' argument to YES which will set this saved profile as the one that will show up in the game stream view
@@ -217,7 +217,7 @@ static NSMutableDictionary *onScreenButtonViewsDict;
 
 
 - (void) saveProfileWithName:(NSString*)name andButtonLayers:(NSMutableArray *)oscButtonLayers {
-    NSMutableArray* buttonStatesEncoded = [self convertOnscreenButtonsToButtonStates:oscButtonLayers];
+    NSMutableArray* buttonStatesEncoded = [self convertOnScreenControllerAndButtonsToButtonStates:oscButtonLayers];
     OSCProfile *newProfile = [[OSCProfile alloc] initWithName:name
                             buttonStates:buttonStatesEncoded isSelected:YES];        // create a new 'OSCProfile'. Set the array of encoded button states created above to the 'buttonStates' property of the new profile, along with a 'name'. Set 'isSelected' argument to YES which will set this saved profile as the one that will show up in the game stream view
     /* set all saved OSCProfiles 'isSelected' property to NO since the new profile you're adding will be set as the selected profile */
@@ -243,7 +243,7 @@ static NSMutableDictionary *onScreenButtonViewsDict;
 }
 
 
-- (NSMutableArray* ) convertOnscreenButtonsToButtonStates:(NSMutableArray *) oscButtonLayers {
+- (NSMutableArray* ) convertOnScreenControllerAndButtonsToButtonStates:(NSMutableArray *) oscButtonLayers {
     /* iterate through each OSC button the user sees on screen, create an 'OnScreenButtonState' object from each button, encode each object, and then add each object to an array */
     /*
     NSSet *validPositionButtonNames = [NSSet setWithObjects:
@@ -262,6 +262,8 @@ static NSMutableDictionary *onScreenButtonViewsDict;
         @"startButton",
         nil]; */
     NSMutableArray *buttonStatesEncoded = [[NSMutableArray alloc] init];
+    
+    // save on-screen game controller buttons & sticks as buttonstate:
     for (CALayer *oscButtonLayer in oscButtonLayers) {
         
         OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:oscButtonLayer.name buttonType:GameControllerButton andPosition:oscButtonLayer.position];
@@ -271,12 +273,14 @@ static NSMutableDictionary *onScreenButtonViewsDict;
         [buttonStatesEncoded addObject: buttonStateEncoded];
     }
     
-    // save keyboard button as buttonstate, this is for the new onscreen keyboard buttons:
+    // save on-screen button views (keyboard & mouse command) as buttonstate:
     [onScreenButtonViewsDict enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) { // this dict is passed from the layout tool VC, as a static obj in this class.
         OnScreenButtonView *buttonView = value;
         OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:buttonView.keyString buttonType:KeyboardOrMouseButton andPosition:buttonView.frame.origin];
         buttonState.alias = buttonView.keyLabel;
         buttonState.timestamp = buttonView.timestamp;
+        buttonState.widthFactor = buttonView.widthFactor;
+        buttonState.heightFactor = buttonView.heightFactor;
         NSData *buttonStateEncoded = [NSKeyedArchiver archivedDataWithRootObject:buttonState requiringSecureCoding:YES error:nil];
         [buttonStatesEncoded addObject: buttonStateEncoded];
     }];

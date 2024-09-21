@@ -36,10 +36,28 @@ typedef NS_ENUM(NSInteger, OnScreenControlsLevel) {
 // @property (nonatomic, assign) CustomTapGestureRecognizer* mouseRightClickTapRecognizer; // this object will be passed to onscreencontrols class for areVirtualControllerTaps flag setting
 @property (nonatomic, assign) bool isLayingOut;
 //@property (nonatomic) NSMutableSet<UITouch* >* touchesCapturedByOnScreenButtons;
+
+
+@property (nonatomic, assign) CGRect standardRoundButtonBounds;
+@property (nonatomic, assign) CGRect standardRectangleButtonBounds;
+@property (nonatomic, assign) CGRect standardStickBounds;
+@property (nonatomic, assign) CGRect standardStickBackgroundBounds;
+@property (nonatomic, assign) CGRect standardUpDownButtonBounds;
+@property (nonatomic, assign) CGRect standardLeftRightButtonBounds;
+
+@property (nonatomic, assign) CGPoint leftStickCenter;
+@property (nonatomic, assign) CGPoint rightStickCenter;
+
 @property CALayer* _aButton;
+@property (nonatomic, assign) CGFloat aButtonSizeFactor;
 @property CALayer* _bButton;
+@property (nonatomic, assign) CGFloat bButtonSizeFactor;
 @property CALayer* _xButton;
+@property (nonatomic, assign) CGFloat xButtonSizeFactor;
 @property CALayer* _yButton;
+@property (nonatomic, assign) CGFloat yButtonSizeFactor;
+
+
 @property CALayer* _startButton;
 @property CALayer* _selectButton;
 @property CALayer* _r1Button;
@@ -56,7 +74,7 @@ typedef NS_ENUM(NSInteger, OnScreenControlsLevel) {
 @property CALayer* _leftStick;
 @property CALayer* _rightStickBackground;
 @property CALayer* _rightStick;
-@property CALayer *_dPadBackground;    // parent layer that contains each individual dPad button so user can drag them around the screen together
+@property CALayer* _dPadBackground;    // parent layer that contains each individual dPad button so user can drag them around the screen together
 
 @property float D_PAD_CENTER_X;
 @property float D_PAD_CENTER_Y;
@@ -81,5 +99,6 @@ typedef NS_ENUM(NSInteger, OnScreenControlsLevel) {
 - (void) setDPadCenter;
 - (void) setAnalogStickPositions;
 - (void) positionOSCButtons;
+- (void) resizeControllerLayersWith:(CALayer*)layer and:(CGFloat)sizeFactor;
 
 @end

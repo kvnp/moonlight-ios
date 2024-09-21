@@ -21,7 +21,12 @@
 
 @implementation LayoutOnScreenControlsViewController {
     BOOL isToolbarHidden;
-    OSCProfilesManager *profilesManager;
+    OSCProfilesManager* profilesManager;
+    OnScreenButtonView* selectedButtonView;
+    CALayer* selectedControllerLayer;
+    CGRect controllerOriginalBounds;
+    bool buttonViewSelected;
+    bool controllerLayerSelected;
     __weak IBOutlet NSLayoutConstraint *toolbarTopConstraintiPhone;
     __weak IBOutlet NSLayoutConstraint *toolbarTopConstraintiPad;
 }
@@ -61,10 +66,12 @@
             OnScreenButtonView* buttonView = [[OnScreenButtonView alloc] initWithKeyString:buttonState.name keyLabel:buttonState.alias]; //reconstruct buttonView
             buttonView.translatesAutoresizingMaskIntoConstraints = NO; // weird but this is mandatory, or you will find no key views added to the right place
             buttonView.timestamp = buttonState.timestamp; // will be set as key in in the dict.
+            buttonView.widthFactor = buttonState.widthFactor;
+            buttonView.heightFactor = buttonState.heightFactor;
             // Add the buttonView to the view controller's view
             [self.view addSubview:buttonView];
-            [buttonView setKeyLocationWithXOffset:buttonState.position.x yOffset:buttonState.position.y];
-            
+            [buttonView setLocationWithXOffset:buttonState.position.x yOffset:buttonState.position.y];
+            [buttonView resizeButtonView]; // resize must be called after relocation
             [self.onScreenButtonViewsDict setObject:buttonView forKey:@(buttonView.timestamp)];
         }
     }
@@ -120,7 +127,16 @@
                                                  name:@"OscLayoutProfileSelctedInTableView"   // This is a special notification for reloading the on screen keyboard buttons. which can't be executed by _oscProfilesTableViewController.needToUpdateOscLayoutTVC code block, and has to be triggered by a notification
                                                object:nil];
 
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(setButtonViewSizeSliderValues:)
+                                                 name:@"OnScreenButtonViewSelected"
+                                               object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(setControllerCALayerSizeSliderValues:)
+                                                 name:@"ControllerCALayerSelected"
+                                               object:nil];
+
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(OSCLayoutChanged) name:@"OSCLayoutChanged" object:nil];    // used to notifiy this view controller that the user made a change to the OSC layout so that the VC can either fade in or out its 'Undo button' which will signify to the user whether there are any OSC layout changes to undo
     
@@ -234,7 +250,7 @@
     if ([self.layoutOSC.layoutChanges count] > 0) { // check if there are layout changes to roll back to
         OnScreenButtonState *buttonState = [self.layoutOSC.layoutChanges lastObject];   //  Get the 'OnScreenButtonState' object that contains the name, position, and visiblity state of the button the user last moved
         
-        CALayer *buttonLayer = [self.layoutOSC buttonLayerFromName:buttonState.name];   // get the on screen button layer that corresponds with the 'OnScreenButtonState' object that we retrieved above
+        CALayer *buttonLayer = [self.layoutOSC controllerLayerFromName:buttonState.name];   // get the on screen button layer that corresponds with the 'OnScreenButtonState' object that we retrieved above
         
         /* Set the button's position and visiblity to what it was before the user last moved it */
         buttonLayer.position = buttonState.position;
@@ -319,7 +335,7 @@
         [self.onScreenButtonViewsDict setObject:buttonView forKey:@(buttonView.timestamp)];
         // Add the buttonView to the view controller's view
         [self.view addSubview:buttonView];
-        [buttonView setKeyLocationWithXOffset:50 yOffset:50];
+        [buttonView setLocationWithXOffset:50 yOffset:50];
     }];
     [alertController addAction:cancelAction];
     [alertController addAction:okAction];
@@ -346,6 +362,87 @@
     }
 }
 
+- (void)setButtonViewSizeSliderValues: (NSNotification *)notification{
+    // receive the selected buttonView obj passed from the notification
+    OnScreenButtonView* buttonView = (OnScreenButtonView* )notification.object;
+    self->buttonViewSelected = true;
+    self->controllerLayerSelected = false;
+    self->selectedButtonView = buttonView;
+    // setup slider values
+    [self.buttonAndControllerWidthSlider setValue:100 * self->selectedButtonView.widthFactor];
+    [self.buttonAndControllerHeightSlider setValue:100 * self->selectedButtonView.heightFactor];
+}
+
+- (void)setControllerCALayerSizeSliderValues: (NSNotification *)notification{
+    // receive the selected buttonView obj passed from the notification
+    CALayer* controllerLayer = (CALayer* )notification.object;
+    self->buttonViewSelected = false;
+    self->controllerLayerSelected = true;
+    self->selectedControllerLayer = controllerLayer;
+    self->controllerOriginalBounds = controllerLayer.bounds;
+    // setup slider values
+    // [self.buttonAndControllerWidthSlider setValue:100 * self->selectedButtonView.widthFactor];
+    // [self.buttonAndControllerHeightSlider setValue:100 * self->selectedButtonView.heightFactor];
+}
+
+
+
+- (void)buttonAndControllerWidthSliderMoved{
+    if(self->selectedButtonView != nil && self->buttonViewSelected){
+        self->selectedButtonView.translatesAutoresizingMaskIntoConstraints = true; // this is mandatory to prevent unexpected key view location change
+        // when adjusting width, the buttonView height will be syncronized
+        self->selectedButtonView.widthFactor = self->selectedButtonView.heightFactor = self.buttonAndControllerWidthSlider.value / 100;
+        [self.buttonAndControllerHeightSlider setValue: self.buttonAndControllerWidthSlider.value];
+        [self->selectedButtonView resizeButtonView];
+    }
+    if(self->selectedControllerLayer != nil && self->controllerLayerSelected){
+        [self.layoutOSC resizeControllerLayersWith:self->selectedControllerLayer and:self.buttonAndControllerWidthSlider.value/100];
+        return;
+        
+        CALayer* superLayer = self->selectedControllerLayer.superlayer;
+        // if(self->selectedControllerLayer.name == @"")
+        if ([self->selectedControllerLayer.name isEqualToString:@"r1Button"] ||
+            [self->selectedControllerLayer.name isEqualToString:@"r2Button"] ||
+            [self->selectedControllerLayer.name isEqualToString:@"l1Button"] ||
+            [self->selectedControllerLayer.name isEqualToString:@"l2Button"] ||
+            [self->selectedControllerLayer.name isEqualToString:@"aButton"] ||
+            [self->selectedControllerLayer.name isEqualToString:@"bButton"] ||
+            [self->selectedControllerLayer.name isEqualToString:@"xButton"] ||
+            [self->selectedControllerLayer.name isEqualToString:@"yButton"]){
+            [self->selectedControllerLayer removeFromSuperlayer];
+            self->selectedControllerLayer.bounds = CGRectMake(0, 0, self.layoutOSC.standardRoundButtonBounds.size.width * self.buttonAndControllerWidthSlider.value/100, self.layoutOSC.standardRoundButtonBounds.size.height * self.buttonAndControllerWidthSlider.value/100);
+            [superLayer addSublayer:self->selectedControllerLayer];
+        }
+    }
+    
+}
+
+- (void)buttonAndControllerHeightSliderMoved{
+    if(self->selectedButtonView != nil && self->buttonViewSelected){
+        self->selectedButtonView.translatesAutoresizingMaskIntoConstraints = true; // this is mandatory to prevent unexpected key view location change
+        self->selectedButtonView.heightFactor = self.buttonAndControllerHeightSlider.value / 100;
+        [self->selectedButtonView resizeButtonView];
+    }
+}
+
+
+- (void)setupProfileLableAndSliders{
+    CGFloat xPosition = (self.view.bounds.size.width - self.currentProfileLabel.frame.size.width) / 2;
+    // Set the label's frame with the calculated x-position
+    self.currentProfileLabel.frame = CGRectMake(xPosition, self.currentProfileLabel.frame.origin.y, self.currentProfileLabel.frame.size.width, self.currentProfileLabel.frame.size.height);
+    self.currentProfileLabel.hidden = NO; // Show Current Profile display
+    [self.currentProfileLabel setText:[LocalizationHelper localizedStringForKey:@"Current Profile: %@",[profilesManager getSelectedProfile].name]]; // display current profile name when profile is being refreshed.
+    
+    // button size sliders
+    self.buttonAndControllerWidthSlider.hidden = NO;
+    self.buttonAndControllerWidthSlider.frame = CGRectMake(xPosition, self.buttonAndControllerWidthSlider.frame.origin.y, self.buttonAndControllerWidthSlider.frame.size.width, self.buttonAndControllerWidthSlider.frame.size.height);
+    [self.buttonAndControllerWidthSlider addTarget:self action:@selector(buttonAndControllerWidthSliderMoved) forControlEvents:(UIControlEventValueChanged)];
+
+    // button size sliders
+    self.buttonAndControllerHeightSlider.hidden = NO;
+    self.buttonAndControllerHeightSlider.frame = CGRectMake(xPosition, self.buttonAndControllerHeightSlider.frame.origin.y, self.buttonAndControllerHeightSlider.frame.size.width, self.buttonAndControllerHeightSlider.frame.size.height);
+    [self.buttonAndControllerHeightSlider addTarget:self action:@selector(buttonAndControllerHeightSliderMoved) forControlEvents:(UIControlEventValueChanged)];
+}
 
 
 /* Basically the same method as loadTapped, without parameter*/
@@ -360,13 +457,8 @@
         storyboard = [UIStoryboard storyboardWithName:@"iPad" bundle:nil];
     }
     
-    // Center the current profile lable horizontally:;
-    // Calculate the x-position
-    CGFloat xPosition = (self.view.bounds.size.width - self.currentProfileLabel.frame.size.width) / 2;
-    // Set the label's frame with the calculated x-position
-    self.currentProfileLabel.frame = CGRectMake(xPosition, self.currentProfileLabel.frame.origin.y, self.currentProfileLabel.frame.size.width, self.currentProfileLabel.frame.size.height);
-    self.currentProfileLabel.hidden = NO; // Show Current Profile display
-    [self.currentProfileLabel setText:[LocalizationHelper localizedStringForKey:@"Current Profile: %@",[profilesManager getSelectedProfile].name]]; // display current profile name when profile is being refreshed.
+    // setup: current profile lable, button width slider, button height slider & button alpha slider
+    [self setupProfileLableAndSliders];
     
     //initialiaze _oscProfilesTableViewController
     self->_oscProfilesTableViewController = [storyboard instantiateViewControllerWithIdentifier:@"OSCProfilesTableViewController"];
@@ -411,6 +503,7 @@
         [self OSCLayoutChanged];    // fades the 'Undo Button' out
     };
     self.currentProfileLabel.hidden = YES; // Hide Current Profile display before entering the profile table view
+    self.buttonAndControllerWidthSlider.hidden = YES;
     _oscProfilesTableViewController.currentOSCButtonLayers = self.layoutOSC.OSCButtonLayers;
     [self presentViewController:_oscProfilesTableViewController animated:YES completion:nil];
 }
@@ -454,8 +547,6 @@
         trashCanButton.tintColor = [UIColor redColor];
     }
     else trashCanButton.tintColor = [UIColor colorWithRed:171.0/255.0 green:157.0/255.0 blue:255.0/255.0 alpha:1];
-
-    
 }
 
 - (bool)touchWithinTashcanButton:(UITouch* )touch {
