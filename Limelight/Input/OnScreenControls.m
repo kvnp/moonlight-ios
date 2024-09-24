@@ -1264,8 +1264,8 @@ static float L3_Y;
                 dzHalfWidth = _l2Button.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
                 dzHalfHeight = _l2Button.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
             } else if ([key isEqualToString:@"dPad"]) {
-                dzHalfWidth = _leftButton.bounds.size.width * 2; // dPad specially handled
-                dzHalfHeight = _upButton.bounds.size.height * 2;
+                dzHalfWidth = _leftButton.bounds.size.width * _oscTapExlusionAreaSizeFactor; // dPad specially handled
+                dzHalfHeight = _upButton.bounds.size.height * _oscTapExlusionAreaSizeFactor;
             } else if ([key isEqualToString:@"selectButton"]) {
                 dzHalfWidth = _selectButton.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
                 dzHalfHeight = _selectButton.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
