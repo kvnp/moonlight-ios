@@ -53,6 +53,7 @@
     [super drawBumpers];
     [super drawButtons];
     
+    
     UIImage* downButtonImage = [UIImage imageNamed:@"DownButton"];
     UIImage* rightButtonImage = [UIImage imageNamed:@"RightButton"];
     UIImage* upButtonImage = [UIImage imageNamed:@"UpButton"];
@@ -69,17 +70,20 @@
     [self.OSCButtonLayers addObject:self._dPadBackground];
     [_view.layer addSublayer:self._dPadBackground];
 
-    /*  add dPad buttons to parent layer */
+    // add dPad buttons to parent layer
     [self._dPadBackground addSublayer:self._downButton];
     [self._dPadBackground addSublayer:self._rightButton];
     [self._dPadBackground addSublayer:self._upButton];
     [self._dPadBackground addSublayer:self._leftButton];
 
-    /* reposition each dPad button within their parent dPadBackground layer */
+    [self resizeControllerLayerWith:self._dPadBackground and:_dPadSizeFactor];
+    
+    /*
+    // reposition each dPad button within their parent dPadBackground layer
     self._downButton.frame = CGRectMake(self._dPadBackground.frame.size.width/3, self._dPadBackground.frame.size.height/2 + D_PAD_DIST, downButtonImage.size.width, downButtonImage.size.height);
     self._rightButton.frame = CGRectMake(self._dPadBackground.frame.size.width/2 + D_PAD_DIST, self._dPadBackground.frame.size.height/3, rightButtonImage.size.width, rightButtonImage.size.height);
     self._upButton.frame = CGRectMake(self._dPadBackground.frame.size.width/3, 0, upButtonImage.size.width, upButtonImage.size.height);
-    self._leftButton.frame = CGRectMake(0, self._dPadBackground.frame.size.height/3, leftButtonImage.size.width, leftButtonImage.size.height);
+    self._leftButton.frame = CGRectMake(0, self._dPadBackground.frame.size.height/3, leftButtonImage.size.width, leftButtonImage.size.height);*/
 }
 
 /**

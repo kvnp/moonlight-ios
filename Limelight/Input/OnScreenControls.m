@@ -68,8 +68,6 @@ static NSSet *validPositionButtonNames;
     BOOL _swapABXY;
     BOOL _largerStickLR1;
     CGFloat _oscTapExlusionAreaSizeFactor;
-    CGFloat _leftStickSizeFactor;
-    CGFloat _rightStickSizeFactor;
     OSCProfilesManager *profilesManager;
     NSMutableDictionary *_activeCustomOscButtonPositionDict;
 }
@@ -314,6 +312,7 @@ static float L3_Y;
             // retrieve complex control size factors
             if([buttonState.name isEqualToString:@"leftStick"]) _leftStickSizeFactor = buttonState.oscLayerSizeFactor;
             if([buttonState.name isEqualToString:@"rightStick"]) _rightStickSizeFactor = buttonState.oscLayerSizeFactor;
+            if([buttonState.name isEqualToString:@"upButton"]) _dPadSizeFactor = buttonState.oscLayerSizeFactor / 0.982759;
         }
         NSLog(@"_activeCustomOscButtonPositionDict update, active button number: %lu", (unsigned long)[_activeCustomOscButtonPositionDict count]);
     }
@@ -558,33 +557,45 @@ static float L3_Y;
     _yButton.contents = (id) yButtonImage.CGImage;
     [_view.layer addSublayer:_yButton];
     
-    // create Down button
-    UIImage* downButtonImage = [UIImage imageNamed:@"DownButton"];
-    _downButton.frame = CGRectMake(D_PAD_CENTER_X - downButtonImage.size.width / 2, D_PAD_CENTER_Y + D_PAD_DIST, downButtonImage.size.width, downButtonImage.size.height);
-    _downButton.contents = (id) downButtonImage.CGImage;
-    _downButton.frame = CGRectMake(D_PAD_CENTER_X - downButtonImage.size.width / 2, D_PAD_CENTER_Y + D_PAD_DIST, downButtonImage.size.width, downButtonImage.size.height);
-    [_view.layer addSublayer:_downButton];
-    
-    // create Right button
-    UIImage* rightButtonImage = [UIImage imageNamed:@"RightButton"];
-    _rightButton.frame = CGRectMake(D_PAD_CENTER_X + D_PAD_DIST, D_PAD_CENTER_Y - rightButtonImage.size.height / 2, rightButtonImage.size.width, rightButtonImage.size.height);
-    _rightButton.contents = (id) rightButtonImage.CGImage;
-    _rightButton.frame = CGRectMake(D_PAD_CENTER_X + D_PAD_DIST, D_PAD_CENTER_Y - rightButtonImage.size.height / 2, rightButtonImage.size.width, rightButtonImage.size.height);
-    [_view.layer addSublayer:_rightButton];
-    
-    // create Up button
+    // Calculate the distances of each button from the shared center based on their transformed positions
+    CGFloat newDPadDistFactor = 0.1/_dPadSizeFactor;
+    CGFloat newLongSideLength = standardLeftRightButtonBounds.size.width * _dPadSizeFactor;
+    CGFloat newShortSideLength = standardLeftRightButtonBounds.size.height * _dPadSizeFactor;
+    CGPoint sharedCenter = CGPointMake(D_PAD_CENTER_X, D_PAD_CENTER_Y); // this will anchor the center point of the dPad
+
+    // dPad buttons are resized HERE
+    // up button
     UIImage* upButtonImage = [UIImage imageNamed:@"UpButton"];
-    _upButton.frame = CGRectMake(D_PAD_CENTER_X - upButtonImage.size.width / 2, D_PAD_CENTER_Y - D_PAD_DIST - upButtonImage.size.height, upButtonImage.size.width, upButtonImage.size.height);
     _upButton.contents = (id) upButtonImage.CGImage;
-    _upButton.frame = CGRectMake(D_PAD_CENTER_X - upButtonImage.size.width / 2, D_PAD_CENTER_Y - D_PAD_DIST - upButtonImage.size.height, upButtonImage.size.width, upButtonImage.size.height);
     [_view.layer addSublayer:_upButton];
+    _upButton.anchorPoint = CGPointMake(0.5, 1 + newDPadDistFactor);
+    _upButton.bounds = CGRectMake(0, 0, newShortSideLength, newLongSideLength);
+    _upButton.position = CGPointMake(sharedCenter.x, sharedCenter.y);
     
-    // create Left button
+    // down button
+    UIImage* downButtonImage = [UIImage imageNamed:@"DownButton"];
+    _downButton.contents = (id) downButtonImage.CGImage;
+    [_view.layer addSublayer:_downButton];
+    // Resize and reposition the button
+    _downButton.anchorPoint = CGPointMake(0.5, 0 - newDPadDistFactor);
+    _downButton.bounds = CGRectMake(0, 0, newShortSideLength, newLongSideLength);
+    _downButton.position = CGPointMake(sharedCenter.x, sharedCenter.y);
+    
+    // left button
     UIImage* leftButtonImage = [UIImage imageNamed:@"LeftButton"];
-    _leftButton.frame = CGRectMake(D_PAD_CENTER_X - D_PAD_DIST - leftButtonImage.size.width, D_PAD_CENTER_Y - leftButtonImage.size.height / 2, leftButtonImage.size.width, leftButtonImage.size.height);
     _leftButton.contents = (id) leftButtonImage.CGImage;
-    _leftButton.frame = CGRectMake(D_PAD_CENTER_X - D_PAD_DIST - leftButtonImage.size.width, D_PAD_CENTER_Y - leftButtonImage.size.height / 2, leftButtonImage.size.width, leftButtonImage.size.height);
     [_view.layer addSublayer:_leftButton];
+    _leftButton.anchorPoint = CGPointMake(1 + newDPadDistFactor, 0.5);
+    _leftButton.bounds = CGRectMake(0, 0, newLongSideLength, newShortSideLength);
+    _leftButton.position = CGPointMake(sharedCenter.x, sharedCenter.y);
+    
+    // right button
+    UIImage* rightButtonImage = [UIImage imageNamed:@"RightButton"];
+    _rightButton.contents = (id) rightButtonImage.CGImage;
+    [_view.layer addSublayer:_rightButton];
+    _rightButton.anchorPoint = CGPointMake(0 - newDPadDistFactor, 0.5);
+    _rightButton.bounds = CGRectMake(0, 0, newLongSideLength, newShortSideLength);
+    _rightButton.position = CGPointMake(sharedCenter.x, sharedCenter.y);
 }
 
 /**
@@ -1596,8 +1607,12 @@ static float L3_Y;
         CGFloat newLongSideLength = standardLeftRightButtonBounds.size.width * sizeFactor;
         CGFloat newShortSideLength = standardLeftRightButtonBounds.size.height * sizeFactor;
 
-        CGPoint sharedCenter = CGPointMake(standardLeftRightButtonBounds.size.width, standardLeftRightButtonBounds.size.width); // this will anchor the center point of the dPad
-                
+        
+        // this will anchor the center point of the dPad
+        // must * _dPadSizeFactor (the current size factor retrieved from selected osc profile)
+        CGPoint sharedCenter = CGPointMake(standardLeftRightButtonBounds.size.width * _dPadSizeFactor, standardLeftRightButtonBounds.size.width * _dPadSizeFactor);
+        //CGPoint sharedCenter = CGPointMake(0, 0); // this will anchor the center point of the dPad
+
         // Resize and reposition the Up button
         _upButton.anchorPoint = CGPointMake(0.5, 1 + newDPadDistFactor);
         _upButton.bounds = CGRectMake(0, 0, newShortSideLength, newLongSideLength);

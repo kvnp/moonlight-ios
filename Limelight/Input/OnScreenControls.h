@@ -17,7 +17,12 @@
 static const float D_PAD_DIST = 10;
 static const float BUTTON_DIST = 20;
 
-@interface OnScreenControls : NSObject
+@interface OnScreenControls : NSObject{
+    @protected
+    CGFloat _leftStickSizeFactor;
+    CGFloat _rightStickSizeFactor;
+    CGFloat _dPadSizeFactor;
+}
 
 typedef NS_ENUM(NSInteger, OnScreenControlsLevel) {
     OnScreenControlsLevelOff,
