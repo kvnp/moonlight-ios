@@ -24,7 +24,7 @@
     OSCProfilesManager* profilesManager;
     OnScreenButtonView* selectedButtonView;
     CALayer* selectedControllerLayer;
-    CGRect controllerOriginalBounds;
+    CGRect controllerLoadedBounds;
     bool buttonViewSelected;
     bool controllerLayerSelected;
     __weak IBOutlet NSLayoutConstraint *toolbarTopConstraintiPhone;
@@ -379,10 +379,11 @@
     self->buttonViewSelected = false;
     self->controllerLayerSelected = true;
     self->selectedControllerLayer = controllerLayer;
-    self->controllerOriginalBounds = controllerLayer.bounds;
+    self->controllerLoadedBounds = controllerLayer.bounds;
+    CGFloat sizeFactor = [OnScreenControls getControllerLayerSizeFactor:controllerLayer]; // calculated sizeFactor from loaded layer bounds.
+    
     // setup slider values
-    // [self.buttonAndControllerWidthSlider setValue:100 * self->selectedButtonView.widthFactor];
-    // [self.buttonAndControllerHeightSlider setValue:100 * self->selectedButtonView.heightFactor];
+    [self.buttonAndControllerWidthSlider setValue:100 * sizeFactor];
 }
 
 
@@ -396,7 +397,7 @@
         [self->selectedButtonView resizeButtonView];
     }
     if(self->selectedControllerLayer != nil && self->controllerLayerSelected){
-        [self.layoutOSC resizeControllerLayersWith:self->selectedControllerLayer and:self.buttonAndControllerWidthSlider.value/100];
+        [self.layoutOSC resizeControllerLayerWith:self->selectedControllerLayer and:self.buttonAndControllerWidthSlider.value/100];
         return;
         
         CALayer* superLayer = self->selectedControllerLayer.superlayer;

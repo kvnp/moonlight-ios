@@ -98,7 +98,8 @@ typedef NS_ENUM(NSInteger, OnScreenControlsLevel) {
 - (OnScreenControlsLevel) getLevel;
 - (void) setDPadCenter;
 - (void) setAnalogStickPositions;
-- (void) positionOSCButtons;
-- (void) resizeControllerLayersWith:(CALayer*)layer and:(CGFloat)sizeFactor;
+- (void) positionAndResizeSingleControllerLayers;
+- (void) resizeControllerLayerWith:(CALayer*)layer and:(CGFloat)sizeFactor;
++ (CGFloat) getControllerLayerSizeFactor:(CALayer*)layer;
 
 @end

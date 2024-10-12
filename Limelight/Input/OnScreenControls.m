@@ -19,6 +19,15 @@
 (y) ? (buttonFlags | (x)) : (buttonFlags & ~(x)))
 
 static NSMutableSet* touchAddrsCapturedByOnScreenControls;
+static CGRect standardRoundButtonBounds;
+static CGRect standardRectangleButtonBounds;
+static CGRect standardStickBounds;
+static CGRect standardStickBackgroundBounds;
+static CGRect standardUpDownButtonBounds;
+static CGRect standardLeftRightButtonBounds;
+static NSSet *validPositionButtonNames;
+
+
 
 @implementation OnScreenControls {
 
@@ -59,6 +68,8 @@ static NSMutableSet* touchAddrsCapturedByOnScreenControls;
     BOOL _swapABXY;
     BOOL _largerStickLR1;
     CGFloat _oscTapExlusionAreaSizeFactor;
+    CGFloat _leftStickSizeFactor;
+    CGFloat _rightStickSizeFactor;
     OSCProfilesManager *profilesManager;
     NSMutableDictionary *_activeCustomOscButtonPositionDict;
 }
@@ -100,8 +111,10 @@ static const float DEAD_ZONE_PADDING = 15;
 
 static const double STICK_CLICK_RATE = 100;
 static const float STICK_DEAD_ZONE = .1;
-static float STICK_INNER_SIZE;
-static float STICK_OUTER_SIZE;
+static float RIGHT_STICK_INNER_SIZE;
+static float RIGHT_STICK_OUTER_SIZE;
+static float LEFT_STICK_INNER_SIZE;
+static float LEFT_STICK_OUTER_SIZE;
 static float LS_CENTER_X;
 static float LS_CENTER_Y;
 static float RS_CENTER_X;
@@ -234,12 +247,12 @@ static float L3_Y;
     _leftButton.name = @"leftButton";
     
     
-    _standardRoundButtonBounds = CGRectMake(0, 0, [UIImage imageNamed:@"AButton"].size.width, [UIImage imageNamed:@"AButton"].size.height);
-    _standardRectangleButtonBounds = CGRectMake(0, 0, [UIImage imageNamed:@"StartButton"].size.width, [UIImage imageNamed:@"StartButton"].size.height);
-    _standardStickBounds = CGRectMake(0, 0, [UIImage imageNamed:@"StickInner"].size.width * 1.33, [UIImage imageNamed:@"StickInner"].size.height * 1.33);
-    _standardStickBackgroundBounds = CGRectMake(0, 0, [UIImage imageNamed:@"StickOuter"].size.width * 1.10, [UIImage imageNamed:@"StickOuter"].size.height * 1.10);
-    _standardUpDownButtonBounds = CGRectMake(0, 0, [UIImage imageNamed:@"UpButton"].size.width, [UIImage imageNamed:@"UpButton"].size.height);
-    _standardLeftRightButtonBounds = CGRectMake(0, 0, [UIImage imageNamed:@"LeftButton"].size.width, [UIImage imageNamed:@"LeftButton"].size.height);
+    _standardRoundButtonBounds = standardRoundButtonBounds = CGRectMake(0, 0, [UIImage imageNamed:@"AButton"].size.width, [UIImage imageNamed:@"AButton"].size.height);
+    _standardRectangleButtonBounds = standardRectangleButtonBounds = CGRectMake(0, 0, [UIImage imageNamed:@"StartButton"].size.width, [UIImage imageNamed:@"StartButton"].size.height);
+    _standardStickBounds = standardStickBounds = CGRectMake(0, 0, [UIImage imageNamed:@"StickInner"].size.width * 1.33, [UIImage imageNamed:@"StickInner"].size.height * 1.33);
+    _standardStickBackgroundBounds = standardStickBackgroundBounds = CGRectMake(0, 0, [UIImage imageNamed:@"StickOuter"].size.width * 1.10, [UIImage imageNamed:@"StickOuter"].size.height * 1.10);
+    _standardUpDownButtonBounds = standardUpDownButtonBounds = CGRectMake(0, 0, [UIImage imageNamed:@"UpButton"].size.width, [UIImage imageNamed:@"UpButton"].size.height);
+    _standardLeftRightButtonBounds = standardLeftRightButtonBounds = CGRectMake(0, 0, [UIImage imageNamed:@"LeftButton"].size.width, [UIImage imageNamed:@"LeftButton"].size.height);
 
     _activeCustomOscButtonPositionDict = [[NSMutableDictionary alloc] init];
     touchAddrsCapturedByOnScreenControls = [[NSMutableSet alloc] init];
@@ -270,7 +283,7 @@ static float L3_Y;
 - (void) updateControls {
     if(self._level == OnScreenControlsLevelCustom){
         // mark all OSC buttons that has valid coords of positions
-        NSSet *validPositionButtonNames = [NSSet setWithObjects:
+        validPositionButtonNames = [NSSet setWithObjects:
             @"l2Button",
             @"l1Button",
             @"dPad",
@@ -285,7 +298,7 @@ static float L3_Y;
             @"yButton",
             @"startButton",
             nil];
-        
+
         // _activeCustomOscButtonPositionDict will be updated every time when the osc profile is reloaded
         OSCProfile *oscProfile = [profilesManager getSelectedProfile]; //returns the currently selected OSCProfile
         [_activeCustomOscButtonPositionDict removeAllObjects]; //reset the Dict.
@@ -297,6 +310,10 @@ static float L3_Y;
                 [_activeCustomOscButtonPositionDict setObject:[NSValue valueWithCGPoint:buttonState.position] forKey:buttonState.name]; // we got a buttonname -> position dict here
                 NSLog(@"_activeCustomOscButtonPositionDict update, button name:%@,  position: %f, %f", buttonState.name, buttonState.position.x, buttonState.position.y);
             }
+            
+            // retrieve complex control size factors
+            if([buttonState.name isEqualToString:@"leftStick"]) _leftStickSizeFactor = buttonState.oscLayerSizeFactor;
+            if([buttonState.name isEqualToString:@"rightStick"]) _rightStickSizeFactor = buttonState.oscLayerSizeFactor;
         }
         NSLog(@"_activeCustomOscButtonPositionDict update, active button number: %lu", (unsigned long)[_activeCustomOscButtonPositionDict count]);
     }
@@ -377,7 +394,7 @@ static float L3_Y;
             [self drawBumpers];
             [self drawTriggers];
             [self drawSticks];
-            [self positionOSCButtons];
+            [self positionAndResizeSingleControllerLayers];
 
             break;
         default:
@@ -612,7 +629,7 @@ static float L3_Y;
 
 # define LR2_Y_UP_OFFSET 8
 # define LR1_Y_DOWN_OFFSET 3.5
-- (void) positionOSCButtons {
+- (void) positionAndResizeSingleControllerLayers {
     OSCProfile *oscProfile = [profilesManager getSelectedProfile];
     bool defaultProfileSelected = [profilesManager getIndexOfSelectedProfile] == 0;
     
@@ -621,7 +638,6 @@ static float L3_Y;
         OnScreenButtonState *buttonStateDecoded = [NSKeyedUnarchiver unarchivedObjectOfClass:[OnScreenButtonState class] fromData:buttonStateEncoded error:nil];
         
         for (CALayer *buttonLayer in self.OSCButtonLayers) {    // iterate through each button layer on screen and position and hide/unhide each according to the instructions of its associated 'buttonState'
-
             if ([buttonLayer.name isEqualToString:buttonStateDecoded.name]) {
                 if ([buttonLayer.name isEqualToString:@"upButton"] == NO &&
                     [buttonLayer.name isEqualToString:@"rightButton"] == NO &&
@@ -637,6 +653,18 @@ static float L3_Y;
                 if( defaultProfileSelected && _largerStickLR1)
                     if([buttonLayer.name isEqualToString:@"l2Button"] || [buttonLayer.name isEqualToString:@"r2Button"]) buttonLayer.position = CGPointMake(buttonLayer.position.x, buttonLayer.position.y - LR2_Y_UP_OFFSET);
                     if([buttonLayer.name isEqualToString:@"l1Button"] || [buttonLayer.name isEqualToString:@"r1Button"]) buttonLayer.position = CGPointMake(buttonLayer.position.x, buttonLayer.position.y + LR1_Y_DOWN_OFFSET);
+                
+                // Here we deal with resizing single layer controllers only
+                if ([buttonLayer.name isEqualToString:@"l1Button"] ||
+                    [buttonLayer.name isEqualToString:@"r1Button"] ||
+                    [buttonLayer.name isEqualToString:@"l2Button"] ||
+                    [buttonLayer.name isEqualToString:@"r2Button"] ||
+                    [buttonLayer.name isEqualToString:@"aButton"] ||
+                    [buttonLayer.name isEqualToString:@"bButton"] ||
+                    [buttonLayer.name isEqualToString:@"xButton"] ||
+                    [buttonLayer.name isEqualToString:@"yButton"] ||
+                    [buttonLayer.name isEqualToString:@"selectButton"] ||
+                    [buttonLayer.name isEqualToString:@"startButton"]) [self resizeControllerLayerWith:buttonLayer and:buttonStateDecoded.oscLayerSizeFactor];
             }
         }
     }
@@ -727,16 +755,28 @@ static float L3_Y;
     
     // make stick larger
     if(_largerStickLR1){
-        STICK_INNER_SIZE = rightStickImage.size.width *1.33;
-        STICK_OUTER_SIZE = rightStickBgImage.size.width *1.10;
-        _rightStick.bounds = _leftStick.bounds = CGRectMake(0, 0, STICK_INNER_SIZE, STICK_INNER_SIZE);
-        _rightStickBackground.bounds = _leftStickBackground.bounds = CGRectMake(0, 0, STICK_OUTER_SIZE, STICK_OUTER_SIZE);
+        // sticks are resized here by the sizefactor persisted in the osc profile.
+        RIGHT_STICK_INNER_SIZE = rightStickImage.size.width *1.33 * _rightStickSizeFactor;
+        RIGHT_STICK_OUTER_SIZE = rightStickBgImage.size.width *1.10 * _rightStickSizeFactor;
+        _rightStick.bounds = CGRectMake(0, 0, RIGHT_STICK_INNER_SIZE, RIGHT_STICK_INNER_SIZE);
+        _rightStickBackground.bounds = CGRectMake(0, 0, RIGHT_STICK_OUTER_SIZE, RIGHT_STICK_OUTER_SIZE);
+        
+        LEFT_STICK_INNER_SIZE = rightStickImage.size.width *1.33 * _leftStickSizeFactor;
+        LEFT_STICK_OUTER_SIZE = rightStickBgImage.size.width *1.10 * _leftStickSizeFactor;
+        _leftStick.bounds = CGRectMake(0, 0, LEFT_STICK_INNER_SIZE, LEFT_STICK_INNER_SIZE);
+        _leftStickBackground.bounds = CGRectMake(0, 0, LEFT_STICK_OUTER_SIZE, LEFT_STICK_OUTER_SIZE);
     }
     else{
-        STICK_INNER_SIZE = rightStickImage.size.width;
-        STICK_OUTER_SIZE = rightStickBgImage.size.width;
-        _rightStick.bounds = _leftStick.bounds = CGRectMake(0, 0, STICK_INNER_SIZE, STICK_INNER_SIZE);
-        _rightStickBackground.bounds = _leftStickBackground.bounds = CGRectMake(0, 0, STICK_OUTER_SIZE, STICK_OUTER_SIZE);
+        // sticks are resized here by the sizefactor persisted in the osc profile.
+        RIGHT_STICK_INNER_SIZE = rightStickImage.size.width * _rightStickSizeFactor;
+        RIGHT_STICK_OUTER_SIZE = rightStickBgImage.size.width * _rightStickSizeFactor;
+        _rightStick.bounds = CGRectMake(0, 0, RIGHT_STICK_INNER_SIZE, RIGHT_STICK_INNER_SIZE);
+        _rightStickBackground.bounds = CGRectMake(0, 0, RIGHT_STICK_OUTER_SIZE, RIGHT_STICK_OUTER_SIZE);
+        
+        LEFT_STICK_INNER_SIZE = rightStickImage.size.width * _leftStickSizeFactor;
+        LEFT_STICK_OUTER_SIZE = rightStickBgImage.size.width * _leftStickSizeFactor;
+        _leftStick.bounds = CGRectMake(0, 0, LEFT_STICK_INNER_SIZE, LEFT_STICK_INNER_SIZE);
+        _leftStickBackground.bounds = CGRectMake(0, 0, LEFT_STICK_OUTER_SIZE, LEFT_STICK_OUTER_SIZE);
     }
 }
 
@@ -797,14 +837,15 @@ static float L3_Y;
 - (BOOL) handleTouchMovedEvent:touches {
     BOOL updated = false;
     BOOL buttonTouch = false;
-    float rsMaxX = RS_CENTER_X + STICK_OUTER_SIZE / 2;
-    float rsMaxY = RS_CENTER_Y + STICK_OUTER_SIZE / 2;
-    float rsMinX = RS_CENTER_X - STICK_OUTER_SIZE / 2;
-    float rsMinY = RS_CENTER_Y - STICK_OUTER_SIZE / 2;
-    float lsMaxX = LS_CENTER_X + STICK_OUTER_SIZE / 2;
-    float lsMaxY = LS_CENTER_Y + STICK_OUTER_SIZE / 2;
-    float lsMinX = LS_CENTER_X - STICK_OUTER_SIZE / 2;
-    float lsMinY = LS_CENTER_Y - STICK_OUTER_SIZE / 2;
+    // we'll set fixed stick range despite stick & its background are resizable
+    float rsMaxX = RS_CENTER_X + standardStickBackgroundBounds.size.width / 2;
+    float rsMaxY = RS_CENTER_Y + standardStickBackgroundBounds.size.width / 2;
+    float rsMinX = RS_CENTER_X - standardStickBackgroundBounds.size.width / 2;
+    float rsMinY = RS_CENTER_Y - standardStickBackgroundBounds.size.width / 2;
+    float lsMaxX = LS_CENTER_X + standardStickBackgroundBounds.size.width / 2;
+    float lsMaxY = LS_CENTER_Y + standardStickBackgroundBounds.size.width / 2;
+    float lsMinX = LS_CENTER_X - standardStickBackgroundBounds.size.width / 2;
+    float lsMinY = LS_CENTER_Y - standardStickBackgroundBounds.size.width / 2;
     
     for (UITouch* touch in touches) {
         CGPoint touchLocation = [touch locationInView:_view];
@@ -816,7 +857,7 @@ static float L3_Y;
             if (yLoc > lsMaxY) yLoc = lsMaxY;
             if (yLoc < lsMinY) yLoc = lsMinY;
             
-            _leftStick.frame = CGRectMake(xLoc - STICK_INNER_SIZE / 2, yLoc - STICK_INNER_SIZE / 2, STICK_INNER_SIZE, STICK_INNER_SIZE);
+            _leftStick.frame = CGRectMake(xLoc - LEFT_STICK_INNER_SIZE / 2, yLoc - LEFT_STICK_INNER_SIZE / 2, LEFT_STICK_INNER_SIZE, LEFT_STICK_INNER_SIZE);
             
             float xStickVal = (xLoc - LS_CENTER_X) / (lsMaxX - LS_CENTER_X);
             float yStickVal = (yLoc - LS_CENTER_Y) / (lsMaxY - LS_CENTER_Y);
@@ -833,7 +874,7 @@ static float L3_Y;
             if (yLoc > rsMaxY) yLoc = rsMaxY;
             if (yLoc < rsMinY) yLoc = rsMinY;
             
-            _rightStick.frame = CGRectMake(xLoc - STICK_INNER_SIZE / 2, yLoc - STICK_INNER_SIZE / 2, STICK_INNER_SIZE, STICK_INNER_SIZE);
+            _rightStick.frame = CGRectMake(xLoc - RIGHT_STICK_INNER_SIZE / 2, yLoc - RIGHT_STICK_INNER_SIZE / 2, RIGHT_STICK_INNER_SIZE, RIGHT_STICK_INNER_SIZE);
             
             float xStickVal = (xLoc - RS_CENTER_X) / (rsMaxX - RS_CENTER_X);
             float yStickVal = (yLoc - RS_CENTER_Y) / (rsMaxY - RS_CENTER_Y);
@@ -1209,7 +1250,7 @@ static float L3_Y;
             _r2Button.shadowOpacity = 0.0;
             updated = true;
         } else if (touch == _lsTouch) {
-            _leftStick.frame = CGRectMake(LS_CENTER_X - STICK_INNER_SIZE / 2, LS_CENTER_Y - STICK_INNER_SIZE / 2, STICK_INNER_SIZE, STICK_INNER_SIZE);
+            _leftStick.frame = CGRectMake(LS_CENTER_X - LEFT_STICK_INNER_SIZE / 2, LS_CENTER_Y - LEFT_STICK_INNER_SIZE / 2, LEFT_STICK_INNER_SIZE, LEFT_STICK_INNER_SIZE);
             _leftStick.shadowOpacity = 0.0;
             _leftStick.opacity = STICK_OPACITY; // reset stick to half transparent
             [_controllerSupport updateLeftStick:_controller x:0 y:0];
@@ -1218,7 +1259,7 @@ static float L3_Y;
             _lsTouch = nil;
             updated = true;
         } else if (touch == _rsTouch) {
-            _rightStick.frame = CGRectMake(RS_CENTER_X - STICK_INNER_SIZE / 2, RS_CENTER_Y - STICK_INNER_SIZE / 2, STICK_INNER_SIZE, STICK_INNER_SIZE);
+            _rightStick.frame = CGRectMake(RS_CENTER_X - RIGHT_STICK_INNER_SIZE / 2, RS_CENTER_Y - RIGHT_STICK_INNER_SIZE / 2, RIGHT_STICK_INNER_SIZE, RIGHT_STICK_INNER_SIZE);
             _rightStick.shadowOpacity = 0.0;
             _rightStick.opacity = STICK_OPACITY;
             [_controllerSupport updateRightStick:_controller x:0 y:0];
@@ -1434,10 +1475,70 @@ static float L3_Y;
     CGPoint touchLocation = [touch locationInView:_view];
     return (touchLocation.x > deadZoneStartX && touchLocation.x < deadZoneEndX
             && touchLocation.y > deadZoneStartY && touchLocation.y < deadZoneEndY);
-    
 }
 
-- (void) resizeControllerLayersWith:(CALayer*)layer and:(CGFloat)sizeFactor{
++ (CGFloat) getControllerLayerSizeFactor:(CALayer*)layer{
+    CGFloat sizeFactor = 1.0;
+    if([layer.name isEqualToString:@"aButton"]||
+        [layer.name isEqualToString:@"bButton"] ||
+        [layer.name isEqualToString:@"xButton"] ||
+        [layer.name isEqualToString:@"yButton"] ||
+        [layer.name isEqualToString:@"l1Button"] ||
+        [layer.name isEqualToString:@"l2Button"] ||
+        [layer.name isEqualToString:@"r1Button"] ||
+        [layer.name isEqualToString:@"r2Button"]){
+        sizeFactor = layer.bounds.size.width / standardRoundButtonBounds.size.width;
+    }
+    
+    if([layer.name isEqualToString:@"selectButton"] ||
+        [layer.name isEqualToString:@"startButton"]) {
+        sizeFactor = layer.bounds.size.width / standardRectangleButtonBounds.size.width;
+    }
+    
+    if([layer.name isEqualToString:@"rightStickBackground"]) {
+        sizeFactor = layer.bounds.size.width / standardStickBackgroundBounds.size.width;
+    }
+
+    if([layer.name isEqualToString:@"leftStickBackground"]){
+        sizeFactor = layer.bounds.size.width / standardStickBackgroundBounds.size.width;
+    }
+
+    if([layer.name isEqualToString:@"dPad"]){
+        for(CALayer* subLayer in layer.sublayers){
+            if([subLayer.name isEqualToString:@"upButton"]){
+                sizeFactor = subLayer.bounds.size.height / standardUpDownButtonBounds.size.height;
+                break;
+            }
+        }
+    }
+    
+    // sub controller layers embedded in super layers
+    if([layer.name isEqualToString:@"upButton"] ||
+       [layer.name isEqualToString:@"downButton"]){
+        sizeFactor = layer.bounds.size.height / standardUpDownButtonBounds.size.height;
+    }
+    
+    if([layer.name isEqualToString:@"leftButton"] ||
+       [layer.name isEqualToString:@"rightButton"]){
+        sizeFactor = layer.bounds.size.width / standardUpDownButtonBounds.size.height; // left & right buttons are just 90 rotations of up & down buttons
+    }
+    
+    if([layer.name isEqualToString:@"leftStick"] ||
+       [layer.name isEqualToString:@"rightStick"]){
+        sizeFactor = layer.bounds.size.width / standardStickBounds.size.width;
+    }
+
+
+    return sizeFactor;
+}
+
+/*
+- (void) resizeControllerLayers{
+    
+}
+*/
+
+- (void) resizeControllerLayerWith:(CALayer*)layer and:(CGFloat)sizeFactor{
     // CALayer* superLayer = layer.superlayer;
     // if(layerBeingDragged.name == @"")
     if (layer == self._aButton ||
@@ -1448,18 +1549,18 @@ static float L3_Y;
         layer == self._l2Button ||
         layer == self._r1Button ||
         layer == self._r2Button){
-        layer.bounds = CGRectMake(0, 0, self.standardRoundButtonBounds.size.width * sizeFactor, self.standardRoundButtonBounds.size.height * sizeFactor);
+        layer.bounds = CGRectMake(layer.bounds.origin.x, layer.bounds.origin.y, standardRoundButtonBounds.size.width * sizeFactor, standardRoundButtonBounds.size.height * sizeFactor);
     }
     
     if (layer == self._selectButton ||
         layer == self._startButton) {
-        layer.bounds = CGRectMake(0, 0, self.standardRectangleButtonBounds.size.width * sizeFactor, self.standardRectangleButtonBounds.size.height * sizeFactor);
+        layer.bounds = CGRectMake(layer.bounds.origin.x, layer.bounds.origin.y, standardRectangleButtonBounds.size.width * sizeFactor, standardRectangleButtonBounds.size.height * sizeFactor);
     }
     
     if (layer == self._rightStickBackground) {
         // Resize the rightStick & Background bounds
-        self._rightStickBackground.bounds = CGRectMake(0, 0, self.standardStickBackgroundBounds.size.width * sizeFactor, self.standardStickBackgroundBounds.size.height * sizeFactor);
-        self._rightStick.bounds = CGRectMake(0, 0, self.standardStickBounds.size.width * sizeFactor, self.standardStickBounds.size.height * sizeFactor);
+        self._rightStickBackground.bounds = CGRectMake(layer.bounds.origin.x, layer.bounds.origin.y, standardStickBackgroundBounds.size.width * sizeFactor, standardStickBackgroundBounds.size.height * sizeFactor);
+        self._rightStick.bounds = CGRectMake(layer.bounds.origin.x, layer.bounds.origin.y, standardStickBounds.size.width * sizeFactor, standardStickBounds.size.height * sizeFactor);
 
         // Retrieve the current frame to account for transformations, this will update the coords for new position CGPointMake
         CGRect transformedBackgroundFrame = self._rightStickBackground.frame;
@@ -1473,8 +1574,8 @@ static float L3_Y;
 
     if (layer == self._leftStickBackground){
         // Resize the rightStick & Background bounds
-        self._leftStickBackground.bounds = CGRectMake(0, 0, self.standardStickBackgroundBounds.size.width * sizeFactor, self.standardStickBackgroundBounds.size.height * sizeFactor);
-        self._leftStick.bounds = CGRectMake(0, 0, self.standardStickBounds.size.width * sizeFactor, self.standardStickBounds.size.height * sizeFactor);
+        self._leftStickBackground.bounds = CGRectMake(layer.bounds.origin.x, layer.bounds.origin.y, standardStickBackgroundBounds.size.width * sizeFactor, standardStickBackgroundBounds.size.height * sizeFactor);
+        self._leftStick.bounds = CGRectMake(layer.bounds.origin.x, layer.bounds.origin.y, standardStickBounds.size.width * sizeFactor, standardStickBounds.size.height * sizeFactor);
 
         // Retrieve the current frame to account for transformations, this will update the coords for new position CGPointMake
         CGRect transformedBackgroundFrame = self._leftStickBackground.frame;
@@ -1482,21 +1583,20 @@ static float L3_Y;
         // Explicitly adjust the position of _rightStickBackground using the transformed frame
         self._leftStickBackground.position = CGPointMake(CGRectGetMidX(transformedBackgroundFrame), CGRectGetMidY(transformedBackgroundFrame));
 
-        // Update the position of _rightStick to match the new center of the transformed _rightStickBackground
+        // Update the position of _leftStick to match the new center of the transformed _rightStickBackground
         self._leftStick.position = CGPointMake(CGRectGetMidX(self._leftStickBackground.bounds), CGRectGetMidY(self._leftStickBackground.bounds));
     }
 
     if (layer == self._dPadBackground){
-
         // Calculate the distances of each button from the shared center based on their transformed positions
         CGFloat newDPadDistFactor = 0.1/sizeFactor;
 
         // 1. Resize and reposition the Down button
         
-        CGFloat newLongSideLength = _standardLeftRightButtonBounds.size.width * sizeFactor;
-        CGFloat newShortSideLength = _standardLeftRightButtonBounds.size.height * sizeFactor;
+        CGFloat newLongSideLength = standardLeftRightButtonBounds.size.width * sizeFactor;
+        CGFloat newShortSideLength = standardLeftRightButtonBounds.size.height * sizeFactor;
 
-        CGPoint sharedCenter = CGPointMake(_standardLeftRightButtonBounds.size.width, _standardLeftRightButtonBounds.size.width); // this will anchor the center point of the dPad
+        CGPoint sharedCenter = CGPointMake(standardLeftRightButtonBounds.size.width, standardLeftRightButtonBounds.size.width); // this will anchor the center point of the dPad
                 
         // Resize and reposition the Up button
         _upButton.anchorPoint = CGPointMake(0.5, 1 + newDPadDistFactor);

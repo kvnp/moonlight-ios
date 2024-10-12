@@ -10,6 +10,7 @@
 #import "OnScreenButtonState.h"
 #import "Moonlight-Swift.h"
 #import "LayoutOnScreenControlsViewController.h"
+#import "OnScreenControls.h"
 
 @implementation OSCProfilesManager
 
@@ -269,6 +270,10 @@ static NSMutableDictionary *onScreenButtonViewsDict;
         OnScreenButtonState *buttonState = [[OnScreenButtonState alloc] initWithButtonName:oscButtonLayer.name buttonType:GameControllerButton andPosition:oscButtonLayer.position];
         // add hidden attr here
         buttonState.isHidden = oscButtonLayer.isHidden;
+        buttonState.oscLayerSizeFactor = [OnScreenControls getControllerLayerSizeFactor:oscButtonLayer];
+        NSLog(@"oscLayerName: %@, sizeFactor: %f", oscButtonLayer.name, buttonState.oscLayerSizeFactor);
+        // buttonState.oscLayerSizeFactor = oscButtonLayer.bounds;
+        
         NSData *buttonStateEncoded = [NSKeyedArchiver archivedDataWithRootObject:buttonState requiringSecureCoding:YES error:nil];
         [buttonStatesEncoded addObject: buttonStateEncoded];
     }

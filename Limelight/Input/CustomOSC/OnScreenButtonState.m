@@ -35,6 +35,7 @@
     [encoder encodeBool:self.isHidden forKey:@"isHidden"];
     [encoder encodeFloat:self.widthFactor forKey:@"widthFactor"];
     [encoder encodeFloat:self.heightFactor forKey:@"heightFactor"];
+    [encoder encodeFloat:self.oscLayerSizeFactor forKey:@"oscLayerSizeFactor"];
 }
 
 - (id) initWithCoder:(NSCoder*)decoder {
@@ -47,8 +48,8 @@
         self.isHidden = [decoder decodeBoolForKey:@"isHidden"];
         self.widthFactor = [decoder decodeFloatForKey:@"widthFactor"];
         self.heightFactor = [decoder decodeFloatForKey:@"heightFactor"];
+        self.oscLayerSizeFactor = [decoder decodeFloatForKey:@"oscLayerSizeFactor"];
     }
-    
     return self;
 }
 
