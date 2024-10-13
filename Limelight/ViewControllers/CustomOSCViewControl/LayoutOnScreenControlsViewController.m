@@ -29,6 +29,9 @@
     bool controllerLayerSelected;
     __weak IBOutlet NSLayoutConstraint *toolbarTopConstraintiPhone;
     __weak IBOutlet NSLayoutConstraint *toolbarTopConstraintiPad;
+    UILabel *buttonSizeSliderLabel;
+    UILabel *buttonHeightSliderLabel;
+
 }
 
 @synthesize trashCanButton;
@@ -369,7 +372,7 @@
     self->controllerLayerSelected = false;
     self->selectedButtonView = buttonView;
     // setup slider values
-    [self.buttonAndControllerWidthSlider setValue:100 * self->selectedButtonView.widthFactor];
+    [self.buttonAndControllerSizeSlider setValue:100 * self->selectedButtonView.widthFactor];
     [self.buttonAndControllerHeightSlider setValue:100 * self->selectedButtonView.heightFactor];
 }
 
@@ -383,7 +386,7 @@
     CGFloat sizeFactor = [OnScreenControls getControllerLayerSizeFactor:controllerLayer]; // calculated sizeFactor from loaded layer bounds.
     
     // setup slider values
-    [self.buttonAndControllerWidthSlider setValue:100 * sizeFactor];
+    [self.buttonAndControllerSizeSlider setValue:100 * sizeFactor];
 }
 
 
@@ -392,12 +395,12 @@
     if(self->selectedButtonView != nil && self->buttonViewSelected){
         self->selectedButtonView.translatesAutoresizingMaskIntoConstraints = true; // this is mandatory to prevent unexpected key view location change
         // when adjusting width, the buttonView height will be syncronized
-        self->selectedButtonView.widthFactor = self->selectedButtonView.heightFactor = self.buttonAndControllerWidthSlider.value / 100;
-        [self.buttonAndControllerHeightSlider setValue: self.buttonAndControllerWidthSlider.value];
+        self->selectedButtonView.widthFactor = self->selectedButtonView.heightFactor = self.buttonAndControllerSizeSlider.value / 100;
+        [self.buttonAndControllerHeightSlider setValue: self.buttonAndControllerSizeSlider.value];
         [self->selectedButtonView resizeButtonView];
     }
     if(self->selectedControllerLayer != nil && self->controllerLayerSelected){
-        [self.layoutOSC resizeControllerLayerWith:self->selectedControllerLayer and:self.buttonAndControllerWidthSlider.value/100];
+        [self.layoutOSC resizeControllerLayerWith:self->selectedControllerLayer and:self.buttonAndControllerSizeSlider.value/100];
         return;
         
         CALayer* superLayer = self->selectedControllerLayer.superlayer;
@@ -411,7 +414,7 @@
             [self->selectedControllerLayer.name isEqualToString:@"xButton"] ||
             [self->selectedControllerLayer.name isEqualToString:@"yButton"]){
             [self->selectedControllerLayer removeFromSuperlayer];
-            self->selectedControllerLayer.bounds = CGRectMake(0, 0, self.layoutOSC.standardRoundButtonBounds.size.width * self.buttonAndControllerWidthSlider.value/100, self.layoutOSC.standardRoundButtonBounds.size.height * self.buttonAndControllerWidthSlider.value/100);
+            self->selectedControllerLayer.bounds = CGRectMake(0, 0, self.layoutOSC.standardRoundButtonBounds.size.width * self.buttonAndControllerSizeSlider.value/100, self.layoutOSC.standardRoundButtonBounds.size.height * self.buttonAndControllerSizeSlider.value/100);
             [superLayer addSublayer:self->selectedControllerLayer];
         }
     }
@@ -435,14 +438,46 @@
     [self.currentProfileLabel setText:[LocalizationHelper localizedStringForKey:@"Current Profile: %@",[profilesManager getSelectedProfile].name]]; // display current profile name when profile is being refreshed.
     
     // button size sliders
-    self.buttonAndControllerWidthSlider.hidden = NO;
-    self.buttonAndControllerWidthSlider.frame = CGRectMake(xPosition, self.buttonAndControllerWidthSlider.frame.origin.y, self.buttonAndControllerWidthSlider.frame.size.width, self.buttonAndControllerWidthSlider.frame.size.height);
-    [self.buttonAndControllerWidthSlider addTarget:self action:@selector(buttonAndControllerWidthSliderMoved) forControlEvents:(UIControlEventValueChanged)];
+    self.buttonAndControllerSizeSlider.hidden = NO;
+    self.buttonAndControllerSizeSlider.frame = CGRectMake(xPosition, self.buttonAndControllerSizeSlider.frame.origin.y, self.buttonAndControllerSizeSlider.frame.size.width, self.buttonAndControllerSizeSlider.frame.size.height);
+    [self.buttonAndControllerSizeSlider addTarget:self action:@selector(buttonAndControllerWidthSliderMoved) forControlEvents:(UIControlEventValueChanged)];
+    buttonSizeSliderLabel = [[UILabel alloc] init];
+    buttonSizeSliderLabel.text = [LocalizationHelper localizedStringForKey:@"Button Size"];
+    buttonSizeSliderLabel.font = [UIFont systemFontOfSize:23];
+    buttonSizeSliderLabel.textColor = [UIColor whiteColor];
+    buttonSizeSliderLabel.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.2];
+    buttonSizeSliderLabel.translatesAutoresizingMaskIntoConstraints = NO; // Disable autoresizing mask for Auto Layout
+    // Add slider and label to the view
+    [self.view addSubview:buttonSizeSliderLabel];
+    // Use Auto Layout to position the label relative to the slider
+    [NSLayoutConstraint activateConstraints:@[
+        // Position the label to the left of the slider
+        [buttonSizeSliderLabel.trailingAnchor constraintEqualToAnchor:self.buttonAndControllerSizeSlider.leadingAnchor constant:-10],
+        // Align vertically with the slider
+        [buttonSizeSliderLabel.centerYAnchor constraintEqualToAnchor:self.buttonAndControllerSizeSlider.centerYAnchor]
+    ]];
 
-    // button size sliders
+
+    // button height sliders
     self.buttonAndControllerHeightSlider.hidden = NO;
     self.buttonAndControllerHeightSlider.frame = CGRectMake(xPosition, self.buttonAndControllerHeightSlider.frame.origin.y, self.buttonAndControllerHeightSlider.frame.size.width, self.buttonAndControllerHeightSlider.frame.size.height);
     [self.buttonAndControllerHeightSlider addTarget:self action:@selector(buttonAndControllerHeightSliderMoved) forControlEvents:(UIControlEventValueChanged)];
+    // button height label
+    buttonHeightSliderLabel = [[UILabel alloc] init];
+    buttonHeightSliderLabel.text = [LocalizationHelper localizedStringForKey:@"Button Height"];
+    buttonHeightSliderLabel.font = [UIFont systemFontOfSize:23];
+    buttonHeightSliderLabel.textColor = [UIColor whiteColor];
+    buttonHeightSliderLabel.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.2];
+    buttonHeightSliderLabel.translatesAutoresizingMaskIntoConstraints = NO; // Disable autoresizing mask for Auto Layout
+    // Add slider and label to the view
+    [self.view addSubview:buttonHeightSliderLabel];
+    // Use Auto Layout to position the label relative to the slider
+    [NSLayoutConstraint activateConstraints:@[
+        // Position the label to the left of the slider
+        [buttonHeightSliderLabel.trailingAnchor constraintEqualToAnchor:self.buttonAndControllerHeightSlider.leadingAnchor constant:-10],
+        // Align vertically with the slider
+        [buttonHeightSliderLabel.centerYAnchor constraintEqualToAnchor:self.buttonAndControllerHeightSlider.centerYAnchor]
+    ]];
 }
 
 
@@ -504,7 +539,8 @@
         [self OSCLayoutChanged];    // fades the 'Undo Button' out
     };
     self.currentProfileLabel.hidden = YES; // Hide Current Profile display before entering the profile table view
-    self.buttonAndControllerWidthSlider.hidden = YES;
+    self.buttonAndControllerSizeSlider.hidden = YES;
+    self.buttonAndControllerHeightSlider.hidden = YES;
     _oscProfilesTableViewController.currentOSCButtonLayers = self.layoutOSC.OSCButtonLayers;
     [self presentViewController:_oscProfilesTableViewController animated:YES completion:nil];
 }
