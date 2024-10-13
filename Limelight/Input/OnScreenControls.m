@@ -537,9 +537,15 @@ static float L3_Y;
 
 - (void) drawButtons {
     UIImage* aButtonImage = [UIImage imageNamed:@"AButton"];
+    UIImage* aButtonHDImage = [UIImage imageNamed:@"AButtonHD"];
     UIImage* bButtonImage = [UIImage imageNamed:@"BButton"];
+    UIImage* bButtonHDImage = [UIImage imageNamed:@"BButtonHD"];
     UIImage* xButtonImage = [UIImage imageNamed:@"XButton"];
+    UIImage* xButtonHDImage = [UIImage imageNamed:@"XButtonHD"];
     UIImage* yButtonImage = [UIImage imageNamed:@"YButton"];
+    UIImage* yButtonHDImage = [UIImage imageNamed:@"YButtonHD"];
+
+    
     
     CGRect aButtonFrame = CGRectMake(BUTTON_CENTER_X - aButtonImage.size.width / 2, BUTTON_CENTER_Y + BUTTON_DIST, aButtonImage.size.width, aButtonImage.size.height);
     CGRect bButtonFrame = CGRectMake(BUTTON_CENTER_X + BUTTON_DIST, BUTTON_CENTER_Y - bButtonImage.size.height / 2, bButtonImage.size.width, bButtonImage.size.height);
@@ -547,23 +553,32 @@ static float L3_Y;
     CGRect yButtonFrame = CGRectMake(BUTTON_CENTER_X - yButtonImage.size.width / 2, BUTTON_CENTER_Y - BUTTON_DIST - yButtonImage.size.height, yButtonImage.size.width, yButtonImage.size.height);
     
     // create A button
-    _aButton.contents = (id) aButtonImage.CGImage;
+    _aButton.contents = (id) aButtonHDImage.CGImage;
+    // Set the filtering mode for smooth downscaling
+    _aButton.minificationFilter = kCAFilterLinear; // Smooth scaling down
+    _aButton.magnificationFilter = kCAFilterLinear; // Smooth scaling up (if needed)
+    _aButton.minificationFilterBias = 0.0f; // Trilinear-like effect
+
+    // Enable anti-aliasing for smoother edges
+    _aButton.allowsEdgeAntialiasing = YES;
+    _aButton.edgeAntialiasingMask = kCALayerLeftEdge | kCALayerRightEdge | kCALayerBottomEdge | kCALayerTopEdge;
+
     _aButton.frame = _swapABXY ? bButtonFrame : aButtonFrame;
     [_view.layer addSublayer:_aButton];      // rendering OSC Button here
     
     // create B button
     _bButton.frame = _swapABXY ? aButtonFrame : bButtonFrame;
-    _bButton.contents = (id) bButtonImage.CGImage;
+    _bButton.contents = (id) bButtonHDImage.CGImage;
     [_view.layer addSublayer:_bButton];
     
     // create X Button
     _xButton.frame = _swapABXY ? yButtonFrame : xButtonFrame;
-    _xButton.contents = (id) xButtonImage.CGImage;
+    _xButton.contents = (id) xButtonHDImage.CGImage;
     [_view.layer addSublayer:_xButton];
     
     // create Y Button
     _yButton.frame = _swapABXY ? xButtonFrame : yButtonFrame;
-    _yButton.contents = (id) yButtonImage.CGImage;
+    _yButton.contents = (id) yButtonHDImage.CGImage;
     [_view.layer addSublayer:_yButton];
     
     // Calculate the distances of each button from the shared center based on their transformed positions
@@ -714,18 +729,21 @@ static float L3_Y;
     
     // create L1 button
     UIImage* l1ButtonImage = [UIImage imageNamed:@"L1"];
+    UIImage* l1ButtonHDImage = [UIImage imageNamed:@"L1HD"];
     _l1Button.frame = CGRectMake(L1_X - l1ButtonImage.size.width / 2, L1_Y - l1ButtonImage.size.height / 2, l1ButtonImage.size.width, l1ButtonImage.size.height);
-    _l1Button.contents = (id) l1ButtonImage.CGImage;
+    _l1Button.contents = (id) l1ButtonHDImage.CGImage;
     [_view.layer addSublayer:_l1Button];
     
     // create R1 button
     UIImage* r1ButtonImage = [UIImage imageNamed:@"R1"];
+    UIImage* r1ButtonHDImage = [UIImage imageNamed:@"R1HD"];
     _r1Button.frame = CGRectMake(R1_X - r1ButtonImage.size.width / 2, R1_Y - r1ButtonImage.size.height / 2, r1ButtonImage.size.width, r1ButtonImage.size.height);
-    _r1Button.contents = (id) r1ButtonImage.CGImage;
+    _r1Button.contents = (id) r1ButtonHDImage.CGImage;
     
     // make l1 r1 the same size as l2 r2
     if(_largerStickLR1){
         UIImage* l2ButtonImage = [UIImage imageNamed:@"L2"];
+        UIImage* l2ButtonHDImage = [UIImage imageNamed:@"L2HD"];
         _l1Button.bounds = _r1Button.bounds = CGRectMake(0, 0, l2ButtonImage.size.width, l2ButtonImage.size.height);
     }
     
@@ -738,14 +756,16 @@ static float L3_Y;
     
     // create L2 button
     UIImage* l2ButtonImage = [UIImage imageNamed:@"L2"];
+    UIImage* l2ButtonHDImage = [UIImage imageNamed:@"L2HD"];
     _l2Button.frame = CGRectMake(L2_X - l2ButtonImage.size.width / 2, L2_Y - l2ButtonImage.size.height / 2, l2ButtonImage.size.width, l2ButtonImage.size.height);
-    _l2Button.contents = (id) l2ButtonImage.CGImage;
+    _l2Button.contents = (id) l2ButtonHDImage.CGImage;
     [_view.layer addSublayer:_l2Button];
     
     // create R2 button
     UIImage* r2ButtonImage = [UIImage imageNamed:@"R2"];
+    UIImage* r2ButtonHDImage = [UIImage imageNamed:@"R2HD"];
     _r2Button.frame = CGRectMake(R2_X - r2ButtonImage.size.width / 2, R2_Y - r2ButtonImage.size.height / 2, r2ButtonImage.size.width, r2ButtonImage.size.height);
-    _r2Button.contents = (id) r2ButtonImage.CGImage;
+    _r2Button.contents = (id) r2ButtonHDImage.CGImage;
     [_view.layer addSublayer:_r2Button];
 }
 
@@ -981,7 +1001,7 @@ static float L3_Y;
         
         button.borderColor = [UIColor clearColor].CGColor; // Color of the outline
         button.borderWidth = 20; // Width of the outline
-        button.cornerRadius = 45;
+        button.cornerRadius = button.bounds.size.width/2;
         
         // 使用 shadowPath 定义阴影形状和扩展范围
         CGFloat spread = 15;  // 扩散的大小
