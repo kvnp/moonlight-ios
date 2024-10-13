@@ -537,13 +537,13 @@ static float L3_Y;
 
 - (void) drawButtons {
     UIImage* aButtonImage = [UIImage imageNamed:@"AButton"];
-    UIImage* aButtonHDImage = [UIImage imageNamed:@"AButtonHD"];
+    UIImage* aButtonHdImage = [UIImage imageNamed:@"AButtonHD"];
     UIImage* bButtonImage = [UIImage imageNamed:@"BButton"];
-    UIImage* bButtonHDImage = [UIImage imageNamed:@"BButtonHD"];
+    UIImage* bButtonHdImage = [UIImage imageNamed:@"BButtonHD"];
     UIImage* xButtonImage = [UIImage imageNamed:@"XButton"];
-    UIImage* xButtonHDImage = [UIImage imageNamed:@"XButtonHD"];
+    UIImage* xButtonHdImage = [UIImage imageNamed:@"XButtonHD"];
     UIImage* yButtonImage = [UIImage imageNamed:@"YButton"];
-    UIImage* yButtonHDImage = [UIImage imageNamed:@"YButtonHD"];
+    UIImage* yButtonHdImage = [UIImage imageNamed:@"YButtonHD"];
 
     
     
@@ -553,7 +553,7 @@ static float L3_Y;
     CGRect yButtonFrame = CGRectMake(BUTTON_CENTER_X - yButtonImage.size.width / 2, BUTTON_CENTER_Y - BUTTON_DIST - yButtonImage.size.height, yButtonImage.size.width, yButtonImage.size.height);
     
     // create A button
-    _aButton.contents = (id) aButtonHDImage.CGImage;
+    _aButton.contents = (id) aButtonHdImage.CGImage;
     // Set the filtering mode for smooth downscaling
     _aButton.minificationFilter = kCAFilterLinear; // Smooth scaling down
     _aButton.magnificationFilter = kCAFilterLinear; // Smooth scaling up (if needed)
@@ -568,17 +568,17 @@ static float L3_Y;
     
     // create B button
     _bButton.frame = _swapABXY ? aButtonFrame : bButtonFrame;
-    _bButton.contents = (id) bButtonHDImage.CGImage;
+    _bButton.contents = (id) bButtonHdImage.CGImage;
     [_view.layer addSublayer:_bButton];
     
     // create X Button
     _xButton.frame = _swapABXY ? yButtonFrame : xButtonFrame;
-    _xButton.contents = (id) xButtonHDImage.CGImage;
+    _xButton.contents = (id) xButtonHdImage.CGImage;
     [_view.layer addSublayer:_xButton];
     
     // create Y Button
     _yButton.frame = _swapABXY ? xButtonFrame : yButtonFrame;
-    _yButton.contents = (id) yButtonHDImage.CGImage;
+    _yButton.contents = (id) yButtonHdImage.CGImage;
     [_view.layer addSublayer:_yButton];
     
     // Calculate the distances of each button from the shared center based on their transformed positions
@@ -729,21 +729,21 @@ static float L3_Y;
     
     // create L1 button
     UIImage* l1ButtonImage = [UIImage imageNamed:@"L1"];
-    UIImage* l1ButtonHDImage = [UIImage imageNamed:@"L1HD"];
+    UIImage* l1ButtonHdImage = [UIImage imageNamed:@"L1HD"];
     _l1Button.frame = CGRectMake(L1_X - l1ButtonImage.size.width / 2, L1_Y - l1ButtonImage.size.height / 2, l1ButtonImage.size.width, l1ButtonImage.size.height);
-    _l1Button.contents = (id) l1ButtonHDImage.CGImage;
+    _l1Button.contents = (id) l1ButtonHdImage.CGImage;
     [_view.layer addSublayer:_l1Button];
     
     // create R1 button
     UIImage* r1ButtonImage = [UIImage imageNamed:@"R1"];
-    UIImage* r1ButtonHDImage = [UIImage imageNamed:@"R1HD"];
+    UIImage* r1ButtonHdImage = [UIImage imageNamed:@"R1HD"];
     _r1Button.frame = CGRectMake(R1_X - r1ButtonImage.size.width / 2, R1_Y - r1ButtonImage.size.height / 2, r1ButtonImage.size.width, r1ButtonImage.size.height);
-    _r1Button.contents = (id) r1ButtonHDImage.CGImage;
+    _r1Button.contents = (id) r1ButtonHdImage.CGImage;
     
     // make l1 r1 the same size as l2 r2
     if(_largerStickLR1){
         UIImage* l2ButtonImage = [UIImage imageNamed:@"L2"];
-        UIImage* l2ButtonHDImage = [UIImage imageNamed:@"L2HD"];
+        UIImage* l2ButtonHdImage = [UIImage imageNamed:@"L2HD"];
         _l1Button.bounds = _r1Button.bounds = CGRectMake(0, 0, l2ButtonImage.size.width, l2ButtonImage.size.height);
     }
     
@@ -756,36 +756,39 @@ static float L3_Y;
     
     // create L2 button
     UIImage* l2ButtonImage = [UIImage imageNamed:@"L2"];
-    UIImage* l2ButtonHDImage = [UIImage imageNamed:@"L2HD"];
+    UIImage* l2ButtonHdImage = [UIImage imageNamed:@"L2HD"];
     _l2Button.frame = CGRectMake(L2_X - l2ButtonImage.size.width / 2, L2_Y - l2ButtonImage.size.height / 2, l2ButtonImage.size.width, l2ButtonImage.size.height);
-    _l2Button.contents = (id) l2ButtonHDImage.CGImage;
+    _l2Button.contents = (id) l2ButtonHdImage.CGImage;
     [_view.layer addSublayer:_l2Button];
     
     // create R2 button
     UIImage* r2ButtonImage = [UIImage imageNamed:@"R2"];
-    UIImage* r2ButtonHDImage = [UIImage imageNamed:@"R2HD"];
+    UIImage* r2ButtonHdImage = [UIImage imageNamed:@"R2HD"];
     _r2Button.frame = CGRectMake(R2_X - r2ButtonImage.size.width / 2, R2_Y - r2ButtonImage.size.height / 2, r2ButtonImage.size.width, r2ButtonImage.size.height);
-    _r2Button.contents = (id) r2ButtonHDImage.CGImage;
+    _r2Button.contents = (id) r2ButtonHdImage.CGImage;
     [_view.layer addSublayer:_r2Button];
 }
 
 - (void) drawSticks {
     // create left analog stick
     UIImage* leftStickBgImage = [UIImage imageNamed:@"StickOuter"];
+    UIImage* stickBgHdImage = [UIImage imageNamed:@"StickOuterHD"];
+
     _leftStickBackground.frame = CGRectMake(LS_CENTER_X - leftStickBgImage.size.width / 2, LS_CENTER_Y - leftStickBgImage.size.height / 2, leftStickBgImage.size.width, leftStickBgImage.size.height);
-    _leftStickBackground.contents = (id) leftStickBgImage.CGImage;
+    _leftStickBackground.contents = (id) stickBgHdImage.CGImage;
     [_view.layer addSublayer:_leftStickBackground];
     
     UIImage* leftStickImage = [UIImage imageNamed:@"StickInner"];
+    UIImage* stickHdImage = [UIImage imageNamed:@"StickInnerHD"];
     _leftStick.frame = CGRectMake(LS_CENTER_X - leftStickImage.size.width / 2, LS_CENTER_Y - leftStickImage.size.height / 2, leftStickImage.size.width, leftStickImage.size.height);
-    _leftStick.contents = (id) leftStickImage.CGImage;
+    _leftStick.contents = (id) stickHdImage.CGImage;
     _leftStick.opacity = STICK_OPACITY; // make stick half transparent when it's idle
     [_view.layer addSublayer:_leftStick];
     
     // create right analog stick
     UIImage* rightStickBgImage = [UIImage imageNamed:@"StickOuter"];
     _rightStickBackground.frame = CGRectMake(RS_CENTER_X - rightStickBgImage.size.width / 2, RS_CENTER_Y - rightStickBgImage.size.height / 2, rightStickBgImage.size.width, rightStickBgImage.size.height);
-    _rightStickBackground.contents = (id) rightStickBgImage.CGImage;
+    _rightStickBackground.contents = (id) stickBgHdImage.CGImage;
     [_view.layer addSublayer:_rightStickBackground];
     
     
@@ -793,7 +796,7 @@ static float L3_Y;
     UIImage* rightStickImage = [UIImage imageNamed:@"StickInner"];
     _rightStick.frame = CGRectMake(RS_CENTER_X - rightStickImage.size.width / 2, RS_CENTER_Y - rightStickImage.size.height / 2, rightStickImage.size.width, rightStickImage.size.height);
     
-    _rightStick.contents = (id) rightStickImage.CGImage;
+    _rightStick.contents = (id) stickHdImage.CGImage;
     _rightStick.opacity = STICK_OPACITY; // make stick half transparent when it's idle
     [_view.layer addSublayer:_rightStick];
     
