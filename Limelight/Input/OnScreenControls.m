@@ -310,9 +310,18 @@ static float L3_Y;
             }
             
             // retrieve complex control size factors
-            if([buttonState.name isEqualToString:@"leftStick"]) _leftStickSizeFactor = buttonState.oscLayerSizeFactor;
-            if([buttonState.name isEqualToString:@"rightStick"]) _rightStickSizeFactor = buttonState.oscLayerSizeFactor;
-            if([buttonState.name isEqualToString:@"upButton"]) _dPadSizeFactor = buttonState.oscLayerSizeFactor / 0.982759;
+            if([buttonState.name isEqualToString:@"leftStick"]){
+                _leftStickSizeFactor = buttonState.oscLayerSizeFactor;
+                if(_leftStickSizeFactor == 0) _leftStickSizeFactor = 1.0; // dealing with invalid sizefactor
+            }
+            if([buttonState.name isEqualToString:@"rightStick"]){
+                _rightStickSizeFactor = buttonState.oscLayerSizeFactor;
+                if(_rightStickSizeFactor == 0) _rightStickSizeFactor = 1.0; // dealing with invalid sizefactor
+            }
+            if([buttonState.name isEqualToString:@"upButton"]){
+                _dPadSizeFactor = buttonState.oscLayerSizeFactor / 0.982759;
+                if(_dPadSizeFactor == 0) _dPadSizeFactor = 1.0; // dealing with invalid sizefactor
+            }
         }
         NSLog(@"_activeCustomOscButtonPositionDict update, active button number: %lu", (unsigned long)[_activeCustomOscButtonPositionDict count]);
     }
@@ -675,7 +684,11 @@ static float L3_Y;
                     [buttonLayer.name isEqualToString:@"xButton"] ||
                     [buttonLayer.name isEqualToString:@"yButton"] ||
                     [buttonLayer.name isEqualToString:@"selectButton"] ||
-                    [buttonLayer.name isEqualToString:@"startButton"]) [self resizeControllerLayerWith:buttonLayer and:buttonStateDecoded.oscLayerSizeFactor];
+                    [buttonLayer.name isEqualToString:@"startButton"]){
+                    CGFloat sizeFactor = buttonStateDecoded.oscLayerSizeFactor;
+                    if(sizeFactor == 0) sizeFactor = 1.0; // dealing with invalid sizefactor
+                    [self resizeControllerLayerWith:buttonLayer and:sizeFactor];
+                }
             }
         }
     }
