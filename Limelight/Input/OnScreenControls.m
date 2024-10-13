@@ -716,14 +716,16 @@ static float L3_Y;
 - (void) drawStartSelect {
     // create Start button
     UIImage* startButtonImage = [UIImage imageNamed:@"StartButton"];
+    UIImage* startButtonHdImage = [UIImage imageNamed:@"StartButtonHD"];
     _startButton.frame = CGRectMake(START_X - startButtonImage.size.width / 2, START_Y - startButtonImage.size.height / 2, startButtonImage.size.width, startButtonImage.size.height);
-    _startButton.contents = (id) startButtonImage.CGImage;
+    _startButton.contents = (id) startButtonHdImage.CGImage;
     [_view.layer addSublayer:_startButton];
     
     // create Select button
     UIImage* selectButtonImage = [UIImage imageNamed:@"SelectButton"];
+    UIImage* selectHdButtonImage = [UIImage imageNamed:@"SelectButtonHD"];
     _selectButton.frame = CGRectMake(SELECT_X - selectButtonImage.size.width / 2, SELECT_Y - selectButtonImage.size.height / 2, selectButtonImage.size.width, selectButtonImage.size.height);
-    _selectButton.contents = (id) selectButtonImage.CGImage;
+    _selectButton.contents = (id) selectHdButtonImage.CGImage;
     [_view.layer addSublayer:_selectButton];
 }
 
