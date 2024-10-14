@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface LayoutOnScreenControlsViewController : UIViewController 
 - (void)profileRefresh;
-- (void)reloadOnScreenKeyboardButtons;
+- (void)reloadOnScreenButtonViews;
 
 @property LayoutOnScreenControls *layoutOSC;    // object that contains a view which contains the on screen controller buttons that allows the user to drag and positions each button on the screen using touch
 @property (nonatomic) NSMutableDictionary* onScreenButtonViewsDict;
@@ -39,6 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic) IBOutlet UILabel *currentProfileLabel;
 @property (strong, nonatomic) IBOutlet UISlider *buttonAndControllerSizeSlider;
 @property (strong, nonatomic) IBOutlet UISlider *buttonAndControllerHeightSlider;
+@property (strong, nonatomic) IBOutlet UISlider *buttonAndControllerAlphaSlider;
 
 @end
 

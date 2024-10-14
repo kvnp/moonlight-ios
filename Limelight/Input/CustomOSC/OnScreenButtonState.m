@@ -36,6 +36,7 @@
     [encoder encodeFloat:self.widthFactor forKey:@"widthFactor"];
     [encoder encodeFloat:self.heightFactor forKey:@"heightFactor"];
     [encoder encodeFloat:self.oscLayerSizeFactor forKey:@"oscLayerSizeFactor"];
+    [encoder encodeFloat:self.backgroundAlpha forKey:@"backgroundAlpha"];
 }
 
 - (id) initWithCoder:(NSCoder*)decoder {
@@ -49,6 +50,7 @@
         self.widthFactor = [decoder decodeFloatForKey:@"widthFactor"];
         self.heightFactor = [decoder decodeFloatForKey:@"heightFactor"];
         self.oscLayerSizeFactor = [decoder decodeFloatForKey:@"oscLayerSizeFactor"];
+        self.backgroundAlpha = [decoder decodeFloatForKey:@"backgroundAlpha"];
     }
     return self;
 }

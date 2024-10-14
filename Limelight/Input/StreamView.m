@@ -363,7 +363,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     }
 }
 
-- (void) reloadOnScreenKeyboardButtons{
+- (void) reloadOnScreenButtonViews{
     
     NSLog(@"reload on screen keyboard buttons here");
 
@@ -389,6 +389,7 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
                 [self->streamFrameTopLayerView addSubview:buttonView]; // add keyboard button to the stream frame view. must add it to the target view before setting location.
                 [buttonView setLocationWithXOffset:buttonState.position.x yOffset:buttonState.position.y];
                 [buttonView resizeButtonView]; // resize must be called after relocation
+                [buttonView adjustButtonTransparencyWithAlpha:buttonState.backgroundAlpha];
             }
         }
     }

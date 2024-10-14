@@ -161,7 +161,7 @@
         // we got self.view passed to streamView class as the topLayerView, will be useful in many cases
     [self->_streamView reloadOnScreenControlsRealtimeWith:(ControllerSupport*)_controllerSupport
                                         andConfig:(StreamConfiguration*)_streamConfig]; //reload OSC here.
-    [self->_streamView reloadOnScreenKeyboardButtons]; //reload keyboard buttons here. the keyboard button view will be added to the streamframe view instead streamview, the highest layer, which saves a lot of reengineering
+    [self->_streamView reloadOnScreenButtonViews]; //reload keyboard buttons here. the keyboard button view will be added to the streamframe view instead streamview, the highest layer, which saves a lot of reengineering
     //reconfig statsOverlay
     self->_statsUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f
                                                                target:self
@@ -338,7 +338,7 @@
     [self->_streamView reloadOnScreenControlsWith:(ControllerSupport*)_controllerSupport
                                         andConfig:(StreamConfiguration*)_streamConfig];
     [self->_streamView showOnScreenControls];
-    [self->_streamView reloadOnScreenKeyboardButtons]; //update keyboard buttons here
+    [self->_streamView reloadOnScreenButtonViews]; //update keyboard buttons here
 }
 
 

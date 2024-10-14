@@ -39,7 +39,7 @@
 - (void) reloadOnScreenControlsWith:(ControllerSupport*)controllerSupport
                           andConfig:(StreamConfiguration*)streamConfig;
 - (void) clearOnScreenKeyboardButtons;
-- (void) reloadOnScreenKeyboardButtons;
+- (void) reloadOnScreenButtonViews;
 
 - (CGSize) getVideoAreaSize;
 - (CGPoint) adjustCoordinatesForVideoArea:(CGPoint)point;

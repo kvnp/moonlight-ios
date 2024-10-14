@@ -18,21 +18,24 @@ import UIKit
     @objc public var pressed: Bool
     @objc public var widthFactor: CGFloat
     @objc public var heightFactor: CGFloat
+    @objc public var backgroundAlpha: CGFloat
 
     private let label: UILabel
-    private let originalBackgroundColor: UIColor
+    // private let originalBackgroundColor: UIColor
     private var storedLocation: CGPoint = .zero
+    private let minimumBorderAlpha: CGFloat = 0.19
 
     
     @objc init(keyString: String, keyLabel: String) {
         self.keyString = keyString
         self.keyLabel = keyLabel
         self.label = UILabel()
-        self.originalBackgroundColor = UIColor(white: 0.2, alpha: 0.7)
+        // self.originalBackgroundColor = UIColor(white: 0.2, alpha: 0.7)
         self.timestamp = 0
         self.pressed = false
         self.widthFactor = 1.0
         self.heightFactor = 1.0
+        self.backgroundAlpha = 0.5
         super.init(frame: .zero)
         setupView()
     }
@@ -50,6 +53,23 @@ import UIKit
     
     @objc public func enableRelocationMode(enabled: Bool){
         OnScreenButtonView.editMode = enabled
+    }
+    
+    @objc public func adjustButtonTransparency(alpha: CGFloat){
+        if(alpha != 0){
+            self.backgroundAlpha = alpha
+        }
+        else{
+            self.backgroundAlpha = 0.5
+        }
+        
+        var borderAlpha = 1.5 * self.backgroundAlpha
+        if(borderAlpha < minimumBorderAlpha){
+            borderAlpha = minimumBorderAlpha
+        }
+        
+        self.backgroundColor = UIColor(white: 0.2, alpha: self.backgroundAlpha)
+        self.layer.borderColor = UIColor(white: 0.2, alpha: borderAlpha).cgColor
     }
     
     @objc public func resizeButtonView(){
@@ -83,6 +103,8 @@ import UIKit
         setupView()
     }
     
+    
+    
     @objc public func setupView() {
         label.text = self.keyLabel
         label.font = UIFont.boldSystemFont(ofSize: 19)
@@ -97,16 +119,20 @@ import UIKit
         label.translatesAutoresizingMaskIntoConstraints = false // enable auto alignment for the label
         
         self.translatesAutoresizingMaskIntoConstraints = true // this is mandatory to prevent unexpected key view location change
-        self.layer.borderColor = UIColor(white: 0.2, alpha: 0.86).cgColor
+        var borderAlpha = 1.5 * self.backgroundAlpha
+        if(borderAlpha < minimumBorderAlpha){
+            borderAlpha = minimumBorderAlpha
+        }
+        // if(self.backgroundAlpha * )
+        self.layer.borderColor = UIColor(white: 0.2, alpha: borderAlpha).cgColor
         self.layer.borderWidth = 1
         self.layer.cornerRadius = 20
-        self.backgroundColor = UIColor(white: 0.2, alpha: 0.57)
+        self.backgroundColor = UIColor(white: 0.2, alpha: self.backgroundAlpha)
         self.layer.shadowColor = UIColor.clear.cgColor
         self.layer.shadowRadius = 8
         self.layer.shadowOpacity = 0.5
         
         addSubview(label)
-        
         
         NSLayoutConstraint.activate([
             //self.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.088),

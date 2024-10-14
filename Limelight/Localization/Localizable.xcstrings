@@ -237,6 +237,29 @@
         }
       }
     },
+    "Button Alpha" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按键透明度"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按键透明度"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按键透明度"
+          }
+        }
+      }
+    },
     "Button Height" : {
       "extractionState" : "manual",
       "localizations" : {
