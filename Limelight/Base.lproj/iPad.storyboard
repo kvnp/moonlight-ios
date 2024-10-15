@@ -850,7 +850,7 @@ ICAgICAgICAgICAgICA
                                 <color key="backgroundColor" systemColor="secondaryLabelColor"/>
                                 <color key="tintColor" red="0.6716768742" green="0.61711704730000005" blue="0.99902987480000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </slider>
-                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.001" maxValue="1" id="ZLL-pE-iZh" userLabel="Button Alpha Slider">
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.83299999999999996" minValue="0.23000000000000001" maxValue="0.999" id="ZLL-pE-iZh" userLabel="Button Alpha Slider">
                                 <rect key="frame" x="207" y="249" width="420" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="secondaryLabelColor"/>

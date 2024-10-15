@@ -68,7 +68,7 @@ import UIKit
             borderAlpha = minimumBorderAlpha
         }
         
-        self.backgroundColor = UIColor(white: 0.2, alpha: self.backgroundAlpha)
+        self.backgroundColor = UIColor(white: 0.2, alpha: self.backgroundAlpha - 0.18) // offset to be consistent with onScreen controller layer opacity
         self.layer.borderColor = UIColor(white: 0.2, alpha: borderAlpha).cgColor
     }
     
@@ -127,7 +127,7 @@ import UIKit
         self.layer.borderColor = UIColor(white: 0.2, alpha: borderAlpha).cgColor
         self.layer.borderWidth = 1
         self.layer.cornerRadius = 20
-        self.backgroundColor = UIColor(white: 0.2, alpha: self.backgroundAlpha)
+        self.backgroundColor = UIColor(white: 0.2, alpha: self.backgroundAlpha - 0.18) // offset to be consistent with OSC opacity
         self.layer.shadowColor = UIColor.clear.cgColor
         self.layer.shadowRadius = 8
         self.layer.shadowOpacity = 0.5

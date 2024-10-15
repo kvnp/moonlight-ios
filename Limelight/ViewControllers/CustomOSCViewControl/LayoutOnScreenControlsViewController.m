@@ -391,14 +391,13 @@
     self->controllerLayerSelected = true;
     self->selectedControllerLayer = controllerLayer;
     self->controllerLoadedBounds = controllerLayer.bounds;
-    CGFloat sizeFactor = [OnScreenControls getControllerLayerSizeFactor:controllerLayer]; // calculated sizeFactor from loaded layer bounds.
     
     // setup slider values
-    [self.buttonAndControllerSizeSlider setValue: sizeFactor];
+    CGFloat sizeFactor = [OnScreenControls getControllerLayerSizeFactor:controllerLayer]; // calculated sizeFactor from loaded layer bounds.
+    [self.buttonAndControllerSizeSlider setValue:sizeFactor];
+    CGFloat alpha = [self.layoutOSC getControllerLayerOpacity:controllerLayer];
+    [self.buttonAndControllerAlphaSlider setValue:alpha];
 }
-
-
-
 
 - (void)buttonAndControllerWidthSliderMoved{
     if(self->selectedButtonView != nil && self->buttonViewSelected){
@@ -441,6 +440,10 @@
 - (void)buttonAndControllerAlphaSliderMoved{
     if(self->selectedButtonView != nil && self->buttonViewSelected){
         [self->selectedButtonView adjustButtonTransparencyWithAlpha:self.buttonAndControllerAlphaSlider.value];
+    }
+    
+    if(self->selectedControllerLayer != nil && self->controllerLayerSelected){
+        [self.layoutOSC adjustControllerLayerOpacityWith:self->selectedControllerLayer and:self.buttonAndControllerAlphaSlider.value];
     }
     return;
 }

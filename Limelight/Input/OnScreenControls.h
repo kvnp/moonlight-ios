@@ -10,6 +10,7 @@
 #import "ControllerSupport.h"
 #import "CustomTapGestureRecognizer.h"
 #import "OSCProfile.h"
+#define MIN_CONTROLLER_LAYER_ALPHA 0.23
 
 @class ControllerSupport;
 @class StreamConfiguration;
@@ -20,7 +21,9 @@ static const float BUTTON_DIST = 20;
 @interface OnScreenControls : NSObject{
     @protected
     CGFloat _leftStickSizeFactor;
+    CGFloat _leftStickOpacity;
     CGFloat _rightStickSizeFactor;
+    CGFloat _rightStickOpacity;
     CGFloat _dPadSizeFactor;
 }
 
@@ -105,6 +108,8 @@ typedef NS_ENUM(NSInteger, OnScreenControlsLevel) {
 - (void) setAnalogStickPositions;
 - (void) positionAndResizeSingleControllerLayers;
 - (void) resizeControllerLayerWith:(CALayer*)layer and:(CGFloat)sizeFactor;
+- (void) adjustControllerLayerOpacityWith:(CALayer*)layer and:(CGFloat)alpha;
 + (CGFloat) getControllerLayerSizeFactor:(CALayer*)layer;
+- (CGFloat) getControllerLayerOpacity:(CALayer*)layer;
 
 @end

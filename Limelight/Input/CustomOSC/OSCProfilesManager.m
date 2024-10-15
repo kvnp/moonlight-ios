@@ -271,7 +271,10 @@ static NSMutableDictionary *onScreenButtonViewsDict;
         // add hidden attr here
         buttonState.isHidden = oscButtonLayer.isHidden;
         buttonState.oscLayerSizeFactor = [OnScreenControls getControllerLayerSizeFactor:oscButtonLayer];
-        NSLog(@"oscLayerName: %@, sizeFactor: %f", oscButtonLayer.name, buttonState.oscLayerSizeFactor);
+        buttonState.backgroundAlpha = oscButtonLayer.opacity;
+        NSLog(@"oscLayerName: %@, opacity: %f, ", oscButtonLayer.name, buttonState.backgroundAlpha);
+
+        
         // buttonState.oscLayerSizeFactor = oscButtonLayer.bounds;
         
         NSData *buttonStateEncoded = [NSKeyedArchiver archivedDataWithRootObject:buttonState requiringSecureCoding:YES error:nil];
