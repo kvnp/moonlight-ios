@@ -71,6 +71,7 @@
         parentHost.ipv6Address = self.ipv6Address;
     }
     // try to fix invalid mac happens in some cases
+    // 添加主机crash问题重点关注
     if (!(self.mac == nil || [self.mac isEqualToString:@"00:00:00:00:00:00"])) parentHost.mac = self.mac;
     if (self.serverCert != nil) {
         parentHost.serverCert = self.serverCert;
