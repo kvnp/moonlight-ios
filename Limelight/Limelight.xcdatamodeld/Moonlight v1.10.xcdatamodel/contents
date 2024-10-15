@@ -37,7 +37,7 @@
         <attribute name="onscreenControls" attributeType="Integer 32" defaultValueString="1" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="optimizeGames" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="oscLayoutToolFingers" optional="YES" attributeType="Integer 16" defaultValueString="4" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="oscTapExlusionAreaSize" optional="YES" attributeType="Float" defaultValueString="2.3" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="oscTapExlusionAreaSize" optional="YES" attributeType="Float" defaultValueString="1.05" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="playAudioOnPC" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="pointerVelocityModeDivider" optional="YES" attributeType="Float" defaultValueString="0.5" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="preferredCodec" attributeType="Integer 32" defaultValueString="YES" usesScalarValueType="YES" syncable="YES"/>

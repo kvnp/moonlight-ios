@@ -1487,11 +1487,11 @@ static float L3_Y;
                 dzHalfWidth = _selectButton.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
                 dzHalfHeight = _selectButton.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
             } else if ([key isEqualToString:@"leftStickBackground"]) {
-                dzHalfWidth = _l2Button.bounds.size.width * 0.7 * _oscTapExlusionAreaSizeFactor; // stick backgound size is too big to be the base line
-                dzHalfHeight = _l2Button.bounds.size.height * 0.7 * _oscTapExlusionAreaSizeFactor;
+                dzHalfWidth = _leftStickBackground.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor; // stick backgound size is too big to be the base line
+                dzHalfHeight = _leftStickBackground.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
             } else if ([key isEqualToString:@"rightStickBackground"]) {
-                dzHalfWidth = _l2Button.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
-                dzHalfHeight = _l2Button.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfWidth = _rightStickBackground.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _rightStickBackground.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
             } else if ([key isEqualToString:@"r2Button"]) {
                 dzHalfWidth = _r2Button.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
                 dzHalfHeight = _r2Button.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
