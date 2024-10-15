@@ -382,6 +382,11 @@
     [self.buttonAndControllerSizeSlider setValue: self->selectedButtonView.widthFactor];
     [self.buttonAndControllerHeightSlider setValue: self->selectedButtonView.heightFactor];
     [self.buttonAndControllerAlphaSlider setValue: self->selectedButtonView.backgroundAlpha];
+    
+    [buttonSizeSliderLabel setText:[LocalizationHelper localizedStringForKey:@"Button Size: %.2f", self->selectedButtonView.widthFactor]];
+    [buttonHeightSliderLabel setText:[LocalizationHelper localizedStringForKey:@"Button Height: %.2f", self->selectedButtonView.heightFactor]];
+    [buttonAlphaSliderLabel setText:[LocalizationHelper localizedStringForKey:@"Button Alpha: %.2f", self->selectedButtonView.backgroundAlpha]];
+
 }
 
 - (void)setControllerCALayerSliderValues: (NSNotification *)notification{
@@ -395,41 +400,33 @@
     // setup slider values
     CGFloat sizeFactor = [OnScreenControls getControllerLayerSizeFactor:controllerLayer]; // calculated sizeFactor from loaded layer bounds.
     [self.buttonAndControllerSizeSlider setValue:sizeFactor];
+    [self.buttonAndControllerHeightSlider setValue:sizeFactor];
     CGFloat alpha = [self.layoutOSC getControllerLayerOpacity:controllerLayer];
     [self.buttonAndControllerAlphaSlider setValue:alpha];
+    
+    [buttonSizeSliderLabel setText:[LocalizationHelper localizedStringForKey:@"Button Size: %.2f", sizeFactor]];
+    [buttonHeightSliderLabel setText:[LocalizationHelper localizedStringForKey:@"Button Height: %.2f", sizeFactor]];
+    [buttonAlphaSliderLabel setText:[LocalizationHelper localizedStringForKey:@"Button Alpha: %.2f", alpha]];
 }
 
-- (void)buttonAndControllerWidthSliderMoved{
+- (void)buttonAndControllerSizeSliderMoved{
+    [buttonSizeSliderLabel setText:[LocalizationHelper localizedStringForKey:@"Button Size: %.2f", self.buttonAndControllerSizeSlider.value]];
+    [buttonHeightSliderLabel setText:[LocalizationHelper localizedStringForKey:@"Button Height: %.2f", self.buttonAndControllerSizeSlider.value]]; // resizing the whole button
+    [self.buttonAndControllerHeightSlider setValue: self.buttonAndControllerSizeSlider.value];
+    
     if(self->selectedButtonView != nil && self->buttonViewSelected){
         self->selectedButtonView.translatesAutoresizingMaskIntoConstraints = true; // this is mandatory to prevent unexpected key view location change
         // when adjusting width, the buttonView height will be syncronized
         self->selectedButtonView.widthFactor = self->selectedButtonView.heightFactor = self.buttonAndControllerSizeSlider.value;
-        [self.buttonAndControllerHeightSlider setValue: self.buttonAndControllerSizeSlider.value];
         [self->selectedButtonView resizeButtonView];
     }
     if(self->selectedControllerLayer != nil && self->controllerLayerSelected){
         [self.layoutOSC resizeControllerLayerWith:self->selectedControllerLayer and:self.buttonAndControllerSizeSlider.value];
-        return;
-        
-        CALayer* superLayer = self->selectedControllerLayer.superlayer;
-        // if(self->selectedControllerLayer.name == @"")
-        if ([self->selectedControllerLayer.name isEqualToString:@"r1Button"] ||
-            [self->selectedControllerLayer.name isEqualToString:@"r2Button"] ||
-            [self->selectedControllerLayer.name isEqualToString:@"l1Button"] ||
-            [self->selectedControllerLayer.name isEqualToString:@"l2Button"] ||
-            [self->selectedControllerLayer.name isEqualToString:@"aButton"] ||
-            [self->selectedControllerLayer.name isEqualToString:@"bButton"] ||
-            [self->selectedControllerLayer.name isEqualToString:@"xButton"] ||
-            [self->selectedControllerLayer.name isEqualToString:@"yButton"]){
-            [self->selectedControllerLayer removeFromSuperlayer];
-            self->selectedControllerLayer.bounds = CGRectMake(0, 0, self.layoutOSC.standardRoundButtonBounds.size.width * self.buttonAndControllerSizeSlider.value, self.layoutOSC.standardRoundButtonBounds.size.height * self.buttonAndControllerSizeSlider.value);
-            [superLayer addSublayer:self->selectedControllerLayer];
-        }
     }
-    
 }
 
 - (void)buttonAndControllerHeightSliderMoved{
+    [buttonHeightSliderLabel setText:[LocalizationHelper localizedStringForKey:@"Button Height: %.2f", self.buttonAndControllerHeightSlider.value]];
     if(self->selectedButtonView != nil && self->buttonViewSelected){
         self->selectedButtonView.translatesAutoresizingMaskIntoConstraints = true; // this is mandatory to prevent unexpected key view location change
         self->selectedButtonView.heightFactor = self.buttonAndControllerHeightSlider.value;
@@ -438,10 +435,11 @@
 }
 
 - (void)buttonAndControllerAlphaSliderMoved{
+    [buttonAlphaSliderLabel setText:[LocalizationHelper localizedStringForKey:@"Button Alpha: %.2f", self.buttonAndControllerAlphaSlider.value]];
     if(self->selectedButtonView != nil && self->buttonViewSelected){
         [self->selectedButtonView adjustButtonTransparencyWithAlpha:self.buttonAndControllerAlphaSlider.value];
     }
-    
+
     if(self->selectedControllerLayer != nil && self->controllerLayerSelected){
         [self.layoutOSC adjustControllerLayerOpacityWith:self->selectedControllerLayer and:self.buttonAndControllerAlphaSlider.value];
     }
@@ -458,7 +456,7 @@
     // button size sliders
     self.buttonAndControllerSizeSlider.hidden = NO;
     self.buttonAndControllerSizeSlider.frame = CGRectMake(xPosition, self.buttonAndControllerSizeSlider.frame.origin.y, self.buttonAndControllerSizeSlider.frame.size.width, self.buttonAndControllerSizeSlider.frame.size.height);
-    [self.buttonAndControllerSizeSlider addTarget:self action:@selector(buttonAndControllerWidthSliderMoved) forControlEvents:(UIControlEventValueChanged)];
+    [self.buttonAndControllerSizeSlider addTarget:self action:@selector(buttonAndControllerSizeSliderMoved) forControlEvents:(UIControlEventValueChanged)];
     buttonSizeSliderLabel.text = [LocalizationHelper localizedStringForKey:@"Button Size"];
     buttonSizeSliderLabel.font = [UIFont systemFontOfSize:23];
     buttonSizeSliderLabel.textColor = [UIColor whiteColor];

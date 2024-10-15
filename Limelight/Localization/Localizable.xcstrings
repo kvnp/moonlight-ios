@@ -260,6 +260,29 @@
         }
       }
     },
+    "Button Alpha: %.2f" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按键透明度: %.2f"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按键透明度: %.2f"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按键透明度: %.2f"
+          }
+        }
+      }
+    },
     "Button Height" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -283,6 +306,29 @@
         }
       }
     },
+    "Button Height: %.2f" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按键高度: %.2f"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按键高度: %.2f"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按键高度: %.2f"
+          }
+        }
+      }
+    },
     "Button Size" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -302,6 +348,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "按键大小"
+          }
+        }
+      }
+    },
+    "Button Size: %.2f" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按键大小: %.2f"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按键大小: %.2f"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按键大小: %.2f"
           }
         }
       }
