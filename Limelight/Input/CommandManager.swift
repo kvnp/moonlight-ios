@@ -52,7 +52,7 @@ import UIKit
     @objc public static let shared = CommandManager()
     
     @objc public static let mouseButtonMappings: [String: Int32] = ["M_LEFT" : BUTTON_LEFT,
-                                                       "M_MIDDLE" : BUTTON_RIGHT,
+                                                       "M_MIDDLE" : BUTTON_MIDDLE,
                                                        "M_RIGHT" : BUTTON_RIGHT,
                                                        "M_X1" : BUTTON_X1,
                                                        "M_X2" : BUTTON_X2]
