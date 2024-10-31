@@ -23,6 +23,7 @@
     
     
     // try to fix invalid mac happens in some cases
+    // 添加主机crash问题重点关注
     NSString* tmpMac = [[self getStringTag:TAG_MAC_ADDRESS] trim];
     if (!(tmpMac == nil || [tmpMac isEqualToString:@"00:00:00:00:00:00"])) host.mac = tmpMac;
     
