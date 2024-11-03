@@ -24,7 +24,7 @@ import UIKit
     // private let originalBackgroundColor: UIColor
     private var storedLocation: CGPoint = .zero
     private let minimumBorderAlpha: CGFloat = 0.19
-
+    private var defaultBorderColor: CGColor = UIColor(white: 0.2, alpha: 0.3).cgColor
     
     @objc init(keyString: String, keyLabel: String) {
         self.keyString = keyString
@@ -63,13 +63,15 @@ import UIKit
             self.backgroundAlpha = 0.5
         }
         
-        var borderAlpha = 1.5 * self.backgroundAlpha
+        // setup default border from self.backgroundAlpha
+        var borderAlpha = 1.15 * self.backgroundAlpha
         if(borderAlpha < minimumBorderAlpha){
             borderAlpha = minimumBorderAlpha
         }
+        defaultBorderColor = UIColor(white: 0.2, alpha: borderAlpha).cgColor
+        self.layer.borderColor = defaultBorderColor
         
         self.backgroundColor = UIColor(white: 0.2, alpha: self.backgroundAlpha - 0.18) // offset to be consistent with onScreen controller layer opacity
-        self.layer.borderColor = UIColor(white: 0.2, alpha: borderAlpha).cgColor
     }
     
     @objc public func resizeButtonView(){
@@ -119,18 +121,21 @@ import UIKit
         label.translatesAutoresizingMaskIntoConstraints = false // enable auto alignment for the label
         
         self.translatesAutoresizingMaskIntoConstraints = true // this is mandatory to prevent unexpected key view location change
-        var borderAlpha = 1.5 * self.backgroundAlpha
+        
+        // reset to default border
+        self.layer.borderWidth = 1
+        var borderAlpha = 1.15 * self.backgroundAlpha
         if(borderAlpha < minimumBorderAlpha){
             borderAlpha = minimumBorderAlpha
         }
-        // if(self.backgroundAlpha * )
-        self.layer.borderColor = UIColor(white: 0.2, alpha: borderAlpha).cgColor
-        self.layer.borderWidth = 1
+        defaultBorderColor = UIColor(white: 0.2, alpha: borderAlpha).cgColor
+        self.layer.borderColor = defaultBorderColor
+        
         self.layer.cornerRadius = 20
         self.backgroundColor = UIColor(white: 0.2, alpha: self.backgroundAlpha - 0.18) // offset to be consistent with OSC opacity
-        self.layer.shadowColor = UIColor.clear.cgColor
-        self.layer.shadowRadius = 8
-        self.layer.shadowOpacity = 0.5
+        // self.layer.shadowColor = UIColor.clear.cgColor
+        // self.layer.shadowRadius = 8
+        // self.layer.shadowOpacity = 0.5
         
         addSubview(label)
         
@@ -151,17 +156,13 @@ import UIKit
     }
     
     private func buttonDownVisualEffect() {
-        let spread = 10.2;  // 扩散的大小
-        let largerRect = self.bounds.insetBy(dx: -spread, dy: -spread)
-        let shadowPath = UIBezierPath(roundedRect: largerRect, cornerRadius: self.layer.cornerRadius)
-        self.layer.shadowPath = shadowPath.cgPath
-        
-        // self.layer.shadowColor = UIColor.systemBlue.withAlphaComponent(0.7).cgColor
-        self.layer.shadowColor = UIColor(red: 0.5, green: 0.5, blue: 1.0, alpha: 0.80).cgColor
-        self.layer.shadowOffset = CGSize.zero
-        self.layer.shadowOpacity = 1.0
-        self.layer.shadowRadius = 0.0
-        self.layer.borderWidth = 0
+        self.layer.borderWidth = 8.6
+        self.layer.borderColor = UIColor(red: 0.5, green: 0.5, blue: 1.0, alpha: 0.80).cgColor
+    }
+    
+    private func buttonUpVisualEffect() {
+        self.layer.borderWidth = 1
+        self.layer.borderColor = defaultBorderColor
     }
     
     // Touch event handling
@@ -174,15 +175,12 @@ import UIKit
         if !OnScreenButtonView.editMode {
             // self.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.7)
             self.buttonDownVisualEffect()
-            self.layer.borderWidth = 0
             // if the command(keystring contains "+", it's a multi-key command or a quick triggering key, rather than a physical button
             if(self.keyString.contains("+")){
                 let keyboardCmdStrings = CommandManager.shared.extractKeyStrings(from: self.keyString)!
                 CommandManager.shared.sendKeyDownEventWithDelay(keyboardCmdStrings: keyboardCmdStrings) // send multi-key command
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) { // reset shadow color immediately 50ms later
-                    self.layer.shadowColor = UIColor.clear.cgColor
-                    self.layer.borderWidth = 1
-
+                    self.buttonUpVisualEffect()
                 }
             }
             // if there's no "+" in the keystring, treat it as a regular button:
@@ -236,15 +234,12 @@ import UIKit
             else{
                 LiSendKeyboardEvent(CommandManager.keyMappings[self.keyString]!,Int8(KEY_ACTION_UP), 0)
             }
-            
-            // self.backgroundColor = self.originalBackgroundColor
-            self.layer.shadowColor = UIColor.clear.cgColor
-            self.layer.borderWidth = 1
+            self.buttonUpVisualEffect()
             return;
         }
         // self.backgroundColor = self.originalBackgroundColor
-        self.layer.shadowColor = UIColor.clear.cgColor
-        self.layer.borderWidth = 1
+        // self.layer.shadowColor = UIColor.clear.cgColor
+        // self.layer.borderWidth = 1
 
         guard let superview = superview else { return }
 
