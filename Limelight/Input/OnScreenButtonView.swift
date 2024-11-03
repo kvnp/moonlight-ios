@@ -25,6 +25,7 @@ import UIKit
     private var storedLocation: CGPoint = .zero
     private let minimumBorderAlpha: CGFloat = 0.19
     private var defaultBorderColor: CGColor = UIColor(white: 0.2, alpha: 0.3).cgColor
+    private let borderLayer = CAShapeLayer()
     
     @objc init(keyString: String, keyLabel: String) {
         self.keyString = keyString
@@ -98,12 +99,13 @@ import UIKit
             self.heightAnchor.constraint(equalToConstant: 65 * self.heightFactor),
         ])
 
+        
         // Trigger layout update
         superview.layoutIfNeeded()
-
+        
         // Re-setup buttonView style
         setupView()
-    }
+        }
     
     
     
@@ -129,9 +131,9 @@ import UIKit
             borderAlpha = minimumBorderAlpha
         }
         defaultBorderColor = UIColor(white: 0.2, alpha: borderAlpha).cgColor
-        self.layer.borderColor = defaultBorderColor
+        self.borderLayer.borderColor = defaultBorderColor
         
-        self.layer.cornerRadius = 20
+        self.layer.cornerRadius = 15
         self.backgroundColor = UIColor(white: 0.2, alpha: self.backgroundAlpha - 0.18) // offset to be consistent with OSC opacity
         // self.layer.shadowColor = UIColor.clear.cgColor
         // self.layer.shadowRadius = 8
@@ -153,17 +155,52 @@ import UIKit
             label.centerYAnchor.constraint(equalTo: centerYAnchor),
             //label.heightAnchor.constraint(equalToConstant: 40)
         ])
+        
+        setupBorderLayer();
     }
     
     private func buttonDownVisualEffect() {
-        self.layer.borderWidth = 8.6
-        self.layer.borderColor = UIColor(red: 0.5, green: 0.5, blue: 1.0, alpha: 0.80).cgColor
+        // setupBorderLayer()
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        // self.layer.borderWidth = 0
+        borderLayer.borderWidth = 8.6
+        borderLayer.borderColor = UIColor(red: 0.5, green: 0.5, blue: 1.0, alpha: 0.80).cgColor
+        CATransaction.commit()
     }
     
     private func buttonUpVisualEffect() {
-        self.layer.borderWidth = 1
-        self.layer.borderColor = defaultBorderColor
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        // self.layer.borderWidth = 1
+        borderLayer.borderWidth = 0
+        borderLayer.borderColor = defaultBorderColor
+        CATransaction.commit()
     }
+    
+
+    private func setupBorderLayer() {
+        // Create a shape layer for the border
+        
+        // Set the frame to be larger than the view to expand outward
+        borderLayer.borderWidth = 0
+        borderLayer.frame = self.bounds.insetBy(dx: -8.6, dy: -8.6) // Adjust the inset as needed
+        borderLayer.cornerRadius = self.layer.cornerRadius + 8.6
+        borderLayer.backgroundColor = UIColor.clear.cgColor;
+        borderLayer.fillColor = UIColor.clear.cgColor;
+        
+        // Create a path for the border
+        let path = UIBezierPath(roundedRect: borderLayer.bounds, cornerRadius: borderLayer.cornerRadius)
+        borderLayer.path = path.cgPath
+        
+        // Add the border layer below the main view layer
+        self.layer.superlayer?.insertSublayer(borderLayer, below: self.layer)
+        
+        // Retrieve the current frame to account for transformations, this will update the coords for new position CGPointMake
+        borderLayer.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+    }
+
+    
     
     // Touch event handling
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
