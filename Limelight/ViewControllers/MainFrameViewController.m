@@ -1024,7 +1024,7 @@ static NSMutableSet* hostList;
         [self.view addSubview:self->waterMark];
         // Set up constraints
         [NSLayoutConstraint activateConstraints:@[
-            [self->waterMark.centerXAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-120], // Aligns the horizontal center of label to the horizontal center of view
+            [self->waterMark.centerXAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-185], // Aligns the horizontal center of label to the horizontal center of view
             [self->waterMark.centerYAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-50], // Aligns the vertical center of label to the vertical center of view
             [self->waterMark.widthAnchor constraintEqualToConstant:500],                     // Sets the width of label to 200 points
             [self->waterMark.heightAnchor constraintEqualToConstant:60]                      // Sets the height of label to 50 points
