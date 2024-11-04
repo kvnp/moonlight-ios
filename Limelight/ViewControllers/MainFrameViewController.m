@@ -1010,7 +1010,7 @@ static NSMutableSet* hostList;
         [self->waterMark removeFromSuperview];
         self->waterMark = [[UILabel alloc] init];
         self->waterMark.translatesAutoresizingMaskIntoConstraints = NO;
-        self->waterMark.text = [LocalizationHelper localizedStringForKey:@"Contact Developer"];
+        self->waterMark.text = [LocalizationHelper localizedStringForKey:@"Contact True砖家(the Developer)"];
         self->waterMark.textColor = UIColor.blackColor;
         self->waterMark.alpha = 0.2;
         self->waterMark.font = [UIFont systemFontOfSize:22];

@@ -588,25 +588,25 @@
         }
       }
     },
-    "Contact Developer" : {
+    "Contact True砖家(the Developer)" : {
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "联系开发者"
+            "value" : "开发者: True砖家 (B站)"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "联系开发者"
+            "value" : "开发者: True砖家 (B站)"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "联系开发者"
+            "value" : "开发者: True砖家 (B站)"
           }
         }
       }
