@@ -165,7 +165,7 @@ import UIKit
         CATransaction.setDisableActions(true)
         // self.layer.borderWidth = 0
         borderLayer.borderWidth = 8.6
-        borderLayer.borderColor = UIColor(red: 0.5, green: 0.5, blue: 1.0, alpha: 0.80).cgColor
+        borderLayer.borderColor = UIColor(red: 0.5, green: 0.5, blue: 1.0, alpha: 0.86).cgColor
         CATransaction.commit()
     }
     
