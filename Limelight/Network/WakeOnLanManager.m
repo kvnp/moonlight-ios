@@ -13,6 +13,7 @@
 #import <netinet/in.h>
 #import <arpa/inet.h>
 #import <netdb.h>
+#import <ifaddrs.h>
 
 @implementation WakeOnLanManager
 
@@ -40,7 +41,7 @@ static const int dynamicPorts[numDynamicPorts] = {
 + (void) wakeHost:(TemporaryHost*)host {
     NSData* wolPayload = [WakeOnLanManager createPayload:host];
     
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         NSString* address;
         struct addrinfo hints, *res, *curr;
         
@@ -59,6 +60,8 @@ static const int dynamicPorts[numDynamicPorts] = {
             NSLog(@"ipv6Address in wakeHost: %@", address);
         } else if (i == 4) {
             address = @"255.255.255.255";
+        } else if (i == 5 && host.localAddress != nil) {
+            address = host.localAddress;
         } else {
             // Requested address wasn't present
             continue;
@@ -68,7 +71,14 @@ static const int dynamicPorts[numDynamicPorts] = {
         NSString* rawAddress = [Utils addressPortStringToAddress:address];
         unsigned short basePort = [Utils addressPortStringToPort:address];
         
-        if(i==0) rawAddress = [self calculateBroadcastAddressForIP:rawAddress withSubnetMask:@"255.255.255.0"]; // force setting the address to the broadcast address of the current LAN IP segment in the first loop (localAddress loop)
+        // Loop 5 is for using the broadcast address
+        if (i == 5) {
+            NSString *subnetMask = [self getSubnetMask];
+            if (subnetMask == nil) {
+                subnetMask = @"255.255.255.0";
+            }
+            rawAddress = [self calculateBroadcastAddressForIP:rawAddress withSubnetMask:subnetMask];
+        }
         NSLog(@"rawAddress in wakeHost: %@", rawAddress);
 
         memset(&hints, 0, sizeof(hints));
@@ -182,4 +192,31 @@ static const int dynamicPorts[numDynamicPorts] = {
     return [NSString stringWithUTF8String:broadcastAddress];
 }
 
++ (NSString *)getSubnetMask {
+    struct ifaddrs *interfaces = NULL;
+    struct ifaddrs *temp_addr = NULL;
+    NSString *subnetMask = nil;
+    
+    // Retrieve the current interfaces - returns 0 on success
+    if (getifaddrs(&interfaces) == 0) {
+        // Loop through linked list of interfaces
+        temp_addr = interfaces;
+        while (temp_addr != NULL) {
+            if (temp_addr->ifa_addr->sa_family == AF_INET) {
+                // Check if interface is en0 which is the wifi connection on the iPhone
+                if ([[NSString stringWithUTF8String:temp_addr->ifa_name] isEqualToString:@"en0"]) {
+                    // Get NSString from C String
+                    subnetMask = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_netmask)->sin_addr)];
+                    break;
+                }
+            }
+            temp_addr = temp_addr->ifa_next;
+        }
+    }
+    
+    // Free memory
+    freeifaddrs(interfaces);
+    
+    return subnetMask;
+}
 @end
