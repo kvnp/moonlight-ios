@@ -222,6 +222,9 @@ BOOL isCustomResolution(CGSize res) {
     return true;
 }
 
+- (bool)isAirPlayEnabled{
+    return [self.externalDisplayModeSelector selectedSegmentIndex] == 1;
+}
 
 - (void)updateResolutionTable{
     UIWindow *window = UIApplication.sharedApplication.windows.firstObject;
@@ -229,6 +232,12 @@ BOOL isCustomResolution(CGSize res) {
     CGFloat safeAreaWidth = (window.frame.size.width - window.safeAreaInsets.left - window.safeAreaInsets.right) * screenScale;
     CGFloat appWindowWidth = window.frame.size.width * screenScale;
     CGFloat appWindowHeight = window.frame.size.height * screenScale;
+    if([self isAirPlayEnabled] && UIScreen.screens.count > 1){
+        CGRect bounds = [UIScreen.screens.lastObject bounds];
+        screenScale = [UIScreen.screens.lastObject scale];
+        appWindowWidth = bounds.size.width * screenScale;
+        appWindowHeight = bounds.size.height * screenScale;
+    }
     bool needSwapWidthAndHeight = appWindowWidth > appWindowHeight;
     
     resolutionTable[4] = CGSizeMake(safeAreaWidth, appWindowHeight);
@@ -248,7 +257,7 @@ BOOL isCustomResolution(CGSize res) {
 // this will also be called back when device orientation changes
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-    double delayInSeconds = 1.0;
+    double delayInSeconds = 0.2;
     // Convert the delay into a dispatch_time_t value
     dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
     // Perform some task after the delay
@@ -549,6 +558,8 @@ BOOL isCustomResolution(CGSize res) {
         self.layoutOnScreenControlsVC = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
         self.layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationFullScreen;
     }
+
+    [self.externalDisplayModeSelector setSelectedSegmentIndex:currentSettings.externalDisplayMode.integerValue];
 }
 
 - (void)slideToSettingsScreenEdgeChanged{
@@ -1055,6 +1066,7 @@ BOOL isCustomResolution(CGSize res) {
     BOOL enableHdr = [self.hdrSelector selectedSegmentIndex] == 1;
     BOOL allowPortrait = [self.allowPortraitSelector selectedSegmentIndex] == 1;
     NSInteger resolutionSelected = [self.resolutionSelector selectedSegmentIndex];
+    NSInteger externalDisplayMode = [self.externalDisplayModeSelector selectedSegmentIndex];
     [dataMan saveSettingsWithBitrate:_bitrate
                            framerate:framerate
                               height:height
@@ -1085,7 +1097,8 @@ BOOL isCustomResolution(CGSize res) {
                            touchMode:touchMode
                         statsOverlay:statsOverlay
                        allowPortrait:allowPortrait
-                  resolutionSelected:resolutionSelected];
+                  resolutionSelected:resolutionSelected
+                 externalDisplayMode:externalDisplayMode];
 }
 
 - (void)didReceiveMemoryWarning {

@@ -57,6 +57,7 @@
 @property (strong, nonatomic) LayoutOnScreenControlsViewController *layoutOnScreenControlsVC;
 @property (nonatomic, strong) MainFrameViewController *mainFrameViewController;
 
+@property (strong, nonatomic) IBOutlet UISegmentedControl *externalDisplayModeSelector;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability"

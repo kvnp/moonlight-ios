@@ -90,6 +90,11 @@ extern int ff_isom_write_av1c(AVIOContext *pb, const uint8_t *buf, int size,
     
     [self reinitializeDisplayLayer];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+    selector:@selector(reinitializeDisplayLayer)
+      name:@"ScreenChanged"
+      object:nil];
+    
     return self;
 }
 

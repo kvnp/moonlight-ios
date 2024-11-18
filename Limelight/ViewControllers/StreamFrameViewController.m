@@ -54,6 +54,10 @@
     UIScrollView *_scrollView;
     BOOL _userIsInteracting;
     CGSize _keyboardSize;
+    UIWindow *_extWindow;
+    UIView *_renderView;
+    UIWindow *_deviceWindow;
+    dispatch_block_t _delayedRemoveExtScreen;
 #if !TARGET_OS_TV
     CustomEdgeSlideGestureRecognizer *_slideToSettingsRecognizer;
     CustomEdgeSlideGestureRecognizer *_slideToCmdToolRecognizer;
@@ -162,6 +166,8 @@
     [self->_streamView reloadOnScreenControlsRealtimeWith:(ControllerSupport*)_controllerSupport
                                         andConfig:(StreamConfiguration*)_streamConfig]; //reload OSC here.
     [self->_streamView reloadOnScreenButtonViews]; //reload keyboard buttons here. the keyboard button view will be added to the streamframe view instead streamview, the highest layer, which saves a lot of reengineering
+    [self reloadAirPlayConfig];
+    
     //reconfig statsOverlay
     self->_statsUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f
                                                                target:self
@@ -179,6 +185,29 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
+    _deviceWindow = self.view.window;
+
+    if (UIScreen.screens.count > 1 && [self isAirPlayEnabled]) {
+        [self prepExtScreen:UIScreen.screens.lastObject];
+    }
+    else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.view insertSubview:self->_renderView atIndex:0];
+        });
+    }
+
+    // check to see if external screen is connected/disconnected
+
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(extScreenDidConnect:)
+                                                 name: UIScreenDidConnectNotification
+                                               object: nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(extScreenDidDisconnect:)
+                                                 name: UIScreenDidDisconnectNotification
+                                               object: nil];
    
 #if !TARGET_OS_TV
     [[self revealViewController] setPrimaryViewController:self];
@@ -239,7 +268,9 @@
     _controllerSupport = [[ControllerSupport alloc] initWithConfig:self.streamConfig delegate:self];
     _inactivityTimer = nil;
     
+    _renderView = (StreamView*)[[UIView alloc] initWithFrame:self.view.frame];
     _streamView = [[StreamView alloc] initWithFrame:self.view.frame];
+    _renderView.bounds = _streamView.bounds;
     //[_streamView setupStreamView:_controllerSupport interactionDelegate:self config:self.streamConfig];
     [self reConfigStreamViewRealtime]; // call this method again to make sure all gestures are configured & added to the superview(self.view), including the gestures added from inside the streamview.
     
@@ -281,7 +312,7 @@
     _tipLabel.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height * 0.9);
     
     _streamMan = [[StreamManager alloc] initWithConfig:self.streamConfig
-                                            renderView:_streamView
+                                            renderView:_renderView
                                    connectionCallbacks:self];
     NSOperationQueue* opQueue = [[NSOperationQueue alloc] init];
     [opQueue addOperation:_streamMan];
@@ -449,7 +480,85 @@
     _statsUpdateTimer = nil;
     
     [self.navigationController popToRootViewControllerAnimated:YES];
+    
+    _extWindow = nil;
 }
+
+// External Screen connected
+- (void)extScreenDidConnect:(NSNotification *)notification {
+    Log(LOG_I, @"External Screen Connected");
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self prepExtScreen:notification.object];
+    });
+}
+
+// External Screen disconnected
+- (void)extScreenDidDisconnect:(NSNotification *)notification {
+    Log(LOG_I, @"External Screen Disconnected");
+    if(UIScreen.screens.count < 2)
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+        [self removeExtScreen];
+        });
+    }
+}
+
+- (BOOL) isAirPlaying{
+    return _extWindow != nil && _extWindow.hidden == NO;
+}
+
+- (BOOL) isAirPlayEnabled{
+    return _settings.externalDisplayMode.intValue == 1;
+}
+
+- (void) reloadAirPlayConfig{
+    if (UIScreen.screens.count == 1){return;}
+    if (![self isAirPlaying] && [self isAirPlayEnabled]){
+        [self prepExtScreen:UIScreen.screens.lastObject];
+    }else if ([self isAirPlaying] && ![self isAirPlayEnabled]){
+        [self removeExtScreen];
+    }
+}
+
+// Prepare Screen
+- (void)prepExtScreen:(UIScreen*)extScreen {
+    Log(LOG_I, @"Preparing External Screen");
+    if(![self isAirPlayEnabled]){
+        return;
+    }
+    CGRect frame = extScreen.bounds;
+    extScreen.overscanCompensation = UIScreenOverscanCompensationNone;
+    if(_extWindow==nil){
+        _extWindow = [[UIWindow alloc] initWithFrame:frame];
+    }
+    _extWindow.screen = extScreen;
+    _renderView.bounds = frame;
+    _renderView.frame = frame;
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc postNotificationName:@"ScreenChanged" object:self];
+    [_extWindow addSubview:_renderView];
+    _extWindow.hidden = NO;
+}
+
+- (void)removeExtScreen {
+    Log(LOG_I, @"Removing External Screen");
+    _extWindow.hidden = YES;
+    [self handleViewResize];
+    [self.view insertSubview:_renderView atIndex:0];
+}
+
+- (void) handleViewResize{
+    _streamView.bounds = _deviceWindow.bounds;
+    _streamView.frame = _deviceWindow.frame;
+    if(![self isAirPlaying]){
+        _renderView.bounds = _deviceWindow.bounds;
+        _renderView.frame = _deviceWindow.frame;
+        NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+        [nc postNotificationName:@"ScreenChanged" object:self];
+    }
+    [self reConfigStreamViewRealtime];
+}
+
 
 // This will fire if the user opens control center or gets a low battery message
 - (void)applicationWillResignActive:(NSNotification *)notification {
@@ -523,6 +632,7 @@
         // the first frame of video.
         self->_stageLabel.hidden = YES;
         self->_tipLabel.hidden = YES;
+        self->_spinner.hidden = YES;
         
         [self->_streamView showOnScreenControls];
         
@@ -864,7 +974,17 @@
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
     
     Log(LOG_I, @"View size changed, terminating stream");
-    // [self returnToMainFrame];
+    
+    double delayInSeconds = 0.2;
+    if (_delayedRemoveExtScreen) {
+        dispatch_block_cancel(_delayedRemoveExtScreen);
+    }
+    dispatch_block_t block = dispatch_block_create(0, ^{
+        [self handleViewResize];
+    });
+    _delayedRemoveExtScreen = block;
+    dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(delayTime, dispatch_get_main_queue(), block);
 }
 
 @end

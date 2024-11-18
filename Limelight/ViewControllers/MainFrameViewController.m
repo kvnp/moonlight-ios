@@ -617,6 +617,7 @@ static NSMutableSet* hostList;
 }
 
 - (void) prepareToStreamApp:(TemporaryApp *)app {
+    [self updateResolutionAccordingly];
     self.revealViewController.isStreaming = true; // tell the revealViewController streaming is started.
     _streamConfig = [[StreamConfiguration alloc] init];
     _streamConfig.host = app.host.activeAddress;
@@ -634,9 +635,14 @@ static NSMutableSet* hostList;
     
     _streamConfig.frameRate = [streamSettings.framerate intValue];
     if (@available(iOS 10.3, *)) {
+        UIWindow *window = UIApplication.sharedApplication.windows.firstObject;
+        NSInteger maximumFramesPerSecond = window.screen.maximumFramesPerSecond;
+        if(UIScreen.screens.count > 1 && streamSettings.externalDisplayMode.intValue == 1){ //AirPlaying
+            maximumFramesPerSecond = UIScreen.screens.lastObject.maximumFramesPerSecond;
+        }
         // Don't stream more FPS than the display can show
-        if (_streamConfig.frameRate > [UIScreen mainScreen].maximumFramesPerSecond) {
-            _streamConfig.frameRate = (int)[UIScreen mainScreen].maximumFramesPerSecond;
+        if (_streamConfig.frameRate > maximumFramesPerSecond) {
+            _streamConfig.frameRate = (int)maximumFramesPerSecond;
             Log(LOG_W, @"Clamping FPS to maximum refresh rate: %d", _streamConfig.frameRate);
         }
     }
@@ -1171,7 +1177,7 @@ static NSMutableSet* hostList;
     //if([SettingsViewController isLandscapeNow] != _streamConfig.width > _streamConfig.height)
     //[self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
     //[self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
-    [self updateResolutionAccordingly];
+    //[self updateResolutionAccordingly];
     
     // SettingsViewController* settingsViewController = (SettingsViewController*)[self.revealViewController rearViewController];
     // [settingsViewController updateResolutionTable];
@@ -1219,17 +1225,17 @@ static NSMutableSet* hostList;
 }
 
 // this will also be called back when device orientation changes
-- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-    
-    double delayInSeconds = 0.7;
-    // Convert the delay into a dispatch_time_t value
-    dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-    // Perform some task after the delay
-    dispatch_after(delayTime, dispatch_get_main_queue(), ^{// Code to execute after the delay
-        [self updateResolutionAccordingly];
-    });
-}
+//- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+//    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+//    
+//    double delayInSeconds = 0.7;
+//    // Convert the delay into a dispatch_time_t value
+//    dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+//    // Perform some task after the delay
+//    dispatch_after(delayTime, dispatch_get_main_queue(), ^{// Code to execute after the delay
+//        [self updateResolutionAccordingly];
+//    });
+//}
 
 -(void) updateResolutionAccordingly {
     DataManager* dataMan = [[DataManager alloc] init];
@@ -1240,6 +1246,13 @@ static NSMutableSet* hostList;
     CGFloat appWindowHeight = CGRectGetHeight(window.frame) * screenScale;
     CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
     CGFloat screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
+    
+    if(currentSettings.externalDisplayMode.intValue == 1 && UIScreen.screens.count > 1){
+        CGRect bounds = [UIScreen.screens.lastObject bounds];
+        screenScale = [UIScreen.screens.lastObject scale];
+        appWindowWidth = bounds.size.width * screenScale;
+        appWindowHeight = bounds.size.height * screenScale;
+    }
 
     bool needSwap = false;
     
@@ -1398,7 +1411,7 @@ static NSMutableSet* hostList;
                                                object: nil];
     //[self simulateSettingsButtonPress]; //force reload resolution table in the setting
     //[self simulateSettingsButtonPress];
-    [self updateResolutionAccordingly];
+    //[self updateResolutionAccordingly];
 }
 
 
