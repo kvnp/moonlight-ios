@@ -1151,6 +1151,11 @@ static NSMutableSet* hostList;
     [self swapResolutionWidthHeightAccordingly];
 }
 
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    
+    [self handleOrientationChange];
+}
 
 -(void)handleRealOrientationChange{
     
@@ -1194,21 +1199,31 @@ static NSMutableSet* hostList;
 }
 
 
--(void)swapResolutionWidthHeightAccordingly{
+-(void) swapResolutionWidthHeightAccordingly {
     DataManager* dataMan = [[DataManager alloc] init];
     Settings *currentSettings = [dataMan retrieveSettings];
-    CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
-    CGFloat screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
-    bool needSwap = ((currentSettings.width.floatValue - currentSettings.height.floatValue) * (screenWidthInPoints - screenHeightInPoints)) < 0; //update the current resolution accordingly
-    NSLog(@"need to swap width & height: %d", needSwap);
-    if(needSwap){
+    
+    UIWindow *window = UIApplication.sharedApplication.windows.firstObject;
+    CGFloat screenScale = window.screen.scale;
+    CGFloat screenWidthInPoints = CGRectGetWidth(window.frame);
+    CGFloat screenHeightInPoints = CGRectGetHeight(window.frame);
+    CGFloat fullScreenWidth = screenWidthInPoints * screenScale;
+    CGFloat fullScreenHeight = screenHeightInPoints * screenScale;
+    
+    bool needSwap = ((currentSettings.width.floatValue - currentSettings.height.floatValue) * 
+                     (fullScreenWidth - fullScreenHeight)) < 0;
+    
+    NSLog(@"Current screen size: %.0f x %.0f", fullScreenWidth, fullScreenHeight); 
+    NSLog(@"Current setting size: %.0f x %.0f", currentSettings.width.floatValue, currentSettings.height.floatValue);
+    NSLog(@"Need to swap width & height: %d", needSwap);
+    
+    if(needSwap) {
         CGFloat tmpLength = currentSettings.width.floatValue;
         currentSettings.width = @(currentSettings.height.floatValue);
         currentSettings.height = @(tmpLength);
         [dataMan saveData];
     }
 }
-
 
 #if TARGET_OS_TV
 -(void)handleCollectionViewLongPress:(UILongPressGestureRecognizer *)gestureRecognizer

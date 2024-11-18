@@ -1073,5 +1073,10 @@ BOOL isCustomResolution(CGSize res) {
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
 }
 
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    
+    [self deviceOrientationDidChange];
+}
 
 @end
