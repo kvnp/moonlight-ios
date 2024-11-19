@@ -42,7 +42,8 @@
                // absoluteTouchMode:(BOOL)absoluteTouchMode
                        touchMode:(NSInteger)touchMode
                     statsOverlay:(BOOL)statsOverlay
-                   allowPortrait:(BOOL)allowPortrait;
+                   allowPortrait:(BOOL)allowPortrait
+              resolutionSelected:(NSInteger)resolutionSelected;
 
 - (NSArray*) getHosts;
 - (void) updateHost:(TemporaryHost*)host;

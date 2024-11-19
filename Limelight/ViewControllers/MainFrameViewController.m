@@ -1151,12 +1151,6 @@ static NSMutableSet* hostList;
     [self swapResolutionWidthHeightAccordingly];
 }
 
-- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-    
-    [self handleOrientationChange];
-}
-
 -(void)handleRealOrientationChange{
     
 }
@@ -1200,6 +1194,7 @@ static NSMutableSet* hostList;
 
 
 -(void) swapResolutionWidthHeightAccordingly {
+    return;
     DataManager* dataMan = [[DataManager alloc] init];
     Settings *currentSettings = [dataMan retrieveSettings];
     

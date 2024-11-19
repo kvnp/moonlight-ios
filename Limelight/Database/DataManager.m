@@ -81,7 +81,8 @@
                // absoluteTouchMode:(BOOL)absoluteTouchMode
                        touchMode:(NSInteger)touchMode
                     statsOverlay:(BOOL)statsOverlay 
-                   allowPortrait:(BOOL)allowPortrait{
+                   allowPortrait:(BOOL)allowPortrait
+              resolutionSelected:(NSInteger)resolutionSelected {
     
     [_managedObjectContext performBlockAndWait:^{
         Settings* settingsToSave = [self retrieveSettings];
@@ -115,6 +116,7 @@
         settingsToSave.touchMode = [NSNumber numberWithInteger:(uint16_t)touchMode];
         settingsToSave.statsOverlay = statsOverlay;
         settingsToSave.allowPortrait = allowPortrait;
+        settingsToSave.resolutionSelected = [NSNumber numberWithInteger:resolutionSelected];
         
         [self saveData];
     }];

@@ -217,6 +217,7 @@ BOOL isCustomResolution(CGSize res) {
     CGFloat safeAreaWidth = (window.frame.size.width - window.safeAreaInsets.left - window.safeAreaInsets.right) * screenScale;
     CGFloat fullScreenWidth = window.frame.size.width * screenScale;
     CGFloat fullScreenHeight = window.frame.size.height * screenScale;
+    bool isLandscapeNow = fullScreenWidth > fullScreenHeight;
     
     resolutionTable[4] = CGSizeMake(safeAreaWidth, fullScreenHeight);
     resolutionTable[5] = CGSizeMake(fullScreenWidth, fullScreenHeight);
@@ -224,11 +225,25 @@ BOOL isCustomResolution(CGSize res) {
     for(uint8_t i=0;i<7;i++){
         CGFloat longSideLen = resolutionTable[i].height > resolutionTable[i].width ? resolutionTable[i].height : resolutionTable[i].width;
         CGFloat shortSideLen = resolutionTable[i].height < resolutionTable[i].width ? resolutionTable[i].height : resolutionTable[i].width;
-        if([SettingsViewController isLandscapeNow]) resolutionTable[i] = CGSizeMake(longSideLen, shortSideLen);
+        if(isLandscapeNow) resolutionTable[i] = CGSizeMake(longSideLen, shortSideLen);
         else resolutionTable[i] = CGSizeMake(shortSideLen, longSideLen);
     }
     
+    [self updateResolutionSettings];
     [self updateResolutionDisplayViewText];
+}
+
+- (void)updateResolutionSettings{
+    DataManager* dataMgr = [[DataManager alloc] init];
+    Settings *currentSettings = [dataMgr retrieveSettings];
+    int resolution = currentSettings.resolutionSelected.intValue;
+    
+    if(resolution==4 || resolution==5){
+        currentSettings.width  = @(resolutionTable[resolution].width);
+        currentSettings.height = @(resolutionTable[resolution].height);
+        NSLog(@"Modify setting width & height: %.0f x %.0f", currentSettings.width.floatValue, currentSettings.height.floatValue);
+        [dataMgr saveData];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated{
@@ -359,13 +374,10 @@ BOOL isCustomResolution(CGSize res) {
             break;
     }
 
-    NSInteger resolution = 1;
-    for (int i = 0; i < RESOLUTION_TABLE_SIZE; i++) {
-        if (((int) resolutionTable[i].height == [currentSettings.height intValue] && (int) resolutionTable[i].width == [currentSettings.width intValue]) || ((int) resolutionTable[i].width == [currentSettings.height intValue] && (int) resolutionTable[i].height == [currentSettings.width intValue])){
-            resolution = i;
-            break;
-        }
-    }    
+    NSInteger resolution = currentSettings.resolutionSelected.integerValue;
+    if(resolution >= RESOLUTION_TABLE_SIZE){
+        resolution = 0;
+    }
 
     // Only show the 120 FPS option if we have a > 60-ish Hz display
     bool enable120Fps = false;
@@ -1030,6 +1042,7 @@ BOOL isCustomResolution(CGSize res) {
     BOOL statsOverlay = [self.statsOverlaySelector selectedSegmentIndex] == 1;
     BOOL enableHdr = [self.hdrSelector selectedSegmentIndex] == 1;
     BOOL allowPortrait = [self.allowPortraitSelector selectedSegmentIndex] == 1;
+    NSInteger resolutionSelected = [self.resolutionSelector selectedSegmentIndex];
     [dataMan saveSettingsWithBitrate:_bitrate
                            framerate:framerate
                               height:height
@@ -1059,7 +1072,8 @@ BOOL isCustomResolution(CGSize res) {
                    // absoluteTouchMode:absoluteTouchMode
                            touchMode:touchMode
                         statsOverlay:statsOverlay
-                       allowPortrait:allowPortrait];
+                       allowPortrait:allowPortrait
+                  resolutionSelected:resolutionSelected];
 }
 
 - (void)didReceiveMemoryWarning {
