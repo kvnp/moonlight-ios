@@ -1149,6 +1149,9 @@ static NSMutableSet* hostList;
     //[self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
     //[self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
     [self swapResolutionWidthHeightAccordingly];
+    
+    SettingsViewController* settingsViewController = (SettingsViewController*)[self.revealViewController rearViewController];
+    [settingsViewController updateResolutionTable];
 }
 
 -(void)handleRealOrientationChange{
