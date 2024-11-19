@@ -912,7 +912,7 @@ static NSMutableSet* hostList;
     dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
     // Perform some task after the delay
     dispatch_after(delayTime, dispatch_get_main_queue(), ^{// Code to execute after the delay
-        [self swapResolutionWidthHeightAccordingly];
+        // [self updateResolutionAccordingly];
         [self.settingsButton setEnabled:![self isIPhonePortrait]]; //make sure settings button is disabled in iphone portrait mode.
         if([self->_upButton title] == nil) [self reloadScrollHostView]; // title of the _upButton is a good flag for judging if we're on the Host selection view
         //self->recordedScreenWidth = screenWidthInPoints; // kind of obselete, but i keep this in the code.
@@ -1148,10 +1148,10 @@ static NSMutableSet* hostList;
     //if([SettingsViewController isLandscapeNow] != _streamConfig.width > _streamConfig.height)
     //[self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
     //[self simulateSettingsButtonPress]; //force expand setting view if orientation changed since last quit from app.
-    [self swapResolutionWidthHeightAccordingly];
+    [self updateResolutionAccordingly];
     
-    SettingsViewController* settingsViewController = (SettingsViewController*)[self.revealViewController rearViewController];
-    [settingsViewController updateResolutionTable];
+    // SettingsViewController* settingsViewController = (SettingsViewController*)[self.revealViewController rearViewController];
+    // [settingsViewController updateResolutionTable];
 }
 
 -(void)handleRealOrientationChange{
@@ -1195,32 +1195,43 @@ static NSMutableSet* hostList;
     [self.view addSubview:hostScrollView];
 }
 
+// this will also be called back when device orientation changes
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    
+    double delayInSeconds = 0.7;
+    // Convert the delay into a dispatch_time_t value
+    dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    // Perform some task after the delay
+    dispatch_after(delayTime, dispatch_get_main_queue(), ^{// Code to execute after the delay
+        [self updateResolutionAccordingly];
+    });
+}
 
--(void) swapResolutionWidthHeightAccordingly {
-    return;
+-(void) updateResolutionAccordingly {
     DataManager* dataMan = [[DataManager alloc] init];
     Settings *currentSettings = [dataMan retrieveSettings];
-    
     UIWindow *window = UIApplication.sharedApplication.windows.firstObject;
     CGFloat screenScale = window.screen.scale;
-    CGFloat screenWidthInPoints = CGRectGetWidth(window.frame);
-    CGFloat screenHeightInPoints = CGRectGetHeight(window.frame);
-    CGFloat fullScreenWidth = screenWidthInPoints * screenScale;
-    CGFloat fullScreenHeight = screenHeightInPoints * screenScale;
-    
-    bool needSwap = ((currentSettings.width.floatValue - currentSettings.height.floatValue) * 
-                     (fullScreenWidth - fullScreenHeight)) < 0;
-    
-    NSLog(@"Current screen size: %.0f x %.0f", fullScreenWidth, fullScreenHeight); 
-    NSLog(@"Current setting size: %.0f x %.0f", currentSettings.width.floatValue, currentSettings.height.floatValue);
-    NSLog(@"Need to swap width & height: %d", needSwap);
-    
-    if(needSwap) {
-        CGFloat tmpLength = currentSettings.width.floatValue;
-        currentSettings.width = @(currentSettings.height.floatValue);
-        currentSettings.height = @(tmpLength);
-        [dataMan saveData];
+    CGFloat appWindowWidth = CGRectGetWidth(window.frame) * screenScale;
+    CGFloat appWindowHeight = CGRectGetHeight(window.frame) * screenScale;
+
+    if(currentSettings.resolutionSelected.intValue == 5){ // app window res, previous fullscreen, update resolution directly
+        currentSettings.width = @(appWindowWidth);
+        currentSettings.height = @(appWindowHeight);
+        NSLog(@"Directly Update app window resolution: %f, %f", appWindowWidth, appWindowHeight);
     }
+    
+    else if(currentSettings.resolutionSelected.intValue){
+        bool needSwap = (appWindowWidth - appWindowHeight) * (currentSettings.width.floatValue - currentSettings.height.floatValue);
+        if(needSwap){
+            CGFloat tmpLength = currentSettings.width.floatValue;
+            currentSettings.width = @(currentSettings.height.floatValue);
+            currentSettings.height = @(tmpLength);
+            NSLog(@"Swap resolution width & height (non-app window)");
+        }
+    }
+    [dataMan saveData];
 }
 
 #if TARGET_OS_TV
@@ -1347,7 +1358,7 @@ static NSMutableSet* hostList;
                                                object: nil];
     //[self simulateSettingsButtonPress]; //force reload resolution table in the setting
     //[self simulateSettingsButtonPress];
-    [self swapResolutionWidthHeightAccordingly];
+    [self updateResolutionAccordingly];
 }
 
 

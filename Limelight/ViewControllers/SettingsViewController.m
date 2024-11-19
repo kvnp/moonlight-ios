@@ -215,43 +215,42 @@ BOOL isCustomResolution(CGSize res) {
     UIWindow *window = UIApplication.sharedApplication.windows.firstObject;
     CGFloat screenScale = window.screen.scale;
     CGFloat safeAreaWidth = (window.frame.size.width - window.safeAreaInsets.left - window.safeAreaInsets.right) * screenScale;
-    CGFloat fullScreenWidth = window.frame.size.width * screenScale;
-    CGFloat fullScreenHeight = window.frame.size.height * screenScale;
-    bool isLandscapeNow = fullScreenWidth > fullScreenHeight;
+    CGFloat appWindowWidth = window.frame.size.width * screenScale;
+    CGFloat appWindowHeight = window.frame.size.height * screenScale;
+    bool needSwapWidthAndHeight = appWindowWidth > appWindowHeight;
     
-    resolutionTable[4] = CGSizeMake(safeAreaWidth, fullScreenHeight);
-    resolutionTable[5] = CGSizeMake(fullScreenWidth, fullScreenHeight);
+    resolutionTable[4] = CGSizeMake(safeAreaWidth, appWindowHeight);
 
     for(uint8_t i=0;i<7;i++){
         CGFloat longSideLen = resolutionTable[i].height > resolutionTable[i].width ? resolutionTable[i].height : resolutionTable[i].width;
         CGFloat shortSideLen = resolutionTable[i].height < resolutionTable[i].width ? resolutionTable[i].height : resolutionTable[i].width;
-        if(isLandscapeNow) resolutionTable[i] = CGSizeMake(longSideLen, shortSideLen);
+        if(needSwapWidthAndHeight) resolutionTable[i] = CGSizeMake(longSideLen, shortSideLen);
         else resolutionTable[i] = CGSizeMake(shortSideLen, longSideLen);
     }
-    
-    [self updateResolutionSettings];
+
+    resolutionTable[5] = CGSizeMake(appWindowWidth, appWindowHeight);
+
     [self updateResolutionDisplayViewText];
 }
 
-- (void)updateResolutionSettings{
-    DataManager* dataMgr = [[DataManager alloc] init];
-    Settings *currentSettings = [dataMgr retrieveSettings];
-    int resolution = currentSettings.resolutionSelected.intValue;
-    
-    if(resolution==4 || resolution==5){
-        currentSettings.width  = @(resolutionTable[resolution].width);
-        currentSettings.height = @(resolutionTable[resolution].height);
-        NSLog(@"Modify setting width & height: %.0f x %.0f", currentSettings.width.floatValue, currentSettings.height.floatValue);
-        [dataMgr saveData];
-    }
+// this will also be called back when device orientation changes
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    double delayInSeconds = 1.0;
+    // Convert the delay into a dispatch_time_t value
+    dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    // Perform some task after the delay
+    dispatch_after(delayTime, dispatch_get_main_queue(), ^{// Code to execute after the delay
+        [self updateResolutionTable];
+    });
 }
 
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     [self updateResolutionTable];
-    //NSLog(@"osc tool fingers setting test: %d", currentSettings.oscLayoutToolFingers.intValue);
-
+    NSLog(@"Resolution table updated");
 }
+
 
 - (void)deviceOrientationDidChange{
     double delayInSeconds = 1.0;
@@ -260,10 +259,11 @@ BOOL isCustomResolution(CGSize res) {
     // Perform some task after the delay
     dispatch_after(delayTime, dispatch_get_main_queue(), ^{
         // Code to execute after the delay
-        NSLog(@"Resolution table to be updated");
-        [self updateResolutionTable];
+        // [self updateResolutionTable];
+        // since we have viewWillTransitionToSize being called back both when orientation changed & app window size changed, resoltion update is dprecated here
     });
 }
+
 
 - (void)simulateSettingsButtonPress{
     [self.mainFrameViewController simulateSettingsButtonPress];
@@ -1085,12 +1085,6 @@ BOOL isCustomResolution(CGSize res) {
 #pragma mark - Navigation
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-}
-
-- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-    
-    [self deviceOrientationDidChange];
 }
 
 @end
