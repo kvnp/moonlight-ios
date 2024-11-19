@@ -33,6 +33,7 @@
 @property (nonatomic, retain) NSNumber * mousePointerVelocityFactor;
 @property (nonatomic, retain) NSNumber * pointerVelocityModeDivider;
 @property (nonatomic, retain) NSString * uniqueId;
+@property (nonatomic, retain) NSNumber * resolutionSelected;
 @property (nonatomic) enum {
     CODEC_PREF_AUTO,
     CODEC_PREF_H264,

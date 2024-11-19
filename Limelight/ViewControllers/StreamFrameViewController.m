@@ -860,4 +860,11 @@
 }
 #endif
 
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    
+    Log(LOG_I, @"View size changed, terminating stream");
+    [self returnToMainFrame];
+}
+
 @end

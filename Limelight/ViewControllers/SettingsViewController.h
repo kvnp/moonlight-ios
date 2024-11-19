@@ -68,6 +68,7 @@
 
 - (void) saveSettings;
 + (bool) isLandscapeNow;
+- (void)updateResolutionTable;
 - (void) widget:(UISlider*)widget setEnabled:(bool)enabled;
 
 @end

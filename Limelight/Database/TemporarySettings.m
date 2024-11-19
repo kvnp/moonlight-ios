@@ -99,6 +99,7 @@
     self.mousePointerVelocityFactor = settings.mousePointerVelocityFactor;
     self.pointerVelocityModeDivider = settings.pointerVelocityModeDivider;
     self.allowPortrait = settings.allowPortrait;
+    self.resolutionSelected = settings.resolutionSelected;
 #endif
     self.uniqueId = settings.uniqueId;
     
