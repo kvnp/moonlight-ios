@@ -132,7 +132,7 @@
 
 - (void) discoverHost:(NSString *)hostAddress withCallback:(void (^)(TemporaryHost *, NSString*))callback {
     BOOL prohibitedAddress = [DiscoveryManager isProhibitedAddress:hostAddress];
-    NSString* prohibitedAddressMessage = [LocalizationHelper localizedStringForKey: @"Moonlight-iOS/tvOS only supports adding PCs on your local network on %s."];
+    NSString* prohibitedAddressMessage = [LocalizationHelper localizedStringForKey: @"Moonlight-iOS/tvOS only supports adding PCs on your local network"]; // this is actually deprecated since i cancel the IP limitation
     ServerInfoResponse* serverInfoResponse = [self getServerInfoResponseForAddress:hostAddress];
     
     TemporaryHost* host = nil;

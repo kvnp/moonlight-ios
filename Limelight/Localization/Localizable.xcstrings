@@ -1296,7 +1296,7 @@
         }
       }
     },
-    "Moonlight-iOS/tvOS only supports adding PCs on your local network on %s." : {
+    "Moonlight-iOS/tvOS only supports adding PCs on your local network" : {
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
