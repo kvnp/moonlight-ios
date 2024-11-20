@@ -626,31 +626,31 @@
       }
     },
     "ckc-Dm-8ex.segmentTitles[5]" : {
-      "comment" : "Class = \"UISegmentedControl\"; ckc-Dm-8ex.segmentTitles[5] = \"Full\"; ObjectID = \"ckc-Dm-8ex\";",
+      "comment" : "Class = \"UISegmentedControl\"; ckc-Dm-8ex.segmentTitles[5] = \"FullScr/Window\"; ObjectID = \"ckc-Dm-8ex\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Full"
+            "value" : "FullScr/Window"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "全屏显示"
+            "value" : "全屏/窗口"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "全屏显示"
+            "value" : "全屏/窗口"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "全屏显示"
+            "value" : "全屏/窗口"
           }
         }
       }

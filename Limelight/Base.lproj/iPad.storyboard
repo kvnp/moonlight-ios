@@ -71,7 +71,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" apportionsSegmentWidthsByContent="YES" segmentControlStyle="plain" selectedSegmentIndex="5" translatesAutoresizingMaskIntoConstraints="NO" id="ckc-Dm-8ex">
-                                <rect key="frame" x="16" y="88" width="459" height="32"/>
+                                <rect key="frame" x="15" y="88" width="462" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <segments>
                                     <segment title="360p"/>
@@ -79,7 +79,7 @@
                                     <segment title="1080p"/>
                                     <segment title="4K"/>
                                     <segment title="Safe Area"/>
-                                    <segment title="Full"/>
+                                    <segment title="FullScr/Window"/>
                                     <segment title="Custom"/>
                                 </segments>
                                 <color key="tintColor" red="0.6716768741607666" green="0.61711704730987549" blue="0.99902987480163574" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
