@@ -864,7 +864,7 @@
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
     
     Log(LOG_I, @"View size changed, terminating stream");
-    [self returnToMainFrame];
+    // [self returnToMainFrame];
 }
 
 @end

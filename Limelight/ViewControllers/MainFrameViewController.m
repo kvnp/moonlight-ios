@@ -1004,16 +1004,39 @@ static NSMutableSet* hostList;
     }
 }
 
+- (BOOL)isFullScreenRequired {
+    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+    NSNumber *requiresFullScreen = infoDictionary[@"UIRequiresFullScreen"];
+    
+    if (requiresFullScreen != nil) {
+        return [requiresFullScreen boolValue];
+    }
+    // Default behavior if the key is not set
+    return YES;
+}
+
+
 - (void)attachWaterMark {
     // Create and configure the label
     if(true){
         [self->waterMark removeFromSuperview];
         self->waterMark = [[UILabel alloc] init];
         self->waterMark.translatesAutoresizingMaskIntoConstraints = NO;
-        self->waterMark.text = [LocalizationHelper localizedStringForKey:@"Contact True砖家(the Developer)"];
-        self->waterMark.textColor = UIColor.blackColor;
-        self->waterMark.alpha = 0.2;
+        self->waterMark.numberOfLines = 1;
         self->waterMark.font = [UIFont systemFontOfSize:22];
+        self->waterMark.text = [LocalizationHelper localizedStringForKey:@"waterMarkText"];
+        CGFloat labelHeight = 60;
+        NSLog(@"fullscr: %d", [self isFullScreenRequired]);
+        // the app is unable to automatically lock screen orientation in app window resiable mode(aka. not require fullscreen)
+        if(![self isFullScreenRequired]){
+            NSString* screenRotationTip = [LocalizationHelper localizedStringForKey:@"screenRotationTIp"];
+            self->waterMark.text = [NSString stringWithFormat:@"%@\n%@", self->waterMark.text, screenRotationTip];
+            self->waterMark.numberOfLines = 0; // Allow multiline text
+            self->waterMark.font = [UIFont systemFontOfSize:19];
+            labelHeight = 80;
+        }
+        self->waterMark.textColor = UIColor.blackColor;
+        self->waterMark.alpha = 0.35;
         self->waterMark.textAlignment = NSTextAlignmentCenter;
         self->waterMark.backgroundColor = [UIColor clearColor];
         self->waterMark.userInteractionEnabled = YES; // Enable user interaction for tap gesture
@@ -1024,10 +1047,10 @@ static NSMutableSet* hostList;
         [self.view addSubview:self->waterMark];
         // Set up constraints
         [NSLayoutConstraint activateConstraints:@[
-            [self->waterMark.centerXAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-185], // Aligns the horizontal center of label to the horizontal center of view
-            [self->waterMark.centerYAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-50], // Aligns the vertical center of label to the vertical center of view
+            [self->waterMark.centerXAnchor constraintEqualToAnchor:self.view.rightAnchor constant:-210], // Aligns the horizontal center of label to the horizontal center of view
+            [self->waterMark.centerYAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-(labelHeight+10)], // Aligns the vertical center of label to the vertical center of view
             [self->waterMark.widthAnchor constraintEqualToConstant:500],                     // Sets the width of label to 200 points
-            [self->waterMark.heightAnchor constraintEqualToConstant:60]                      // Sets the height of label to 50 points
+            [self->waterMark.heightAnchor constraintEqualToConstant:labelHeight]                      // Sets the height of label to 50 points
         ]];
     }
 }

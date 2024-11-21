@@ -588,29 +588,6 @@
         }
       }
     },
-    "Contact True砖家(the Developer)" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "开发者: True砖家 (B站)"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "开发者: True砖家 (B站)"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "开发者: True砖家 (B站)"
-          }
-        }
-      }
-    },
     "Current profile updated successfully" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2136,6 +2113,35 @@
         }
       }
     },
+    "screenRotationTIp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tips: Manually lock screen orientation to avoid display anomalies"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "提示: 手动锁定屏幕方向避免串流显示异常"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "提示: 手动锁定屏幕方向避免串流显示异常"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "提示: 手动锁定屏幕方向避免串流显示异常"
+          }
+        }
+      }
+    },
     "Searching for PCs on your network..." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2505,7 +2511,7 @@
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "提示: 从屏幕连续滑动一定距离退出远程桌面. 滑动边缘和距离取决于菜单设置."
+            "value" : "\\n提示: 从屏幕连续滑动一定距离退出远程桌面. 滑动边缘和距离取决于菜单设置."
           }
         }
       }
@@ -2840,6 +2846,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Wake-on-LAN"
+          }
+        }
+      }
+    },
+    "waterMarkText" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contact True砖家(the Developer)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "开发者: True砖家 (B站)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "开发者: True砖家 (B站)"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "开发者: True砖家 (B站)"
           }
         }
       }
