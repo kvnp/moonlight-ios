@@ -209,6 +209,9 @@ import UIKit
         super.touchesBegan(touches, with: event)
         //self.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 0.7)
         
+        OnScreenControls.testMethod();
+        RelativeTouchHandler.testMethod();
+        
         if !OnScreenButtonView.editMode {
             // self.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.7)
             self.buttonDownVisualEffect()

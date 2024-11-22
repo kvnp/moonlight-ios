@@ -142,6 +142,10 @@ static float L3_Y;
     return touchAddrsCapturedByOnScreenControls;
 }
 
++ (void) testMethod{
+    NSLog(@"swift calling test");
+}
+
 
 - (id) initWithView:(UIView*)view controllerSup:(ControllerSupport*)controllerSupport streamConfig:(StreamConfiguration*)streamConfig {
     self = [self init];

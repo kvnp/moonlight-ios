@@ -42,6 +42,10 @@ static const float QUICK_TAP_TIME_INTERVAL = 0.2;
     StreamView* streamView;
 }
 
++ (void) testMethod{
+    NSLog(@"swift calling test 666");
+}
+
 - (id)initWithView:(StreamView*)view andSettings:(TemporarySettings*)settings {
     self = [self init];
     self->streamView = view;

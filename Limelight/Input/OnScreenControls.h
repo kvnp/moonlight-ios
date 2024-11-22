@@ -93,6 +93,7 @@ typedef NS_ENUM(NSInteger, OnScreenControlsLevel) {
 
 
 + (NSMutableSet* )touchAddrsCapturedByOnScreenControls;
++ (void) testMethod;
 - (id) initWithView:(UIView*)view controllerSup:(ControllerSupport*)controllerSupport streamConfig:(StreamConfiguration*)streamConfig;
 - (BOOL) handleTouchDownEvent:(NSSet*)touches;
 - (BOOL) handleTouchUpEvent:(NSSet*)touches;
