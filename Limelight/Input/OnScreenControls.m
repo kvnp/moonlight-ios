@@ -1006,7 +1006,7 @@ static float L3_Y;
             [_controllerSupport updateLeftStick:_controller x:0x7FFE * xStickVal y:0x7FFE * -yStickVal];
             
             updated = true;
-        } else if (touch == _rsTouch) {
+        } else if (touch == _rsTouch) { // stick move event handled here
             if (xLoc > rsMaxX) xLoc = rsMaxX;
             if (xLoc < rsMinX) xLoc = rsMinX;
             if (yLoc > rsMaxY) yLoc = rsMaxY;
@@ -1020,7 +1020,7 @@ static float L3_Y;
             if (fabsf(xStickVal) < STICK_DEAD_ZONE) xStickVal = 0;
             if (fabsf(yStickVal) < STICK_DEAD_ZONE) yStickVal = 0;
             
-            [_controllerSupport updateRightStick:_controller x:0x7FFE * xStickVal y:0x7FFE * -yStickVal];
+            [_controllerSupport updateRightStick:_controller x:0x7FFE * xStickVal y:0x7FFE * -yStickVal]; // stick value populated to the controllerSupport here
             
             updated = true;
         } else if (touch == _dpadTouch) {
@@ -1095,7 +1095,7 @@ static float L3_Y;
         }
     }
     if (updated) {
-        [_controllerSupport updateFinished:_controller];
+        [_controllerSupport updateFinished:_controller]; // here's the method called to send controller event to the remote side
     }
     return updated || buttonTouch;
 }
