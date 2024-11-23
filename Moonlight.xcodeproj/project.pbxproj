@@ -582,7 +582,6 @@
 				FB89463719F6473800339C8A /* Launch Screen.xib */,
 				FB290D0819B2C406004C83CF /* Images.xcassets */,
 				FB290D0519B2C406004C83CF /* Limelight.xcdatamodeld */,
-				8473AE262CED9E3100E7D3FE /* Limelight.xcdatamodeld */,
 				FB1D59951BBCCB6400F482CA /* ComputerScrollView.h */,
 				FB1D59961BBCCB6400F482CA /* ComputerScrollView.m */,
 				FB1D59981BBCCD7E00F482CA /* AppCollectionView.h */,
@@ -1054,7 +1053,6 @@
 				FBDE86E019F7A837001C18A8 /* UIComputerView.m in Sources */,
 				FB89463019F646E200339C8A /* StreamConfiguration.m in Sources */,
 				FBD3495319FF36FB002D2A60 /* SWRevealViewController.m in Sources */,
-				8473AE382CED9E3100E7D3FE /* Limelight.xcdatamodeld in Sources */,
 				84203F232C5F24C00032EEED /* OnScreenButtonView.swift in Sources */,
 				84FD0B512C31338D006B5BE5 /* LocalizationHelper.m in Sources */,
 				FB1D59971BBCCB6400F482CA /* ComputerScrollView.m in Sources */,
@@ -1398,31 +1396,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		8473AE262CED9E3100E7D3FE /* Limelight.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				8473AE272CED9E3100E7D3FE /* Moonlight v1.4.xcdatamodel */,
-				8473AE282CED9E3100E7D3FE /* Moonlight v1.10.xcdatamodel */,
-				8473AE292CED9E3100E7D3FE /* Limelight.xcdatamodel */,
-				8473AE2A2CED9E3100E7D3FE /* Moonlight v1.8.xcdatamodel */,
-				8473AE2B2CED9E3100E7D3FE /* Moonlight v1.1.xcdatamodel */,
-				8473AE2C2CED9E3100E7D3FE /* Moonlight v1.2.xcdatamodel */,
-				8473AE2D2CED9E3100E7D3FE /* Moonlight v1.0-2.xcdatamodel */,
-				8473AE2E2CED9E3100E7D3FE /* Limelight 0.3.1.xcdatamodel */,
-				8473AE2F2CED9E3100E7D3FE /* Moonlight v1.7.xcdatamodel */,
-				8473AE302CED9E3100E7D3FE /* Moonlight v1.0.xcdatamodel */,
-				8473AE312CED9E3100E7D3FE /* Moonlight v1.9.xcdatamodel */,
-				8473AE322CED9E3100E7D3FE /* Moonlight v1.11.xcdatamodel */,
-				8473AE332CED9E3100E7D3FE /* Moonlight v1.5.xcdatamodel */,
-				8473AE342CED9E3100E7D3FE /* Limelight 0.3.0.xcdatamodel */,
-				8473AE352CED9E3100E7D3FE /* Moonlight v1.6.xcdatamodel */,
-				8473AE362CED9E3100E7D3FE /* Moonlight v1.3.xcdatamodel */,
-			);
-			currentVersion = 8473AE322CED9E3100E7D3FE /* Moonlight v1.11.xcdatamodel */;
-			path = Limelight.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
 		FB290D0519B2C406004C83CF /* Limelight.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
