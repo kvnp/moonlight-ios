@@ -211,6 +211,18 @@ BOOL isCustomResolution(CGSize res) {
     return CGRectGetWidth([[UIScreen mainScreen]bounds]) > CGRectGetHeight([[UIScreen mainScreen]bounds]);
 }
 
+- (bool)isFullScreenRequired {
+    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+    NSNumber *requiresFullScreen = infoDictionary[@"UIRequiresFullScreen"];
+    
+    if (requiresFullScreen != nil) {
+        return [requiresFullScreen boolValue];
+    }
+    // Default behavior if the key is not set
+    return true;
+}
+
+
 - (void)updateResolutionTable{
     UIWindow *window = UIApplication.sharedApplication.windows.firstObject;
     CGFloat screenScale = window.screen.scale;
@@ -451,11 +463,11 @@ BOOL isCustomResolution(CGSize res) {
     [self updateResolutionDisplayViewText];
     
     // allow portrait setting
-    bool allowPortraitSelectorEnabled;
-    if (@available(iOS 16.0, *)) allowPortraitSelectorEnabled = true; //probably need iOS 16.0 to make runtime orientation limitation woring
-    else allowPortraitSelectorEnabled = false;
-    // [self.allowPortraitSelector setEnabled:allowPortraitSelectorEnabled]; //temporally enable this selector for test
-    [self.allowPortraitSelector setSelectedSegmentIndex:currentSettings.allowPortrait ? 1 : 0];
+    bool allowPortraitSelectorEnabled = [self isFullScreenRequired];//need "requires fullscreen" enabled in the app bunddle to make runtime orientation limitation woring
+    if(allowPortraitSelectorEnabled) [self.allowPortraitSelector setSelectedSegmentIndex:currentSettings.allowPortrait ? 1 : 0];
+    else [self.allowPortraitSelector setSelectedSegmentIndex:1]; // can't lock screen orientation in this mode = always allow portrait mode
+    [self.allowPortraitSelector setEnabled:allowPortraitSelectorEnabled];
+
     
     // lift streamview setting
     [self.liftStreamViewForKeyboardSelector setSelectedSegmentIndex:currentSettings.liftStreamViewForKeyboard ? 1 : 0];// Load old setting

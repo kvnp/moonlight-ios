@@ -944,7 +944,7 @@ static NSMutableSet* hostList;
     [settingsViewController.framePacingSelector setEnabled:!self.settingsExpandedInStreamView];
     [settingsViewController.btMouseSelector setEnabled:!self.settingsExpandedInStreamView];
     [settingsViewController.goBackToStreamViewButton setEnabled:self.settingsExpandedInStreamView];
-    [settingsViewController.allowPortraitSelector setEnabled:!self.settingsExpandedInStreamView];
+    [settingsViewController.allowPortraitSelector setEnabled:!self.settingsExpandedInStreamView && [self isFullScreenRequired]];//need "requires fullscreen" enabled in the app bunddle to make runtime orientation limitation woring
 
     if (position == FrontViewPositionLeft) {
         [settingsViewController saveSettings];
@@ -1238,22 +1238,39 @@ static NSMutableSet* hostList;
     CGFloat screenScale = window.screen.scale;
     CGFloat appWindowWidth = CGRectGetWidth(window.frame) * screenScale;
     CGFloat appWindowHeight = CGRectGetHeight(window.frame) * screenScale;
+    CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
+    CGFloat screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
 
-    if(currentSettings.resolutionSelected.intValue == 5){ // app window res, previous fullscreen, update resolution directly
-        currentSettings.width = @(appWindowWidth);
-        currentSettings.height = @(appWindowHeight);
-        NSLog(@"Directly Update app window resolution: %f, %f", appWindowWidth, appWindowHeight);
-    }
+    bool needSwap = false;
     
-    else if(currentSettings.resolutionSelected.intValue){
-        bool needSwap = (appWindowWidth - appWindowHeight) * (currentSettings.width.floatValue - currentSettings.height.floatValue);
+    if([self isFullScreenRequired]){ // if force fullscreen is enabled in app bundle, we use screen bounds to tell if a swap between width & height is needed
+        needSwap = (currentSettings.width.floatValue - currentSettings.height.floatValue) * (screenWidthInPoints - screenHeightInPoints) < 0; //update the current resolution accordingly
+        NSLog(@"need to swap width & height (non-app window mode): %d", needSwap);
         if(needSwap){
             CGFloat tmpLength = currentSettings.width.floatValue;
             currentSettings.width = @(currentSettings.height.floatValue);
             currentSettings.height = @(tmpLength);
-            NSLog(@"Swap resolution width & height (non-app window)");
         }
     }
+    else{// if force fullscreen is disabled in app bundle, we use appWindowSize to directly update or to get if we need a swap
+        if(currentSettings.resolutionSelected.intValue == 5){ // app window res, previous fullscreen, update resolution directly
+            currentSettings.width = @(appWindowWidth);
+            currentSettings.height = @(appWindowHeight);
+            NSLog(@"Directly Update app window resolution: %f, %f", appWindowWidth, appWindowHeight);
+        }
+        else if(currentSettings.resolutionSelected.intValue){
+            needSwap = (currentSettings.width.floatValue - currentSettings.height.floatValue) * (appWindowWidth - appWindowHeight) < 0;
+            if(needSwap){
+                CGFloat tmpLength = currentSettings.width.floatValue;
+                currentSettings.width = @(currentSettings.height.floatValue);
+                currentSettings.height = @(tmpLength);
+                NSLog(@"Swap resolution width & height");
+            }
+        }
+    }
+    
+    
+    
     [dataMan saveData];
 }
 
