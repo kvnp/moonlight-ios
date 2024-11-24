@@ -146,6 +146,50 @@ static float L3_Y;
     NSLog(@"swift calling test");
 }
 
+- (void) sendRightStickTouchPadEventWithDeltaX:(CGFloat) deltaX deltaY: (CGFloat) deltaY{
+    CGFloat controllerX = 0x7FFE * deltaX / 50;
+    if(controllerX > 0x7FFE) controllerX = 0x7FFE;
+    if(controllerX < -0x7FFE) controllerX = -0x7FFE;
+    CGFloat controllerY = 0x7FFE * deltaY / 50;
+    if(controllerY > 0x7FFE) controllerY = 0x7FFE;
+    if(controllerY < -0x7FFE) controllerY = -0x7FFE;
+    [_controllerSupport updateRightStick:_controller x: controllerX y: - controllerY]; // stick value populated to the controllerSupport here
+    [_controllerSupport updateFinished:_controller];
+}
+
+- (void) clearRightStickTouchPadFlag{
+    [_controllerSupport updateRightStick:_controller x:0 y:0];
+    [_controllerSupport clearButtonFlag:_controller flags:RS_CLK_FLAG];
+    [_controllerSupport updateFinished:_controller];
+}
+
+- (void) sendLeftStickTouchPadEventWithDeltaX:(CGFloat) deltaX deltaY: (CGFloat) deltaY{
+    CGFloat controllerX = 0x7FFE * deltaX / 50;
+    if(controllerX > 0x7FFE) controllerX = 0x7FFE;
+    if(controllerX < -0x7FFE) controllerX = -0x7FFE;
+    CGFloat controllerY = 0x7FFE * deltaY / 50;
+    if(controllerY > 0x7FFE) controllerY = 0x7FFE;
+    if(controllerY < -0x7FFE) controllerY = -0x7FFE;
+    [_controllerSupport updateLeftStick:_controller x: controllerX y: - controllerY]; // stick value populated to the controllerSupport here
+    [_controllerSupport updateFinished:_controller];
+}
+
+- (void) clearLeftStickTouchPadFlag{
+    [_controllerSupport updateLeftStick:_controller x:0 y:0];
+    [_controllerSupport clearButtonFlag:_controller flags:LS_CLK_FLAG];
+    [_controllerSupport updateFinished:_controller];
+}
+
+
+// sending self as an instance to OnScreenButtonView
+- (void)sendInstance{
+    NSLog(@"OnScreenControls is sending its instance...");
+    if ([self.delegate respondsToSelector:@selector(getOnScreenControlsInstance:)]) {
+        [self.delegate getOnScreenControlsInstance:self];
+    } else {
+        NSLog(@"Delegate not set or does not respond to getOnScreenControlsInstance:");
+    }
+}
 
 - (id) initWithView:(UIView*)view controllerSup:(ControllerSupport*)controllerSupport streamConfig:(StreamConfiguration*)streamConfig {
     self = [self init];
@@ -1021,7 +1065,9 @@ static float L3_Y;
             if (fabsf(yStickVal) < STICK_DEAD_ZONE) yStickVal = 0;
             
             [_controllerSupport updateRightStick:_controller x:0x7FFE * xStickVal y:0x7FFE * -yStickVal]; // stick value populated to the controllerSupport here
-            
+            NSLog(@"rStickValue, x: %f, y: %f", 0x7FFE * xStickVal, 0x7FFE * yStickVal);
+            NSLog(@"real controlled instance: %@", self);
+
             updated = true;
         } else if (touch == _dpadTouch) {
             [_controllerSupport clearButtonFlag:_controller

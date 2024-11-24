@@ -9,7 +9,17 @@
 import UIKit
 
 
-@objc class OnScreenButtonView: UIView {
+@objc class OnScreenButtonView: UIView, InstanceProviderDelegate {
+    // receiving the OnScreenControls instance from delegate
+    @objc func getOnScreenControlsInstance(_ sender: Any) {
+        if let controls = sender as? OnScreenControls {
+            self.onScreenControls = controls
+            print("ClassA received OnScreenControls instance: \(controls)")
+        } else {
+            print("ClassA received an unknown sender")
+        }
+    }
+    
     @objc static public var editMode: Bool = false
     @objc static public var timestampOfButtonBeingDragged: TimeInterval = 0
     @objc public var keyLabel: String
@@ -19,7 +29,11 @@ import UIKit
     @objc public var widthFactor: CGFloat
     @objc public var heightFactor: CGFloat
     @objc public var backgroundAlpha: CGFloat
-
+    @objc public var latestMousePointerLocation: CGPoint
+    @objc public var deltaX: CGFloat
+    @objc public var deltaY: CGFloat
+    
+    private var onScreenControls: OnScreenControls
     private let label: UILabel
     // private let originalBackgroundColor: UIColor
     private var storedLocation: CGPoint = .zero
@@ -37,6 +51,10 @@ import UIKit
         self.widthFactor = 1.0
         self.heightFactor = 1.0
         self.backgroundAlpha = 0.5
+        self.latestMousePointerLocation = CGPoint(x: 0, y: 0)
+        self.deltaX = 0
+        self.deltaY = 0
+        self.onScreenControls = OnScreenControls()
         super.init(frame: .zero)
         setupView()
     }
@@ -205,12 +223,17 @@ import UIKit
     // Touch event handling
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // print("touchDown: %f", CACurrentMediaTime())
+        
+        if(touches.count == 1){
+            self.latestMousePointerLocation = (touches.first?.location(in: self))!
+        }
+        
         self.pressed = true
         super.touchesBegan(touches, with: event)
         //self.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 0.7)
         
         OnScreenControls.testMethod();
-        RelativeTouchHandler.testMethod();
+        // RelativeTouchHandler.testMethod();
         
         if !OnScreenButtonView.editMode {
             // self.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.7)
@@ -260,12 +283,24 @@ import UIKit
                 storedLocation = currentLocation // Update initial center for next movement
             }
         }
+        else{
+            if touches.count == 1 && false{
+                let currentLocation: CGPoint = (touches.first?.location(in: self))!
+                deltaX = currentLocation.x - self.latestMousePointerLocation.x
+                deltaY = currentLocation.y - self.latestMousePointerLocation.y
+                // NSLog("coord test deltaX: %f, deltaY: %f", deltaX, deltaY)
+                self.onScreenControls.sendLeftStickTouchPadEvent(withDeltaX: deltaX, deltaY: deltaY);
+            }
+        }
     }
     
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         // self.pressed = false // will be reset outside the class
         super.touchesEnded(touches, with: event)
+        if !OnScreenButtonView.editMode && touches.count == 1 {
+            self.onScreenControls.clearLeftStickTouchPadFlag();
+        }
         if !OnScreenButtonView.editMode && !self.keyString.contains("+") { // if the command(keystring contains "+", it's a multi-key command rather than a single key button
             
             if(CommandManager.mouseButtonMappings.keys.contains(self.keyString)){

@@ -15,6 +15,12 @@
 @class ControllerSupport;
 @class StreamConfiguration;
 
+// sending self as an instance to OnScreenButtonView or other related classes
+@protocol InstanceProviderDelegate <NSObject>
+- (void)getOnScreenControlsInstance:(id)sender; // Renamed delegate method
+@end
+
+
 static const float D_PAD_DIST = 10;
 static const float BUTTON_DIST = 20;
 
@@ -40,6 +46,11 @@ typedef NS_ENUM(NSInteger, OnScreenControlsLevel) {
     OnScreenControlsLevelAutoGCExtendedGamepadWithStickButtons
 };
 
+
+
+
+@property (nonatomic, weak) id<InstanceProviderDelegate> delegate; // Delegate property
+- (void)sendInstance;
 
 // @property (nonatomic, assign) CustomTapGestureRecognizer* mouseRightClickTapRecognizer; // this object will be passed to onscreencontrols class for areVirtualControllerTaps flag setting
 @property (nonatomic, assign) bool isLayingOut;
@@ -94,6 +105,11 @@ typedef NS_ENUM(NSInteger, OnScreenControlsLevel) {
 
 + (NSMutableSet* )touchAddrsCapturedByOnScreenControls;
 + (void) testMethod;
+- (void) sendRightStickTouchPadEventWithDeltaX:(CGFloat) deltaX deltaY: (CGFloat) deltaY;
+- (void) clearRightStickTouchPadFlag;
+- (void) sendLeftStickTouchPadEventWithDeltaX:(CGFloat) deltaX deltaY: (CGFloat) deltaY;
+- (void) clearLeftStickTouchPadFlag;
+
 - (id) initWithView:(UIView*)view controllerSup:(ControllerSupport*)controllerSupport streamConfig:(StreamConfiguration*)streamConfig;
 - (BOOL) handleTouchDownEvent:(NSSet*)touches;
 - (BOOL) handleTouchUpEvent:(NSSet*)touches;

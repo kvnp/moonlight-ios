@@ -382,6 +382,10 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
             OnScreenButtonState* buttonState = [NSKeyedUnarchiver unarchivedObjectOfClass:[OnScreenButtonState class] fromData:buttonStateEncoded error:nil];
             if(buttonState.buttonType == KeyboardOrMouseButton){
                 OnScreenButtonView* buttonView = [[OnScreenButtonView alloc] initWithKeyString:buttonState.name keyLabel:buttonState.alias]; //reconstruct buttonView
+                //--------------------------------------------------
+                onScreenControls.delegate = buttonView; // connecting onScreenControls to OnScreenButtonView, sending the active instance for touchPad stick control
+                [onScreenControls sendInstance];
+                //--------------------------------------------------
                 buttonView.translatesAutoresizingMaskIntoConstraints = NO; // weird but this is mandatory, or you will find no key views added to the right place
                 buttonView.widthFactor = buttonState.widthFactor;
                 buttonView.heightFactor = buttonState.heightFactor;

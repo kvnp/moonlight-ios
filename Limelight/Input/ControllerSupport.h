@@ -46,6 +46,8 @@
 -(void) setMotionEventState:(uint16_t)controllerNumber motionType:(uint8_t)motionType reportRateHz:(uint16_t)reportRateHz;
 -(void) setControllerLed:(uint16_t)controllerNumber r:(uint8_t)r g:(uint8_t)g b:(uint8_t)b;
 
+-(uint16_t) getActiveGamepadMask;
+
 +(int) getConnectedGamepadMask:(StreamConfiguration*)streamConfig;
 
 -(NSUInteger) getConnectedGamepadCount;
