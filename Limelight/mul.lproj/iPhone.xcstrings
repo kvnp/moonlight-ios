@@ -961,6 +961,96 @@
         }
       }
     },
+    "F96-Um-Q6t.segmentTitles[0]" : {
+      "comment" : "Class = \"UISegmentedControl\"; F96-Um-Q6t.segmentTitles[0] = \"Capture\"; ObjectID = \"F96-Um-Q6t\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Capture"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "捕获"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "捕获"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "捕获"
+          }
+        }
+      }
+    },
+    "F96-Um-Q6t.segmentTitles[1]" : {
+      "comment" : "Class = \"UISegmentedControl\"; F96-Um-Q6t.segmentTitles[1] = \"Hidden\"; ObjectID = \"F96-Um-Q6t\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hidden"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏"
+          }
+        }
+      }
+    },
+    "F96-Um-Q6t.segmentTitles[2]" : {
+      "comment" : "Class = \"UISegmentedControl\"; F96-Um-Q6t.segmentTitles[2] = \"Visible\"; ObjectID = \"F96-Um-Q6t\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Visible"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可见"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可见"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可见"
+          }
+        }
+      }
+    },
     "FqF-bM-afQ.configuration.title" : {
       "comment" : "Class = \"UIButton\"; configuration.title = \"Go Back to Stream View\"; ObjectID = \"FqF-bM-afQ\";",
       "extractionState" : "extracted_with_value",
@@ -2025,6 +2115,36 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "播放主机端声音"
+          }
+        }
+      }
+    },
+    "VGn-Oc-mKc.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Mouse Mode\"; ObjectID = \"VGn-Oc-mKc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mouse Mode"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鼠标模式"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鼠标模式"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鼠标模式"
           }
         }
       }

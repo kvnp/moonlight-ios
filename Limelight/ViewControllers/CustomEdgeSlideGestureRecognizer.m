@@ -18,7 +18,7 @@ static CGFloat screenWidthInPoints;
 
 - (instancetype)initWithTarget:(nullable id)target action:(nullable SEL)action {
     self = [super initWithTarget:target action:action];
-    screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]); // Get the screen's bounds (in points)
+    screenWidthInPoints = CGRectGetWidth([UIApplication.sharedApplication.windows.firstObject.screen bounds]); // Get the screen's bounds (in points)
     _immediateTriggering = false;
     _EDGE_TOLERANCE = 15.0f;
     return self;

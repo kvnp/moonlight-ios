@@ -46,6 +46,7 @@ static const double MOUSE_SPEED_DIVISOR = 1.25;
     char _controllerNumbers;
     bool _multiController;
     bool _swapABXYButtons;
+    bool _captureMouse;
 }
 
 // UPDATE_BUTTON_FLAG(controller, flag, pressed)
@@ -864,20 +865,25 @@ static const double MOUSE_SPEED_DIVISOR = 1.25;
 }
 
 -(void) registerMouseCallbacks:(GCMouse*) mouse API_AVAILABLE(ios(14.0)) {
-    mouse.mouseInput.mouseMovedHandler = ^(GCMouseInput * _Nonnull mouse, float deltaX, float deltaY) {
-        self->accumulatedDeltaX += deltaX / MOUSE_SPEED_DIVISOR;
-        self->accumulatedDeltaY += -deltaY / MOUSE_SPEED_DIVISOR;
-        
-        short truncatedDeltaX = (short)self->accumulatedDeltaX;
-        short truncatedDeltaY = (short)self->accumulatedDeltaY;
-        
-        if (truncatedDeltaX != 0 || truncatedDeltaY != 0) {
-            LiSendMouseMoveEvent(truncatedDeltaX, truncatedDeltaY);
+    if (_captureMouse){
+        mouse.mouseInput.mouseMovedHandler = ^(GCMouseInput * _Nonnull mouse, float deltaX, float deltaY) {
+            self->accumulatedDeltaX += deltaX / MOUSE_SPEED_DIVISOR;
+            self->accumulatedDeltaY += -deltaY / MOUSE_SPEED_DIVISOR;
             
-            self->accumulatedDeltaX -= truncatedDeltaX;
-            self->accumulatedDeltaY -= truncatedDeltaY;
-        }
-    };
+            short truncatedDeltaX = (short)self->accumulatedDeltaX;
+            short truncatedDeltaY = (short)self->accumulatedDeltaY;
+            
+            if (truncatedDeltaX != 0 || truncatedDeltaY != 0) {
+                LiSendMouseMoveEvent(truncatedDeltaX, truncatedDeltaY);
+                
+                self->accumulatedDeltaX -= truncatedDeltaX;
+                self->accumulatedDeltaY -= truncatedDeltaY;
+            }
+        };
+    } else {
+        mouse.mouseInput.mouseMovedHandler = nil;
+    }
+
     
     mouse.mouseInput.leftButton.pressedChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
         LiSendMouseButtonEvent(pressed ? BUTTON_ACTION_PRESS : BUTTON_ACTION_RELEASE, BUTTON_LEFT);
@@ -1120,6 +1126,7 @@ static const double MOUSE_SPEED_DIVISOR = 1.25;
         }
     }
     
+    _captureMouse = (streamConfig.mouseMode == 0);
     if (@available(iOS 14.0, tvOS 14.0, *)) {
         for (GCMouse* mouse in [GCMouse mice]) {
             [self registerMouseCallbacks:mouse];

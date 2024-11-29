@@ -44,7 +44,8 @@
                     statsOverlay:(BOOL)statsOverlay
                    allowPortrait:(BOOL)allowPortrait
               resolutionSelected:(NSInteger)resolutionSelected
-             externalDisplayMode:(NSInteger)externalDisplayMode;
+             externalDisplayMode:(NSInteger)externalDisplayMode
+                       mouseMode:(NSInteger)mouseMode;
 
 - (NSArray*) getHosts;
 - (void) updateHost:(TemporaryHost*)host;

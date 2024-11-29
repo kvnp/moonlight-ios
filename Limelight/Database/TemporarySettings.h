@@ -35,6 +35,7 @@
 @property (nonatomic, retain) NSString * uniqueId;
 @property (nonatomic, retain) NSNumber * resolutionSelected;
 @property (nonatomic, retain) NSNumber * externalDisplayMode;
+@property (nonatomic, retain) NSNumber * mouseMode;
 @property (nonatomic) enum {
     CODEC_PREF_AUTO,
     CODEC_PREF_H264,

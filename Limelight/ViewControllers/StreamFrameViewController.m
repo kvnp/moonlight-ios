@@ -167,6 +167,7 @@
                                         andConfig:(StreamConfiguration*)_streamConfig]; //reload OSC here.
     [self->_streamView reloadOnScreenButtonViews]; //reload keyboard buttons here. the keyboard button view will be added to the streamframe view instead streamview, the highest layer, which saves a lot of reengineering
     [self reloadAirPlayConfig];
+    [self mousePresenceChanged];
     
     //reconfig statsOverlay
     self->_statsUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f
@@ -966,7 +967,7 @@
     // Pointer lock breaks the UIKit mouse APIs, which is a problem because
     // GCMouse is horribly broken on iOS 14.0 for certain mice. Only lock
     // the cursor if there is a GCMouse present.
-    return [GCMouse mice].count > 0;
+    return ([GCMouse mice].count > 0) && [_settings mouseMode].intValue == 0;
 }
 #endif
 
