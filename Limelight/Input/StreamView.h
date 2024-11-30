@@ -15,6 +15,10 @@
 
 - (void) userInteractionBegan;
 - (void) userInteractionEnded;
+- (void) streamExitRequested;
+- (void) toggleStatsOverlay;
+- (void) toggleMouseCapture;
+- (void) toggleMouseVisible;
 
 @end
 

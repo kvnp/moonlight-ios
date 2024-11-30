@@ -64,12 +64,15 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     UIHoverGestureRecognizer *stylusHoverRecognizer;
 #endif
     CGFloat HeightViewLiftedTo;
+    
+    UIKeyModifierFlags comboKeyModifierFlags;
 }
 
 - (void) setupStreamView:(ControllerSupport*)controllerSupport
      interactionDelegate:(id<UserInteractionDelegate>)interactionDelegate
                   config:(StreamConfiguration*)streamConfig
  streamFrameTopLayerView:(UIView* )topLayerView{
+    self->comboKeyModifierFlags = (UIKeyModifierControl|UIKeyModifierAlternate|UIKeyModifierShift);
 
     self->streamFrameTopLayerView = topLayerView;
     self.streamFrameTopLayerView = topLayerView; // this will be used as a read-only pointer for other class
@@ -755,11 +758,34 @@ static const double X1_MOUSE_SPEED_DIVISOR = 2.5;
     else if(![onScreenControls handleTouchMovedEvent:touches]) [touchHandler touchesMoved:touches withEvent:event];
 }
 
+- (void) handleKeyCombos:(UIPress*) press{
+    if(press.key.modifierFlags != comboKeyModifierFlags){
+        return;
+    }
+    switch (press.key.keyCode) {
+        case UIKeyboardHIDUsageKeyboardQ:
+            [interactionDelegate streamExitRequested];
+            break;
+        case UIKeyboardHIDUsageKeyboardS:
+            [interactionDelegate toggleStatsOverlay];
+            break;
+        case UIKeyboardHIDUsageKeyboardM:
+            [interactionDelegate toggleMouseCapture];
+            break;
+        case UIKeyboardHIDUsageKeyboardC:
+            [interactionDelegate toggleMouseVisible];
+            break;
+        default:
+            break;
+    }
+}
+
 - (void)pressesBegan:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event {
     BOOL handled = NO;
     
     if (@available(iOS 13.4, tvOS 13.4, *)) {
         for (UIPress* press in presses) {
+            [self handleKeyCombos:press];
             // For now, we'll treated it as handled if we handle at least one of the
             // UIPress events inside the set.
             if ([KeyboardSupport sendKeyEventForPress:press down:YES]) {

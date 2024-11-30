@@ -936,6 +936,44 @@
 #endif
 }
 
+- (void)toggleStatsOverlay{
+    DataManager* dataMan = [[DataManager alloc] init];
+    Settings *currentSettings = [dataMan retrieveSettings];
+    
+    currentSettings.statsOverlay = !currentSettings.statsOverlay;
+    
+    [dataMan saveData];
+    [self reConfigStreamViewRealtime];
+}
+
+- (void)toggleMouseCapture{
+    DataManager* dataMan = [[DataManager alloc] init];
+    Settings *currentSettings = [dataMan retrieveSettings];
+    
+    if(currentSettings.mouseMode.intValue == 0){
+        currentSettings.mouseMode = @1;
+    }else{
+        currentSettings.mouseMode = @0;
+    }
+    
+    [dataMan saveData];
+    [self reConfigStreamViewRealtime];
+}
+
+- (void)toggleMouseVisible{
+    DataManager* dataMan = [[DataManager alloc] init];
+    Settings *currentSettings = [dataMan retrieveSettings];
+    
+    if(currentSettings.mouseMode.intValue == 2){
+        currentSettings.mouseMode = @1;
+    }else{
+        currentSettings.mouseMode = @2;
+    }
+    
+    [dataMan saveData];
+    [self reConfigStreamViewRealtime];
+}
+
 #if !TARGET_OS_TV
 // Require a confirmation when streaming to activate a system gesture
 - (UIRectEdge)preferredScreenEdgesDeferringSystemGestures {
