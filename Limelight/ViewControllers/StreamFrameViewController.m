@@ -12,6 +12,11 @@
 #import "StreamManager.h"
 #import "ControllerSupport.h"
 #import "DataManager.h"
+#import "CustomEdgeSlideGestureRecognizer.h"
+#import "CustomTapGestureRecognizer.h"
+#import "LocalizationHelper.h"
+#import "Moonlight-Swift.h"
+#import "OSCProfilesManager.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -30,6 +35,8 @@
 - (id)initWithRefreshRate:(float)arg1 videoDynamicRange:(int)arg2;
 @end
 
+
+
 @implementation StreamFrameViewController {
     ControllerSupport *_controllerSupport;
     StreamManager *_streamMan;
@@ -47,18 +54,173 @@
     UIScrollView *_scrollView;
     BOOL _userIsInteracting;
     CGSize _keyboardSize;
-    
+    UIWindow *_extWindow;
+    UIView *_renderView;
+    UIWindow *_deviceWindow;
+    dispatch_block_t _delayedRemoveExtScreen;
 #if !TARGET_OS_TV
-    UIScreenEdgePanGestureRecognizer *_exitSwipeRecognizer;
+    CustomEdgeSlideGestureRecognizer *_slideToSettingsRecognizer;
+    CustomEdgeSlideGestureRecognizer *_slideToCmdToolRecognizer;
+    CustomTapGestureRecognizer *_oscLayoutTapRecoginizer;
+    LayoutOnScreenControlsViewController *_layoutOnScreenControlsVC;
 #endif
 }
+
+- (bool)isOscLayoutToolEnabled{
+    return (_settings.touchMode.intValue == RELATIVE_TOUCH || _settings.touchMode.intValue == REGULAR_NATIVE_TOUCH || _settings.touchMode.intValue == ABSOLUTE_TOUCH) && _settings.onscreenControls.intValue == OnScreenControlsLevelCustom;
+}
+
+- (void)configOscLayoutTool{
+    if([self isOscLayoutToolEnabled]){
+        _oscLayoutTapRecoginizer = [[CustomTapGestureRecognizer alloc] initWithTarget:self action:@selector(layoutOSC)];
+        _oscLayoutTapRecoginizer.numberOfTouchesRequired = _settings.oscLayoutToolFingers.intValue; //tap a predefined number of fingers to open osc layout tool
+        _oscLayoutTapRecoginizer.tapDownTimeThreshold = 0.2;
+        _oscLayoutTapRecoginizer.delaysTouchesBegan = NO;
+        _oscLayoutTapRecoginizer.delaysTouchesEnded = NO;
+        if(_settings.touchMode.intValue == ABSOLUTE_TOUCH) _oscLayoutTapRecoginizer.immediateTriggering = true; // make immediate triggering on for absolute touch mode
+        
+        [self.view addGestureRecognizer:_oscLayoutTapRecoginizer]; //
+        /* sets a reference to the correct 'LayoutOnScreenControlsViewController' depending on whether the user is on an iPhone or iPad */
+        _layoutOnScreenControlsVC = [[LayoutOnScreenControlsViewController alloc] init];
+        BOOL isIPhone = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone);
+        if (isIPhone) {
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"iPhone" bundle:nil];
+            _layoutOnScreenControlsVC = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
+        }
+        else {
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"iPad" bundle:nil];
+            _layoutOnScreenControlsVC = [storyboard instantiateViewControllerWithIdentifier:@"LayoutOnScreenControlsViewController"];
+            _layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationFullScreen;
+        }
+        _layoutOnScreenControlsVC.view.backgroundColor = UIColor.clearColor;
+        _layoutOnScreenControlsVC.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+    }
+}
+
+- (void)presentCommandManagerViewController{
+    CommandManagerViewController* cmdManViewController = [[CommandManagerViewController alloc] init];
+    [self presentViewController:cmdManViewController animated:YES completion:nil];
+}
+
+- (void)configSwipeGestures{
+    _slideToSettingsRecognizer = [[CustomEdgeSlideGestureRecognizer alloc] initWithTarget:self action:@selector(edgeSwiped)];
+    _slideToSettingsRecognizer.edges = _settings.slideToSettingsScreenEdge.intValue;
+    _slideToSettingsRecognizer.normalizedThresholdDistance = _settings.slideToSettingsDistance.floatValue;
+    _slideToSettingsRecognizer.delaysTouchesBegan = NO;
+    _slideToSettingsRecognizer.delaysTouchesEnded = NO;
+    [self.view addGestureRecognizer:_slideToSettingsRecognizer];
+    
+    
+    _slideToCmdToolRecognizer = [[CustomEdgeSlideGestureRecognizer alloc] initWithTarget:self action:@selector(presentCommandManagerViewController)];
+    if(_settings.slideToSettingsScreenEdge.intValue == UIRectEdgeLeft) _slideToCmdToolRecognizer.edges = UIRectEdgeRight;
+    else _slideToCmdToolRecognizer.edges = UIRectEdgeLeft;  // _commandManager triggered by sliding from another side.
+    _slideToCmdToolRecognizer.normalizedThresholdDistance = _settings.slideToSettingsDistance.floatValue;
+    _slideToCmdToolRecognizer.delaysTouchesBegan = NO;
+    _slideToCmdToolRecognizer.delaysTouchesEnded = NO;
+    [self.view addGestureRecognizer:_slideToCmdToolRecognizer];
+}
+
+- (void)configZoomGestureAndAddStreamView{
+    if (_settings.touchMode.intValue == ABSOLUTE_TOUCH) {
+        _scrollView = [[UIScrollView alloc] initWithFrame:self.view.frame];
+#if !TARGET_OS_TV
+        [_scrollView.panGestureRecognizer setMinimumNumberOfTouches:2];
+        [_scrollView.panGestureRecognizer setMaximumNumberOfTouches:2]; // reduce competing with keyboardToggleRecognizer in StreamView.
+#endif
+        [_scrollView setShowsHorizontalScrollIndicator:NO];
+        [_scrollView setShowsVerticalScrollIndicator:NO];
+        [_scrollView setDelegate:self];
+        [_scrollView setMaximumZoomScale:10.0f];
+        
+        // Add StreamView inside a UIScrollView for absolute mode
+        [_scrollView addSubview:_streamView];
+        [self.view addSubview:_scrollView];
+    }
+    else{
+        // Add streamView directly to self.view in other touch modes
+        [self.view addSubview:_streamView];
+    }
+}
+
+// key implementation of reconfiguring streamview after realtime setting menu is closed.
+- (void)reConfigStreamViewRealtime{
+    //[self.view removeGestureRecognizer:]
+    //first, remove all gesture recognizers:
+    for (UIGestureRecognizer *recognizer in _streamView.gestureRecognizers) {
+        [_streamView removeGestureRecognizer:recognizer];
+    }
+    for (UIGestureRecognizer *recognizer in self.view.gestureRecognizers) {
+        [self.view removeGestureRecognizer:recognizer];
+    }
+    
+    _settings = [[[DataManager alloc] init] getSettings];  //StreamFrameViewController retrieve the settings here.
+    [self configOscLayoutTool];
+    [self configSwipeGestures];
+    [self configZoomGestureAndAddStreamView];
+    [self->_streamView disableOnScreenControls]; //don't know why but this must be called outside the streamview class, just put it here. execute in streamview class cause hang
+    [self.mainFrameViewcontroller reloadStreamConfig]; // reload streamconfig
+    
+    _controllerSupport = [[ControllerSupport alloc] initWithConfig:self.streamConfig delegate:self]; // reload controllerSupport obj, this is mandatory for OSC reload,especially when the stream view is launched without OSC
+    [_streamView setupStreamView:_controllerSupport interactionDelegate:self config:self.streamConfig streamFrameTopLayerView:self.view]; //reinitiate setupStreamView process.
+        // we got self.view passed to streamView class as the topLayerView, will be useful in many cases
+    [self->_streamView reloadOnScreenControlsRealtimeWith:(ControllerSupport*)_controllerSupport
+                                        andConfig:(StreamConfiguration*)_streamConfig]; //reload OSC here.
+    [self->_streamView reloadOnScreenButtonViews]; //reload keyboard buttons here. the keyboard button view will be added to the streamframe view instead streamview, the highest layer, which saves a lot of reengineering
+    [self reloadAirPlayConfig];
+    [self mousePresenceChanged];
+    
+    //reconfig statsOverlay
+    self->_statsUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f
+                                                               target:self
+                                                             selector:@selector(updateStatsOverlay)
+                                                             userInfo:nil
+                                                              repeats:_settings.statsOverlay];
+    
+    NSLog(@"frameview gestures: %d", (uint32_t)[self.view.gestureRecognizers count]);
+    NSLog(@"streamview gestures: %d", (uint32_t)[_streamView.gestureRecognizers count]);
+}
+
+
+
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
+    _deviceWindow = self.view.window;
+
+    if (UIScreen.screens.count > 1 && [self isAirPlayEnabled]) {
+        [self prepExtScreen:UIScreen.screens.lastObject];
+    }
+    else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.view insertSubview:self->_renderView atIndex:0];
+        });
+    }
+
+    // check to see if external screen is connected/disconnected
+
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(extScreenDidConnect:)
+                                                 name: UIScreenDidConnectNotification
+                                               object: nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(extScreenDidDisconnect:)
+                                                 name: UIScreenDidDisconnectNotification
+                                               object: nil];
+   
 #if !TARGET_OS_TV
     [[self revealViewController] setPrimaryViewController:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reConfigStreamViewRealtime) // reconfig streamview when settings view is closed in stream view
+                                                 name:@"SettingsViewClosedNotification"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(sessionDisconnectedBySettingView) //quit session when exit button is press in setting view during streaming
+                                                 name:@"SessionDisconnectedBySettingsViewNotification"
+                                               object:nil];
 #endif
 }
 
@@ -83,7 +245,7 @@
     
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     
-    _settings = [[[DataManager alloc] init] getSettings];
+    _settings = [[[DataManager alloc] init] getSettings];  //StreamFrameViewController retrieve the settings here.
     
     _stageLabel = [[UILabel alloc] init];
     [_stageLabel setUserInteractionEnabled:NO];
@@ -107,8 +269,11 @@
     _controllerSupport = [[ControllerSupport alloc] initWithConfig:self.streamConfig delegate:self];
     _inactivityTimer = nil;
     
+    _renderView = (StreamView*)[[UIView alloc] initWithFrame:self.view.frame];
     _streamView = [[StreamView alloc] initWithFrame:self.view.frame];
-    [_streamView setupStreamView:_controllerSupport interactionDelegate:self config:self.streamConfig];
+    _renderView.bounds = _streamView.bounds;
+    //[_streamView setupStreamView:_controllerSupport interactionDelegate:self config:self.streamConfig];
+    [self reConfigStreamViewRealtime]; // call this method again to make sure all gestures are configured & added to the superview(self.view), including the gestures added from inside the streamview.
     
 #if TARGET_OS_TV
     if (!_menuTapGestureRecognizer || !_menuDoubleTapGestureRecognizer || !_playPauseTapGestureRecognizer) {
@@ -129,12 +294,8 @@
     [self.view addGestureRecognizer:_playPauseTapGestureRecognizer];
 
 #else
-    _exitSwipeRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(edgeSwiped)];
-    _exitSwipeRecognizer.edges = UIRectEdgeLeft;
-    _exitSwipeRecognizer.delaysTouchesBegan = NO;
-    _exitSwipeRecognizer.delaysTouchesEnded = NO;
-    
-    [self.view addGestureRecognizer:_exitSwipeRecognizer];
+    //[self configSwipeGestures]; // swipe & exit gesture configured here
+    //[self configOscLayoutTool]; //_oscLayoutTapRecoginizer will be added or removed to the view here
 #endif
     
     _tipLabel = [[UILabel alloc] init];
@@ -143,7 +304,7 @@
 #if TARGET_OS_TV
     [_tipLabel setText:@"Tip: Tap the Play/Pause button on the Apple TV Remote to disconnect from your PC"];
 #else
-    [_tipLabel setText:@"Tip: Swipe from the left edge to disconnect from your PC"];
+    [_tipLabel setText:[LocalizationHelper localizedStringForKey:@"Tip: Swipe from screen edge to a certiain distance (configured by Swipe & Exit settings) to disconnect from your PC"]];
 #endif
     
     [_tipLabel sizeToFit];
@@ -152,7 +313,7 @@
     _tipLabel.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height * 0.9);
     
     _streamMan = [[StreamManager alloc] initWithConfig:self.streamConfig
-                                            renderView:_streamView
+                                            renderView:_renderView
                                    connectionCallbacks:self];
     NSOperationQueue* opQueue = [[NSOperationQueue alloc] init];
     [opQueue addOperation:_streamMan];
@@ -171,10 +332,16 @@
                                              selector: @selector(applicationDidEnterBackground:)
                                                  name: UIApplicationDidEnterBackgroundNotification
                                                object: nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(oscLayoutClosed)
+                                                 name:@"OscLayoutCloseNotification"
+                                               object:nil];
 
 #if 0
     // FIXME: This doesn't work reliably on iPad for some reason. Showing and hiding the keyboard
     // several times in a row will not correctly restore the state of the UIScrollView.
+    // TrueZhuanJia: Already fixed by my refactored keyboard toggle gesture recognizer, and the keyboardWillShow/Hide method in StreamView.m
     [[NSNotificationCenter defaultCenter] addObserver: self
                                              selector: @selector(keyboardWillShow:)
                                                  name: UIKeyboardWillShowNotification
@@ -186,30 +353,26 @@
                                                object: nil];
 #endif
     
-    // Only enable scroll and zoom in absolute touch mode
-    if (_settings.absoluteTouchMode) {
-        _scrollView = [[UIScrollView alloc] initWithFrame:self.view.frame];
-#if !TARGET_OS_TV
-        [_scrollView.panGestureRecognizer setMinimumNumberOfTouches:2];
-#endif
-        [_scrollView setShowsHorizontalScrollIndicator:NO];
-        [_scrollView setShowsVerticalScrollIndicator:NO];
-        [_scrollView setDelegate:self];
-        [_scrollView setMaximumZoomScale:10.0f];
-        
-        // Add StreamView inside a UIScrollView for absolute mode
-        [_scrollView addSubview:_streamView];
-        [self.view addSubview:_scrollView];
-    }
-    else {
-        // Add StreamView directly in relative mode
-        [self.view addSubview:_streamView];
-    }
-    
     [self.view addSubview:_stageLabel];
     [self.view addSubview:_spinner];
     [self.view addSubview:_tipLabel];
 }
+
+- (void)layoutOSC{
+    [self->_streamView disableOnScreenControls];
+    [self->_streamView clearOnScreenKeyboardButtons]; // clear all onScreenKeyboardButtons before entering edit mode
+    [self presentViewController:_layoutOnScreenControlsVC animated:YES completion:nil];
+}
+
+- (void)oscLayoutClosed{
+    // Handle the callback
+    [self->_streamView disableOnScreenControls]; // add this to get realtime back menu working.
+    [self->_streamView reloadOnScreenControlsWith:(ControllerSupport*)_controllerSupport
+                                        andConfig:(StreamConfiguration*)_streamConfig];
+    [self->_streamView showOnScreenControls];
+    [self->_streamView reloadOnScreenButtonViews]; //update keyboard buttons here
+}
+
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
     return _streamView;
@@ -254,8 +417,13 @@
 #endif
 
 - (void)updateStatsOverlay {
+    if(!_settings.statsOverlay){
+        [_overlayView removeFromSuperview];
+        return; // add this for realtime streamview reconfig
+    }
+    else [self.view addSubview:_overlayView]; // don't know why but this is necessary for reactivating overlay.
+
     NSString* overlayText = [self->_streamMan getStatsOverlayText];
-    
     dispatch_async(dispatch_get_main_queue(), ^{
         [self updateOverlayText:overlayText];
     });
@@ -313,7 +481,85 @@
     _statsUpdateTimer = nil;
     
     [self.navigationController popToRootViewControllerAnimated:YES];
+    
+    _extWindow = nil;
 }
+
+// External Screen connected
+- (void)extScreenDidConnect:(NSNotification *)notification {
+    Log(LOG_I, @"External Screen Connected");
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self prepExtScreen:notification.object];
+    });
+}
+
+// External Screen disconnected
+- (void)extScreenDidDisconnect:(NSNotification *)notification {
+    Log(LOG_I, @"External Screen Disconnected");
+    if(UIScreen.screens.count < 2)
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+        [self removeExtScreen];
+        });
+    }
+}
+
+- (BOOL) isAirPlaying{
+    return _extWindow != nil && _extWindow.hidden == NO;
+}
+
+- (BOOL) isAirPlayEnabled{
+    return _settings.externalDisplayMode.intValue == 1;
+}
+
+- (void) reloadAirPlayConfig{
+    if (UIScreen.screens.count == 1){return;}
+    if (![self isAirPlaying] && [self isAirPlayEnabled]){
+        [self prepExtScreen:UIScreen.screens.lastObject];
+    }else if ([self isAirPlaying] && ![self isAirPlayEnabled]){
+        [self removeExtScreen];
+    }
+}
+
+// Prepare Screen
+- (void)prepExtScreen:(UIScreen*)extScreen {
+    Log(LOG_I, @"Preparing External Screen");
+    if(![self isAirPlayEnabled]){
+        return;
+    }
+    CGRect frame = extScreen.bounds;
+    extScreen.overscanCompensation = UIScreenOverscanCompensationNone;
+    if(_extWindow==nil){
+        _extWindow = [[UIWindow alloc] initWithFrame:frame];
+    }
+    _extWindow.screen = extScreen;
+    _renderView.bounds = frame;
+    _renderView.frame = frame;
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc postNotificationName:@"ScreenChanged" object:self];
+    [_extWindow addSubview:_renderView];
+    _extWindow.hidden = NO;
+}
+
+- (void)removeExtScreen {
+    Log(LOG_I, @"Removing External Screen");
+    _extWindow.hidden = YES;
+    [self handleViewResize];
+    [self.view insertSubview:_renderView atIndex:0];
+}
+
+- (void) handleViewResize{
+    _streamView.bounds = _deviceWindow.bounds;
+    _streamView.frame = _deviceWindow.frame;
+    if(![self isAirPlaying]){
+        _renderView.bounds = _deviceWindow.bounds;
+        _renderView.frame = _deviceWindow.frame;
+        NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+        [nc postNotificationName:@"ScreenChanged" object:self];
+    }
+    [self reConfigStreamViewRealtime];
+}
+
 
 // This will fire if the user opens control center or gets a low battery message
 - (void)applicationWillResignActive:(NSNotification *)notification {
@@ -361,9 +607,22 @@
     [self returnToMainFrame];
 }
 
-- (void)edgeSwiped {
-    Log(LOG_I, @"User swiped to end stream");
-    
+- (void)expandSettingsView{
+    self.mainFrameViewcontroller.settingsExpandedInStreamView = true; //notify mainFrameViewContorller that this is a setting expansion in stream view, some settings shall be disabled.
+    [self.mainFrameViewcontroller simulateSettingsButtonPress];
+}
+
+- (void)edgeSwiped{
+    if([self->_mainFrameViewcontroller isIPhonePortrait]){ // disable backmenu for iphone portrait mode;
+        [self returnToMainFrame]; //directly quit the session
+        return;
+    }
+    [self expandSettingsView];  // expand settings view in other cases;
+}
+
+- (void)sessionDisconnectedBySettingView {
+    Log(LOG_I, @"Settings view disconnect the session in stream view");
+    self.mainFrameViewcontroller.settingsExpandedInStreamView = false; // reset this flag to false
     [self returnToMainFrame];
 }
 
@@ -374,6 +633,7 @@
         // the first frame of video.
         self->_stageLabel.hidden = YES;
         self->_tipLabel.hidden = YES;
+        self->_spinner.hidden = YES;
         
         [self->_streamView showOnScreenControls];
         
@@ -403,7 +663,7 @@
         NSString* message;
         
         if (portTestResults != ML_TEST_RESULT_INCONCLUSIVE && portTestResults != 0) {
-            title = @"Connection Error";
+            title = [LocalizationHelper localizedStringForKey:@"Connection Error"];
             message = @"Your device's network connection is blocking Moonlight. Streaming may not work while connected to this network.";
         }
         else {
@@ -413,28 +673,28 @@
                     return;
                     
                 case ML_ERROR_NO_VIDEO_TRAFFIC:
-                    title = @"Connection Error";
-                    message = @"No video received from host.";
+                    title = [LocalizationHelper localizedStringForKey:@"Connection Error"];
+                    message = [LocalizationHelper localizedStringForKey:@"No video received from host."];
                     if (portFlags != 0) {
                         char failingPorts[256];
                         LiStringifyPortFlags(portFlags, "\n", failingPorts, sizeof(failingPorts));
-                        message = [message stringByAppendingString:[NSString stringWithFormat:@"\n\nCheck your firewall and port forwarding rules for port(s):\n%s", failingPorts]];
+                        message = [message stringByAppendingString:[LocalizationHelper localizedStringForKey:@"ConnectionFailedFirewall", failingPorts]];
                     }
                     break;
                     
                 case ML_ERROR_NO_VIDEO_FRAME:
-                    title = @"Connection Error";
-                    message = @"Your network connection isn't performing well. Reduce your video bitrate setting or try a faster connection.";
+                    title = [LocalizationHelper localizedStringForKey:@"Connection Error"];
+                    message = [LocalizationHelper localizedStringForKey: @"Your network connection isn't performing well. Reduce your video bitrate setting or try a faster connection."];
                     break;
                     
                 case ML_ERROR_UNEXPECTED_EARLY_TERMINATION:
                 case ML_ERROR_PROTECTED_CONTENT:
-                    title = @"Connection Error";
+                    title = [LocalizationHelper localizedStringForKey:@"Connection Error"];
                     message = @"Something went wrong on your host PC when starting the stream.\n\nMake sure you don't have any DRM-protected content open on your host PC. You can also try restarting your host PC.\n\nIf the issue persists, try reinstalling your GPU drivers and GeForce Experience.";
                     break;
                     
                 case ML_ERROR_FRAME_CONVERSION:
-                    title = @"Connection Error";
+                    title = [LocalizationHelper localizedStringForKey:@"Connection Error"];
                     message = @"The host PC reported a fatal video encoding error.\n\nTry disabling HDR mode, changing the streaming resolution, or changing your host PC's display resolution.";
                     break;
                     
@@ -450,8 +710,8 @@
                         errorString = [NSString stringWithFormat:@"%d", errorCode];
                     }
                     
-                    title = @"Connection Terminated";
-                    message = [NSString stringWithFormat: @"The connection was terminated\n\nError code: %@", errorString];
+                    title = [LocalizationHelper localizedStringForKey: @"Connection Terminated"];
+                    message = [LocalizationHelper localizedStringForKey: @"The connection was terminated, Error code: %@", errorString];
                     break;
                 }
             }
@@ -461,7 +721,7 @@
                                                                               message:message
                                                                        preferredStyle:UIAlertControllerStyleAlert];
         [Utils addHelpOptionToDialog:conTermAlert];
-        [conTermAlert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction* action){
+        [conTermAlert addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Ok"] style:UIAlertActionStyleDefault handler:^(UIAlertAction* action){
             [self returnToMainFrame];
         }]];
         [self presentViewController:conTermAlert animated:YES completion:nil];
@@ -473,7 +733,7 @@
 - (void) stageStarting:(const char*)stageName {
     Log(LOG_I, @"Starting %s", stageName);
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSString* lowerCase = [NSString stringWithFormat:@"%s in progress...", stageName];
+        NSString* lowerCase = [NSString stringWithFormat:@"%s ...", stageName];
         NSString* titleCase = [[[lowerCase substringToIndex:1] uppercaseString] stringByAppendingString:[lowerCase substringFromIndex:1]];
         [self->_stageLabel setText:titleCase];
         [self->_stageLabel sizeToFit];
@@ -497,17 +757,17 @@
         if (portTestFlags != 0) {
             char failingPorts[256];
             LiStringifyPortFlags(portTestFlags, "\n", failingPorts, sizeof(failingPorts));
-            message = [message stringByAppendingString:[NSString stringWithFormat:@"\n\nCheck your firewall and port forwarding rules for port(s):\n%s", failingPorts]];
+            message = [message stringByAppendingString:[LocalizationHelper localizedStringForKey:@"ConnectionFailedFirewall", failingPorts]];
         }
         if (portTestResults != ML_TEST_RESULT_INCONCLUSIVE && portTestResults != 0) {
-            message = [message stringByAppendingString:@"\n\nYour device's network connection is blocking Moonlight. Streaming may not work while connected to this network."];
+            message = [message stringByAppendingString:[LocalizationHelper localizedStringForKey:@"!ML_TEST_RESULT_INCONCLUSIVE"]];
         }
         
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Connection Failed"
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:[LocalizationHelper localizedStringForKey:@"Connection Failed"]
                                                                        message:message
                                                                 preferredStyle:UIAlertControllerStyleAlert];
         [Utils addHelpOptionToDialog:alert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction* action){
+        [alert addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Ok"] style:UIAlertActionStyleDefault handler:^(UIAlertAction* action){
             [self returnToMainFrame];
         }]];
         [self presentViewController:alert animated:YES completion:nil];
@@ -523,11 +783,11 @@
         // Allow the display to go to sleep now
         [UIApplication sharedApplication].idleTimerDisabled = NO;
         
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Connection Error"
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:[LocalizationHelper localizedStringForKey:@"Connection Error"]
                                                                        message:message
                                                                 preferredStyle:UIAlertControllerStyleAlert];
         [Utils addHelpOptionToDialog:alert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction* action){
+        [alert addAction:[UIAlertAction actionWithTitle:[LocalizationHelper localizedStringForKey:@"Ok"] style:UIAlertActionStyleDefault handler:^(UIAlertAction* action){
             [self returnToMainFrame];
         }]];
         [self presentViewController:alert animated:YES completion:nil];
@@ -574,10 +834,10 @@
                 
             case CONN_STATUS_POOR:
                 if (self->_streamConfig.bitRate > 5000) {
-                    [self updateOverlayText:@"Slow connection to PC\nReduce your bitrate"];
+                    [self updateOverlayText:[LocalizationHelper localizedStringForKey:@"Slow connection to PC, Reduce your bitrate"]];
                 }
                 else {
-                    [self updateOverlayText:@"Poor connection to PC"];
+                    [self updateOverlayText:[LocalizationHelper localizedStringForKey:@"Poor connection to PC"]];
                 }
                 break;
         }
@@ -676,6 +936,44 @@
 #endif
 }
 
+- (void)toggleStatsOverlay{
+    DataManager* dataMan = [[DataManager alloc] init];
+    Settings *currentSettings = [dataMan retrieveSettings];
+    
+    currentSettings.statsOverlay = !currentSettings.statsOverlay;
+    
+    [dataMan saveData];
+    [self reConfigStreamViewRealtime];
+}
+
+- (void)toggleMouseCapture{
+    DataManager* dataMan = [[DataManager alloc] init];
+    Settings *currentSettings = [dataMan retrieveSettings];
+    
+    if(currentSettings.mouseMode.intValue == 0){
+        currentSettings.mouseMode = @1;
+    }else{
+        currentSettings.mouseMode = @0;
+    }
+    
+    [dataMan saveData];
+    [self reConfigStreamViewRealtime];
+}
+
+- (void)toggleMouseVisible{
+    DataManager* dataMan = [[DataManager alloc] init];
+    Settings *currentSettings = [dataMan retrieveSettings];
+    
+    if(currentSettings.mouseMode.intValue == 2){
+        currentSettings.mouseMode = @1;
+    }else{
+        currentSettings.mouseMode = @2;
+    }
+    
+    [dataMan saveData];
+    [self reConfigStreamViewRealtime];
+}
+
 #if !TARGET_OS_TV
 // Require a confirmation when streaming to activate a system gesture
 - (UIRectEdge)preferredScreenEdgesDeferringSystemGestures {
@@ -707,8 +1005,25 @@
     // Pointer lock breaks the UIKit mouse APIs, which is a problem because
     // GCMouse is horribly broken on iOS 14.0 for certain mice. Only lock
     // the cursor if there is a GCMouse present.
-    return [GCMouse mice].count > 0;
+    return ([GCMouse mice].count > 0) && [_settings mouseMode].intValue == 0;
 }
 #endif
+
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    
+    Log(LOG_I, @"View size changed, terminating stream");
+    
+    double delayInSeconds = 0.2;
+    if (_delayedRemoveExtScreen) {
+        dispatch_block_cancel(_delayedRemoveExtScreen);
+    }
+    dispatch_block_t block = dispatch_block_create(0, ^{
+        [self handleViewResize];
+    });
+    _delayedRemoveExtScreen = block;
+    dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(delayTime, dispatch_get_main_queue(), block);
+}
 
 @end

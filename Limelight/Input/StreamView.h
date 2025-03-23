@@ -15,6 +15,10 @@
 
 - (void) userInteractionBegan;
 - (void) userInteractionEnded;
+- (void) streamExitRequested;
+- (void) toggleStatsOverlay;
+- (void) toggleMouseCapture;
+- (void) toggleMouseVisible;
 
 @end
 
@@ -24,10 +28,27 @@
 @interface StreamView : UIView <X1KitMouseDelegate, UITextFieldDelegate, UIPointerInteractionDelegate>
 #endif
 
+@property (assign, nonatomic) UIView* streamFrameTopLayerView;
+
 - (void) setupStreamView:(ControllerSupport*)controllerSupport
      interactionDelegate:(id<UserInteractionDelegate>)interactionDelegate
-                  config:(StreamConfiguration*)streamConfig;
+                  config:(StreamConfiguration*)streamConfig
+ streamFrameTopLayerView:(UIView* )topLayerView
+;
 - (void) showOnScreenControls;
+- (void) setOnScreenControls;
+- (void) disableOnScreenControls;
+- (void) reloadOnScreenControlsRealtimeWith:(ControllerSupport*)controllerSupport
+                          andConfig:(StreamConfiguration*)streamConfig;
+- (void) reloadOnScreenControlsWith:(ControllerSupport*)controllerSupport
+                          andConfig:(StreamConfiguration*)streamConfig;
+- (void) clearOnScreenKeyboardButtons;
+- (void) reloadOnScreenButtonViews;
+
+- (CGSize) getVideoAreaSize;
+- (CGPoint) adjustCoordinatesForVideoArea:(CGPoint)point;
+- (uint16_t)getRotationFromAzimuthAngle:(float)azimuthAngle;
+
 - (OnScreenControlsLevel) getCurrentOscState;
 
 #if !TARGET_OS_TV

@@ -16,6 +16,7 @@
 #import "HttpResponse.h"
 #import "HttpRequest.h"
 #import "IdManager.h"
+#import "LocalizationHelper.h"
 
 #include <Limelight.h>
 
@@ -161,7 +162,7 @@
     uint32_t rtt, variance;
     NSString* latencyString;
     if (LiGetEstimatedRttInfo(&rtt, &variance)) {
-        latencyString = [NSString stringWithFormat:@"%u ms (variance: %u ms)", rtt, variance];
+        latencyString = [LocalizationHelper localizedStringForKey:@"%u ms (variance: %u ms)", rtt, variance];
     }
     else {
         latencyString = @"N/A";
@@ -169,7 +170,7 @@
     
     NSString* hostProcessingString;
     if (stats.framesWithHostProcessingLatency != 0) {
-        hostProcessingString = [NSString stringWithFormat:@"\nHost processing latency min/max/avg: %.1f/%.1f/%.1f ms",
+        hostProcessingString = [LocalizationHelper localizedStringForKey:@"\nHost processing latency min/max/avg: %.1f/%.1f/%.1f ms",
                                 stats.minHostProcessingLatency / 10.f,
                                 stats.maxHostProcessingLatency / 10.f,
                                 (float)stats.totalHostProcessingLatency / stats.framesWithHostProcessingLatency / 10.f];
@@ -179,7 +180,7 @@
     }
     
     float interval = stats.endTime - stats.startTime;
-    return [NSString stringWithFormat:@"Video stream: %dx%d %.2f FPS (Codec: %@)\nFrames dropped by your network connection: %.2f%%\nAverage network latency: %@%@",
+    return [LocalizationHelper localizedStringForKey:@"Video stream: %dx%d %.2f FPS (Codec: %@)\nFrames dropped by your network connection: %.2f%%\nAverage network latency: %@%@",
             _config.width,
             _config.height,
             stats.totalFrames / interval,

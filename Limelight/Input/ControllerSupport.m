@@ -50,6 +50,7 @@ static const double MOUSE_SPEED_DIVISOR = 1.25;
     bool _multiController;
     bool _swapABXYButtons;
     int _motionMode;
+    bool _captureMouse;
 }
 
 // UPDATE_BUTTON_FLAG(controller, flag, pressed)
@@ -451,6 +452,10 @@ static const double MOUSE_SPEED_DIVISOR = 1.25;
                 rightStickY = MAX_MAGNITUDE(rightStickY, controller.mergedWithController.lastRightStickY);
             }
             
+            
+            
+            //NSLog(@"gamepadMask: %@", [self binaryRepresentationOfInteger:buttonFlags]); // we got the pressed OSC buttons here.
+            
             // Player 1 is always present for OSC
             LiSendMultiControllerEvent(_multiController ? controller.playerIndex : 0, [self getActiveGamepadMask],
                                        buttonFlags, leftTrigger, rightTrigger,
@@ -466,6 +471,19 @@ static const double MOUSE_SPEED_DIVISOR = 1.25;
         });
     }
 }
+
+
+- (NSString *)binaryRepresentationOfInteger:(int)number {
+    NSMutableString *binaryString = [NSMutableString string];
+    int numBits = sizeof(number) * 8;
+
+    for (int i = numBits - 1; i >= 0; i--) {
+        [binaryString appendString:((number >> i) & 1) ? @"1" : @"0"];
+    }
+
+    return binaryString;
+}
+
 
 +(BOOL) hasKeyboardOrMouse {
     if (@available(iOS 14.0, tvOS 14.0, *)) {
@@ -944,20 +962,25 @@ static const double MOUSE_SPEED_DIVISOR = 1.25;
 }
 
 -(void) registerMouseCallbacks:(GCMouse*) mouse API_AVAILABLE(ios(14.0)) {
-    mouse.mouseInput.mouseMovedHandler = ^(GCMouseInput * _Nonnull mouse, float deltaX, float deltaY) {
-        self->accumulatedDeltaX += deltaX / MOUSE_SPEED_DIVISOR;
-        self->accumulatedDeltaY += -deltaY / MOUSE_SPEED_DIVISOR;
-        
-        short truncatedDeltaX = (short)self->accumulatedDeltaX;
-        short truncatedDeltaY = (short)self->accumulatedDeltaY;
-        
-        if (truncatedDeltaX != 0 || truncatedDeltaY != 0) {
-            LiSendMouseMoveEvent(truncatedDeltaX, truncatedDeltaY);
+    if (_captureMouse){
+        mouse.mouseInput.mouseMovedHandler = ^(GCMouseInput * _Nonnull mouse, float deltaX, float deltaY) {
+            self->accumulatedDeltaX += deltaX / MOUSE_SPEED_DIVISOR;
+            self->accumulatedDeltaY += -deltaY / MOUSE_SPEED_DIVISOR;
             
-            self->accumulatedDeltaX -= truncatedDeltaX;
-            self->accumulatedDeltaY -= truncatedDeltaY;
-        }
-    };
+            short truncatedDeltaX = (short)self->accumulatedDeltaX;
+            short truncatedDeltaY = (short)self->accumulatedDeltaY;
+            
+            if (truncatedDeltaX != 0 || truncatedDeltaY != 0) {
+                LiSendMouseMoveEvent(truncatedDeltaX, truncatedDeltaY);
+                
+                self->accumulatedDeltaX -= truncatedDeltaX;
+                self->accumulatedDeltaY -= truncatedDeltaY;
+            }
+        };
+    } else {
+        mouse.mouseInput.mouseMovedHandler = nil;
+    }
+
     
     mouse.mouseInput.leftButton.pressedChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
         LiSendMouseButtonEvent(pressed ? BUTTON_ACTION_PRESS : BUTTON_ACTION_RELEASE, BUTTON_LEFT);
@@ -1158,7 +1181,7 @@ static const double MOUSE_SPEED_DIVISOR = 1.25;
     // Even if no gamepads are present, we will always count one if OSC is enabled,
     // or it's set to auto and no keyboard or mouse is present. Absolute touch mode
     // disables the OSC.
-    if (level != OnScreenControlsLevelOff && (![ControllerSupport hasKeyboardOrMouse] || level != OnScreenControlsLevelAuto) && !settings.absoluteTouchMode) {
+    if (level != OnScreenControlsLevelOff && (![ControllerSupport hasKeyboardOrMouse] || level != OnScreenControlsLevelAuto) && (settings.touchMode.intValue == RELATIVE_TOUCH)) {
         mask |= 0x1;
     }
     
@@ -1201,6 +1224,7 @@ static const double MOUSE_SPEED_DIVISOR = 1.25;
         }
     }
     
+    _captureMouse = (streamConfig.mouseMode == 0);
     if (@available(iOS 14.0, tvOS 14.0, *)) {
         for (GCMouse* mouse in [GCMouse mice]) {
             [self registerMouseCallbacks:mouse];

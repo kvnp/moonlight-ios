@@ -14,6 +14,7 @@
 #import "DiscoveryWorker.h"
 #import "ServerInfoResponse.h"
 #import "IdManager.h"
+#import "LocalizationHelper.h"
 
 #include <Limelight.h>
 #include <arpa/inet.h>
@@ -85,7 +86,7 @@
 // the Add PC dialog. This is required to comply with Apple App Store
 // Guideline 4.2.7a.
 + (BOOL) isProhibitedAddress:(NSString*)address {
-#ifdef ENABLE_APP_STORE_RESTRICTIONS
+//#ifdef ENABLE_APP_STORE_RESTRICTIONS
     struct addrinfo hints;
     struct addrinfo* result;
     int err;
@@ -111,12 +112,15 @@
     }
     
     BOOL ret = ![DiscoveryManager isAddressLAN:((struct sockaddr_in*)result->ai_addr)->sin_addr.s_addr];
+    //BOOL ret = NO;
     freeaddrinfo(result);
+    
+    NSLog(@"IP Check, is prohibited: %d", ret);
 
-    return ret;
-#else
     return NO;
-#endif
+//#else
+//    return NO;
+//#endif
 }
 
 - (ServerInfoResponse*) getServerInfoResponseForAddress:(NSString*)address {
@@ -128,13 +132,7 @@
 
 - (void) discoverHost:(NSString *)hostAddress withCallback:(void (^)(TemporaryHost *, NSString*))callback {
     BOOL prohibitedAddress = [DiscoveryManager isProhibitedAddress:hostAddress];
-    NSString* prohibitedAddressMessage = [NSString stringWithFormat: @"Moonlight only supports adding PCs on your local network on %s.",
-    #if TARGET_OS_TV
-                                   "tvOS"
-    #else
-                                   "iOS"
-    #endif
-                             ];
+    NSString* prohibitedAddressMessage = [LocalizationHelper localizedStringForKey: @"Moonlight-iOS/tvOS only supports adding PCs on your local network"]; // this is actually deprecated since i cancel the IP limitation
     ServerInfoResponse* serverInfoResponse = [self getServerInfoResponseForAddress:hostAddress];
     
     TemporaryHost* host = nil;
@@ -197,12 +195,12 @@
         }
         
         if (![self addHostToDiscovery:host]) {
-            callback(nil, @"Host information updated");
+            callback(nil, [LocalizationHelper localizedStringForKey:@"Host information updated"]);
         } else {
             callback(host, nil);
         }
     } else if (!prohibitedAddress) {
-        callback(nil, @"Could not connect to host.\n\nIf you're hosting using GeForce Experience, make sure you've enabled the toggle on the SHIELD tab.\n\nIf you're hosting using Sunshine, ensure it is running properly. If you're using a non-default port, you will need to include that here.");
+        callback(nil, [LocalizationHelper localizedStringForKey:@"Manual_Add_Host_Fail"]);
     } else {
         callback(nil, prohibitedAddressMessage);
     }

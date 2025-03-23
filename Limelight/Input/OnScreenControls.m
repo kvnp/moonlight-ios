@@ -7,44 +7,41 @@
 //
 
 #import "OnScreenControls.h"
-#import "StreamView.h"
-#import "ControllerSupport.h"
+#import "CustomTapGestureRecognizer.h"
 #import "Controller.h"
 #include "Limelight.h"
 #if !TARGET_OS_TV
     #import <CoreMotion/CoreMotion.h>
 #endif
+#import "OnScreenButtonState.h"
+#import "OSCProfilesManager.h"
+#import "DataManager.h"
 
 #define UPDATE_BUTTON(x, y) (buttonFlags = \
 (y) ? (buttonFlags | (x)) : (buttonFlags & ~(x)))
 
+static NSMutableSet* touchAddrsCapturedByOnScreenControls;
+static CGRect standardRoundButtonBounds;
+static CGRect standardRectangleButtonBounds;
+static CGRect standardStickBounds;
+static CGRect standardStickBackgroundBounds;
+static CGRect standardUpDownButtonBounds;
+static CGRect standardLeftRightButtonBounds;
+static NSSet *validPositionButtonNames;
+
+
+
 @implementation OnScreenControls {
-    CALayer* _aButton;
-    CALayer* _bButton;
-    CALayer* _xButton;
-    CALayer* _yButton;
-    CALayer* _upButton;
-    CALayer* _downButton;
-    CALayer* _leftButton;
-    CALayer* _rightButton;
-    CALayer* _leftStickBackground;
-    CALayer* _leftStick;
-    CALayer* _rightStickBackground;
-    CALayer* _rightStick;
-    CALayer* _startButton;
-    CALayer* _selectButton;
-    CALayer* _r1Button;
-    CALayer* _r2Button;
-    CALayer* _r3Button;
-    CALayer* _l1Button;
-    CALayer* _l2Button;
-    CALayer* _l3Button;
-    
+
     UITouch* _aTouch;
     UITouch* _bTouch;
     UITouch* _xTouch;
     UITouch* _yTouch;
     UITouch* _dpadTouch;
+    UITouch* _upTouch;
+    UITouch* _leftTouch;
+    UITouch* _rightTouch;
+    UITouch* _downTouch;
     UITouch* _lsTouch;
     UITouch* _rsTouch;
     UITouch* _startTouch;
@@ -64,37 +61,66 @@
     
     BOOL _iPad;
     CGRect _controlArea;
-    UIView* _view;
-    OnScreenControlsLevel _level;
+    UIView* _view; // the view passed to here, is the streamFrameTopLayerView
     BOOL _visible;
     
     ControllerSupport *_controllerSupport;
     Controller *_controller;
     NSMutableArray* _deadTouches;
     BOOL _swapABXY;
+    BOOL _largerStickLR1;
+    CGFloat _oscTapExlusionAreaSizeFactor;
+    OSCProfilesManager *profilesManager;
+    NSMutableDictionary *_activeCustomOscButtonPositionDict;
+    NSMutableDictionary *_originalControllerLayerOpacityDict;
 }
+
+@synthesize D_PAD_CENTER_X;
+@synthesize D_PAD_CENTER_Y;
+@synthesize _leftStickBackground;
+@synthesize _leftStick;
+@synthesize _rightStickBackground;
+@synthesize _rightStick;
+@synthesize _upButton;
+@synthesize _downButton;
+@synthesize _leftButton;
+@synthesize _rightButton;
+@synthesize _aButton;
+@synthesize _bButton;
+@synthesize _xButton;
+@synthesize _yButton;
+@synthesize _startButton;
+@synthesize _selectButton;
+@synthesize _r1Button;
+@synthesize _r2Button;
+@synthesize _r3Button;
+@synthesize _l1Button;
+@synthesize _l2Button;
+@synthesize _l3Button;
+@synthesize _level;
+@synthesize OSCButtonLayers;
+@synthesize _dPadBackground;
 
 static const float EDGE_WIDTH = .05;
 
 //static const float BUTTON_SIZE = 50;
-static const float BUTTON_DIST = 20;
 static float BUTTON_CENTER_X;
 static float BUTTON_CENTER_Y;
 
-static const float D_PAD_DIST = 10;
-static float D_PAD_CENTER_X;
-static float D_PAD_CENTER_Y;
 
 static const float DEAD_ZONE_PADDING = 15;
 
 static const double STICK_CLICK_RATE = 100;
 static const float STICK_DEAD_ZONE = .1;
-static float STICK_INNER_SIZE;
-static float STICK_OUTER_SIZE;
+static float RIGHT_STICK_INNER_SIZE;
+static float RIGHT_STICK_OUTER_SIZE;
+static float LEFT_STICK_INNER_SIZE;
+static float LEFT_STICK_OUTER_SIZE;
 static float LS_CENTER_X;
 static float LS_CENTER_Y;
 static float RS_CENTER_X;
 static float RS_CENTER_Y;
+static const float DEFAULT_STICK_OPACITY = 0.63;
 
 static float START_X;
 static float START_Y;
@@ -115,14 +141,84 @@ static float L2_Y;
 static float L3_X;
 static float L3_Y;
 
++ (NSMutableSet* )touchAddrsCapturedByOnScreenControls{
+    return touchAddrsCapturedByOnScreenControls;
+}
+
++ (void) testMethod{
+    NSLog(@"swift calling test");
+}
+
+- (void) sendRightStickTouchPadEventWithDeltaX:(CGFloat) deltaX deltaY: (CGFloat) deltaY{
+    CGFloat controllerX = 0x7FFE * deltaX / 50;
+    if(controllerX > 0x7FFE) controllerX = 0x7FFE;
+    if(controllerX < -0x7FFE) controllerX = -0x7FFE;
+    CGFloat controllerY = 0x7FFE * deltaY / 50;
+    if(controllerY > 0x7FFE) controllerY = 0x7FFE;
+    if(controllerY < -0x7FFE) controllerY = -0x7FFE;
+    [_controllerSupport updateRightStick:_controller x: controllerX y: - controllerY]; // stick value populated to the controllerSupport here
+    [_controllerSupport updateFinished:_controller];
+}
+
+- (void) clearRightStickTouchPadFlag{
+    [_controllerSupport updateRightStick:_controller x:0 y:0];
+    [_controllerSupport clearButtonFlag:_controller flags:RS_CLK_FLAG];
+    [_controllerSupport updateFinished:_controller];
+}
+
+- (void) sendLeftStickTouchPadEventWithDeltaX:(CGFloat) deltaX deltaY: (CGFloat) deltaY{
+    CGFloat controllerX = 0x7FFE * deltaX / 50;
+    if(controllerX > 0x7FFE) controllerX = 0x7FFE;
+    if(controllerX < -0x7FFE) controllerX = -0x7FFE;
+    CGFloat controllerY = 0x7FFE * deltaY / 50;
+    if(controllerY > 0x7FFE) controllerY = 0x7FFE;
+    if(controllerY < -0x7FFE) controllerY = -0x7FFE;
+    [_controllerSupport updateLeftStick:_controller x: controllerX y: - controllerY]; // stick value populated to the controllerSupport here
+    [_controllerSupport updateFinished:_controller];
+}
+
+- (void) clearLeftStickTouchPadFlag{
+    [_controllerSupport updateLeftStick:_controller x:0 y:0];
+    [_controllerSupport clearButtonFlag:_controller flags:LS_CLK_FLAG];
+    [_controllerSupport updateFinished:_controller];
+}
+
+
+// sending self as an instance to OnScreenButtonView
+- (void)sendInstance{
+    NSLog(@"OnScreenControls is sending its instance...");
+    if ([self.delegate respondsToSelector:@selector(getOnScreenControlsInstance:)]) {
+        [self.delegate getOnScreenControlsInstance:self];
+    } else {
+        NSLog(@"Delegate not set or does not respond to getOnScreenControlsInstance:");
+    }
+}
+
 - (id) initWithView:(UIView*)view controllerSup:(ControllerSupport*)controllerSupport streamConfig:(StreamConfiguration*)streamConfig {
     self = [self init];
+    self.isLayingOut = false; // set false by default (play mode instead of layout mode)
     _view = view;
-    _controllerSupport = controllerSupport;
+    
+    profilesManager = [OSCProfilesManager sharedManager];
+    
+    self.OSCButtonLayers = [[NSMutableArray alloc] init];
+
+    if (controllerSupport) {
+        _controllerSupport = controllerSupport;
+    }
     _controller = [controllerSupport getOscController];
     _deadTouches = [[NSMutableArray alloc] init];
-    _swapABXY = streamConfig.swapABXYButtons;
+    if (streamConfig) {
+        _swapABXY = streamConfig.swapABXYButtons;
+    }
     
+    _originalControllerLayerOpacityDict = [[NSMutableDictionary alloc] init];
+    // we have to retrieve largerStickLR1 setting direct from the database, since streamConfig is invalid in LayoutOnScreenControls
+    DataManager* dataMan = [[DataManager alloc] init];
+    Settings* settings = [dataMan retrieveSettings];
+    _largerStickLR1 = settings.largerStickLR1;
+    _oscTapExlusionAreaSizeFactor = settings.oscTapExlusionAreaSize.floatValue;
+        
     _iPad = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad);
     _controlArea = CGRectMake(0, 0, _view.frame.size.width, _view.frame.size.height);
     if (_iPad)
@@ -136,7 +232,7 @@ static float L3_Y;
         _controlArea.origin.x = _controlArea.size.width * EDGE_WIDTH;
         _controlArea.size.width -= _controlArea.origin.x * 2;
     }
-    
+
     _aButton = [CALayer layer];
     _bButton = [CALayer layer];
     _xButton = [CALayer layer];
@@ -157,6 +253,60 @@ static float L3_Y;
     _rightStickBackground = [CALayer layer];
     _leftStick = [CALayer layer];
     _rightStick = [CALayer layer];
+        
+    [self.OSCButtonLayers addObject:_aButton];
+    [self.OSCButtonLayers addObject:_bButton];
+    [self.OSCButtonLayers addObject:_xButton];
+    [self.OSCButtonLayers addObject:_yButton];
+    [self.OSCButtonLayers addObject:_startButton];
+    [self.OSCButtonLayers addObject:_selectButton];
+    [self.OSCButtonLayers addObject:_r1Button];
+    [self.OSCButtonLayers addObject:_r2Button];
+    [self.OSCButtonLayers addObject:_r3Button];
+    [self.OSCButtonLayers addObject:_l1Button];
+    [self.OSCButtonLayers addObject:_l2Button];
+    [self.OSCButtonLayers addObject:_l3Button];
+    [self.OSCButtonLayers addObject:_upButton];
+    [self.OSCButtonLayers addObject:_downButton];
+    [self.OSCButtonLayers addObject:_leftButton];
+    [self.OSCButtonLayers addObject:_rightButton];
+    [self.OSCButtonLayers addObject:_leftStickBackground];
+    [self.OSCButtonLayers addObject:_rightStickBackground];
+    [self.OSCButtonLayers addObject:_leftStick];
+    [self.OSCButtonLayers addObject:_rightStick];
+
+    /* Name button layers to allow us to more easily associate them with 'OnScreenButtonState' objects by comparing their name properties */
+    _leftStickBackground.name = @"leftStickBackground";
+    _rightStickBackground.name = @"rightStickBackground";
+    _leftStick.name = @"leftStick";
+    _rightStick.name = @"rightStick";
+    _aButton.name = @"aButton";
+    _bButton.name = @"bButton";
+    _xButton.name = @"xButton";
+    _yButton.name = @"yButton";
+    _startButton.name = @"startButton";
+    _selectButton.name = @"selectButton";
+    _r1Button.name = @"r1Button";
+    _r2Button.name = @"r2Button";
+    _r3Button.name = @"r3Button";
+    _l1Button.name = @"l1Button";
+    _l2Button.name = @"l2Button";
+    _l3Button.name = @"l3Button";
+    _upButton.name = @"upButton";
+    _rightButton.name = @"rightButton";
+    _downButton.name = @"downButton";
+    _leftButton.name = @"leftButton";
+    
+    
+    _standardRoundButtonBounds = standardRoundButtonBounds = CGRectMake(0, 0, [UIImage imageNamed:@"AButton"].size.width, [UIImage imageNamed:@"AButton"].size.height);
+    _standardRectangleButtonBounds = standardRectangleButtonBounds = CGRectMake(0, 0, [UIImage imageNamed:@"StartButton"].size.width, [UIImage imageNamed:@"StartButton"].size.height);
+    _standardStickBounds = standardStickBounds = CGRectMake(0, 0, [UIImage imageNamed:@"StickInner"].size.width * 1.33, [UIImage imageNamed:@"StickInner"].size.height * 1.33);
+    _standardStickBackgroundBounds = standardStickBackgroundBounds = CGRectMake(0, 0, [UIImage imageNamed:@"StickOuter"].size.width * 1.10, [UIImage imageNamed:@"StickOuter"].size.height * 1.10);
+    _standardUpDownButtonBounds = standardUpDownButtonBounds = CGRectMake(0, 0, [UIImage imageNamed:@"UpButton"].size.width, [UIImage imageNamed:@"UpButton"].size.height);
+    _standardLeftRightButtonBounds = standardLeftRightButtonBounds = CGRectMake(0, 0, [UIImage imageNamed:@"LeftButton"].size.width, [UIImage imageNamed:@"LeftButton"].size.height);
+
+    _activeCustomOscButtonPositionDict = [[NSMutableDictionary alloc] init];
+    touchAddrsCapturedByOnScreenControls = [[NSMutableSet alloc] init];
     
     return self;
 }
@@ -182,7 +332,66 @@ static float L3_Y;
 }
 
 - (void) updateControls {
-    switch (_level) {
+    if(self._level == OnScreenControlsLevelCustom){
+        // mark all OSC buttons that has valid coords of positions
+        validPositionButtonNames = [NSSet setWithObjects:
+                                    @"l2Button",
+                                    @"l1Button",
+                                    @"dPad",
+                                    @"selectButton",
+                                    @"leftStickBackground",
+                                    @"rightStickBackground",
+                                    @"r2Button",
+                                    @"r1Button",
+                                    @"aButton",
+                                    @"bButton",
+                                    @"xButton",
+                                    @"yButton",
+                                    @"startButton",
+                                    nil];
+        
+        // _activeCustomOscButtonPositionDict will be updated every time when the osc profile is reloaded
+        OSCProfile *oscProfile = [profilesManager getSelectedProfile]; //returns the currently selected OSCProfile
+        [_activeCustomOscButtonPositionDict removeAllObjects]; //reset the Dict.
+        NSLog(@"_activeCustomOscButtonPositionDict update: STARTOVER");
+        for (NSData *buttonStateEncoded in oscProfile.buttonStates) {
+            OnScreenButtonState *buttonState = [NSKeyedUnarchiver unarchivedObjectOfClass:[OnScreenButtonState class] fromData:buttonStateEncoded error:nil];
+            
+            if(!buttonState.isHidden && [validPositionButtonNames containsObject:buttonState.name] && (buttonState.buttonType == GameControllerButton || [profilesManager getIndexOfSelectedProfile] == 0 ) ){
+                [_activeCustomOscButtonPositionDict setObject:[NSValue valueWithCGPoint:buttonState.position] forKey:buttonState.name]; // we got a buttonname -> position dict here
+                NSLog(@"_activeCustomOscButtonPositionDict update, button name:%@,  position: %f, %f", buttonState.name, buttonState.position.x, buttonState.position.y);
+            }
+            
+            // retrieve size factors & other necessary configurations for complex control
+            if([buttonState.name isEqualToString:@"leftStick"]){
+                _leftStickSizeFactor = buttonState.oscLayerSizeFactor;
+                if(_leftStickSizeFactor == 0) _leftStickSizeFactor = 1.0; // dealing with invalid sizefactor
+                _leftStickOpacity = buttonState.backgroundAlpha;
+                if(_leftStickOpacity == 0 ) _leftStickOpacity = DEFAULT_STICK_OPACITY; // dealing with invalid sizefactor
+            }
+            if([buttonState.name isEqualToString:@"rightStick"]){
+                _rightStickSizeFactor = buttonState.oscLayerSizeFactor;
+                if(_rightStickSizeFactor == 0) _rightStickSizeFactor = 1.0; // dealing with invalid sizefactor
+                _rightStickOpacity = buttonState.backgroundAlpha;
+                if(_rightStickOpacity == 0) _rightStickOpacity = DEFAULT_STICK_OPACITY; // dealing with invalid sizefactor
+            }
+            if([buttonState.name isEqualToString:@"upButton"]){
+                _dPadSizeFactor = buttonState.oscLayerSizeFactor / 0.982759;
+                if(_dPadSizeFactor == 0) _dPadSizeFactor = 1.0; // dealing with invalid sizefactor
+            }
+        }
+        NSLog(@"_activeCustomOscButtonPositionDict update, active button number: %lu", (unsigned long)[_activeCustomOscButtonPositionDict count]);
+    }
+    else{
+        // deal with simple & full mode configurations
+        _leftStickSizeFactor = _rightStickSizeFactor = 1.0;
+        _leftStickOpacity = _rightStickOpacity = DEFAULT_STICK_OPACITY;
+    }
+    
+    NSLog(@"rightStickOpacity: %f", _rightStickOpacity);
+    
+    // belows are orginal codes:
+    switch (self._level) {
         case OnScreenControlsLevelOff:
             [self hideButtons];
             [self hideBumpers];
@@ -227,28 +436,49 @@ static float L3_Y;
             [self hideSticks];
             break;
         case OnScreenControlsLevelSimple:
-            [self setupSimpleControls];
             
+            [self setupSimpleControls];
             [self hideTriggers];
             [self hideL3R3];
             [self hideBumpers];
             [self hideSticks];
             [self drawStartSelect];
             [self drawButtons];
+            [self setOpacityForStandardControllerLayers];
             break;
         case OnScreenControlsLevelFull:
-            [self setupComplexControls];
             
+            [self setupComplexControls];
             [self drawButtons];
             [self drawStartSelect];
             [self drawBumpers];
             [self drawTriggers];
             [self drawSticks];
             [self hideL3R3]; // Full controls don't need these they have the sticks
+            [self setOpacityForStandardControllerLayers];
+            break;
+        case OnScreenControlsLevelCustom:
+            
+            [self setupComplexControls];    // Default postion for D-Pad set here
+            [self setDPadCenter];    // Custom position for D-Pad set here
+            [self setAnalogStickPositions]; // Custom position for analog sticks set here
+            [self drawButtons];
+            [self drawStartSelect];
+            [self drawBumpers];
+            [self drawTriggers];
+            [self drawSticks];
+            [self positionAndResizeSingleControllerLayers];
+            [self setOpacityForCutsomControllerLayers];
+            
             break;
         default:
             Log(LOG_W, @"Unknown on-screen controls level: %d", (int)_level);
             break;
+    }
+    
+    // populate the controllerLayer.name -> Opacity dictionary...  have to do this in order to make touchdown visual effect consistent
+    for (CALayer* controllerLayer in self.OSCButtonLayers){
+        [_originalControllerLayerOpacityDict setObject:@(controllerLayer.opacity) forKey:controllerLayer.name];
     }
 }
 
@@ -378,9 +608,15 @@ static float L3_Y;
 
 - (void) drawButtons {
     UIImage* aButtonImage = [UIImage imageNamed:@"AButton"];
+    UIImage* aButtonHdImage = [UIImage imageNamed:@"AButtonHD"];
     UIImage* bButtonImage = [UIImage imageNamed:@"BButton"];
+    UIImage* bButtonHdImage = [UIImage imageNamed:@"BButtonHD"];
     UIImage* xButtonImage = [UIImage imageNamed:@"XButton"];
+    UIImage* xButtonHdImage = [UIImage imageNamed:@"XButtonHD"];
     UIImage* yButtonImage = [UIImage imageNamed:@"YButton"];
+    UIImage* yButtonHdImage = [UIImage imageNamed:@"YButtonHD"];
+
+    
     
     CGRect aButtonFrame = CGRectMake(BUTTON_CENTER_X - aButtonImage.size.width / 2, BUTTON_CENTER_Y + BUTTON_DIST, aButtonImage.size.width, aButtonImage.size.height);
     CGRect bButtonFrame = CGRectMake(BUTTON_CENTER_X + BUTTON_DIST, BUTTON_CENTER_Y - bButtonImage.size.height / 2, bButtonImage.size.width, bButtonImage.size.height);
@@ -388,117 +624,345 @@ static float L3_Y;
     CGRect yButtonFrame = CGRectMake(BUTTON_CENTER_X - yButtonImage.size.width / 2, BUTTON_CENTER_Y - BUTTON_DIST - yButtonImage.size.height, yButtonImage.size.width, yButtonImage.size.height);
     
     // create A button
-    _aButton.contents = (id) aButtonImage.CGImage;
+    _aButton.contents = (id) aButtonHdImage.CGImage;
+    // Set the filtering mode for smooth downscaling
+    _aButton.minificationFilter = kCAFilterLinear; // Smooth scaling down
+    _aButton.magnificationFilter = kCAFilterLinear; // Smooth scaling up (if needed)
+    _aButton.minificationFilterBias = 0.0f; // Trilinear-like effect
+
+    // Enable anti-aliasing for smoother edges
+    _aButton.allowsEdgeAntialiasing = YES;
+    _aButton.edgeAntialiasingMask = kCALayerLeftEdge | kCALayerRightEdge | kCALayerBottomEdge | kCALayerTopEdge;
+
     _aButton.frame = _swapABXY ? bButtonFrame : aButtonFrame;
-    [_view.layer addSublayer:_aButton];
+    [_view.layer addSublayer:_aButton];      // rendering OSC Button here
     
     // create B button
     _bButton.frame = _swapABXY ? aButtonFrame : bButtonFrame;
-    _bButton.contents = (id) bButtonImage.CGImage;
+    _bButton.contents = (id) bButtonHdImage.CGImage;
     [_view.layer addSublayer:_bButton];
     
     // create X Button
     _xButton.frame = _swapABXY ? yButtonFrame : xButtonFrame;
-    _xButton.contents = (id) xButtonImage.CGImage;
+    _xButton.contents = (id) xButtonHdImage.CGImage;
     [_view.layer addSublayer:_xButton];
     
     // create Y Button
     _yButton.frame = _swapABXY ? xButtonFrame : yButtonFrame;
-    _yButton.contents = (id) yButtonImage.CGImage;
+    _yButton.contents = (id) yButtonHdImage.CGImage;
     [_view.layer addSublayer:_yButton];
     
-    // create Down button
-    UIImage* downButtonImage = [UIImage imageNamed:@"DownButton"];
-    _downButton.frame = CGRectMake(D_PAD_CENTER_X - downButtonImage.size.width / 2, D_PAD_CENTER_Y + D_PAD_DIST, downButtonImage.size.width, downButtonImage.size.height);
-    _downButton.contents = (id) downButtonImage.CGImage;
-    [_view.layer addSublayer:_downButton];
     
-    // create Right button
-    UIImage* rightButtonImage = [UIImage imageNamed:@"RightButton"];
-    _rightButton.frame = CGRectMake(D_PAD_CENTER_X + D_PAD_DIST, D_PAD_CENTER_Y - rightButtonImage.size.height / 2, rightButtonImage.size.width, rightButtonImage.size.height);
-    _rightButton.contents = (id) rightButtonImage.CGImage;
-    [_view.layer addSublayer:_rightButton];
+    if(self._level == OnScreenControlsLevelFull ||
+       self._level == OnScreenControlsLevelSimple){
+        _dPadSizeFactor = 1.0;
+    }
     
-    // create Up button
-    UIImage* upButtonImage = [UIImage imageNamed:@"UpButton"];
-    _upButton.frame = CGRectMake(D_PAD_CENTER_X - upButtonImage.size.width / 2, D_PAD_CENTER_Y - D_PAD_DIST - upButtonImage.size.height, upButtonImage.size.width, upButtonImage.size.height);
-    _upButton.contents = (id) upButtonImage.CGImage;
+    // Calculate the distances of each button from the shared center based on their transformed positions
+    CGFloat newDPadDistFactor = 0.2/_dPadSizeFactor;
+    CGFloat newLongSideLength = standardLeftRightButtonBounds.size.width * _dPadSizeFactor;
+    CGFloat newShortSideLength = standardLeftRightButtonBounds.size.height * _dPadSizeFactor;
+    CGPoint sharedCenter = CGPointMake(D_PAD_CENTER_X, D_PAD_CENTER_Y); // this will anchor the center point of the dPad
+    
+    
+    // dPad buttons are resized HERE
+    // up button
+    // UIImage* upButtonImage = [UIImage imageNamed:@"UpButton"];
+    UIImage* upButtonHdImage = [UIImage imageNamed:@"UpButtonHD"];
+    _upButton.contents = (id) upButtonHdImage.CGImage;
     [_view.layer addSublayer:_upButton];
+    _upButton.anchorPoint = CGPointMake(0.5, 1 + newDPadDistFactor);
+    _upButton.bounds = CGRectMake(0, 0, newShortSideLength, newLongSideLength);
+    _upButton.position = CGPointMake(sharedCenter.x, sharedCenter.y);
     
-    // create Left button
-    UIImage* leftButtonImage = [UIImage imageNamed:@"LeftButton"];
-    _leftButton.frame = CGRectMake(D_PAD_CENTER_X - D_PAD_DIST - leftButtonImage.size.width, D_PAD_CENTER_Y - leftButtonImage.size.height / 2, leftButtonImage.size.width, leftButtonImage.size.height);
-    _leftButton.contents = (id) leftButtonImage.CGImage;
+    // down button
+    // UIImage* downButtonImage = [UIImage imageNamed:@"DownButton"];
+    UIImage* downButtonHdImage = [UIImage imageNamed:@"DownButtonHD"];
+    _downButton.contents = (id) downButtonHdImage.CGImage;
+    [_view.layer addSublayer:_downButton];
+    // Resize and reposition the button
+    _downButton.anchorPoint = CGPointMake(0.5, 0 - newDPadDistFactor);
+    _downButton.bounds = CGRectMake(0, 0, newShortSideLength, newLongSideLength);
+    _downButton.position = CGPointMake(sharedCenter.x, sharedCenter.y);
+    
+    // left button
+    // UIImage* leftButtonImage = [UIImage imageNamed:@"LeftButton"];
+    UIImage* leftButtonHdImage = [UIImage imageNamed:@"LeftButtonHD"];
+    _leftButton.contents = (id) leftButtonHdImage.CGImage;
     [_view.layer addSublayer:_leftButton];
+    _leftButton.anchorPoint = CGPointMake(1 + newDPadDistFactor, 0.5);
+    _leftButton.bounds = CGRectMake(0, 0, newLongSideLength, newShortSideLength);
+    _leftButton.position = CGPointMake(sharedCenter.x, sharedCenter.y);
+    
+    // right button
+    // UIImage* rightButtonImage = [UIImage imageNamed:@"RightButton"];
+    UIImage* rightButtonHdImage = [UIImage imageNamed:@"RightButtonHD"];
+    _rightButton.contents = (id) rightButtonHdImage.CGImage;
+    [_view.layer addSublayer:_rightButton];
+    _rightButton.anchorPoint = CGPointMake(0 - newDPadDistFactor, 0.5);
+    _rightButton.bounds = CGRectMake(0, 0, newLongSideLength, newShortSideLength);
+    _rightButton.position = CGPointMake(sharedCenter.x, sharedCenter.y);
 }
+
+/**
+ * Sets D-Pad position for class const var
+ */
+- (void) setDPadCenter {
+    OSCProfile *oscProfile = [profilesManager getSelectedProfile]; //returns the currently selected OSCProfile
+    
+    for (NSData *buttonStateEncoded in oscProfile.buttonStates) {
+        OnScreenButtonState *buttonState = [NSKeyedUnarchiver unarchivedObjectOfClass:[OnScreenButtonState class] fromData:buttonStateEncoded error:nil];
+            
+        if ([buttonState.name isEqualToString:@"dPad"]) {
+            D_PAD_CENTER_X = buttonState.position.x;
+            D_PAD_CENTER_Y = buttonState.position.y;
+        }
+    }
+}
+
+/**
+ * Sets analog stick positions for class const var
+ */
+- (void) setAnalogStickPositions {
+    OSCProfile *oscProfile = [profilesManager getSelectedProfile]; // returns the currently selected OSCProfile
+    
+    for (NSData *buttonStateEncoded in oscProfile.buttonStates) {
+        OnScreenButtonState *buttonState = [NSKeyedUnarchiver unarchivedObjectOfClass:[OnScreenButtonState class] fromData:buttonStateEncoded error:nil];
+            
+        if ([buttonState.name isEqualToString:@"leftStickBackground"]) {
+            LS_CENTER_X = buttonState.position.x;
+            LS_CENTER_Y = buttonState.position.y;
+        }
+        if ([buttonState.name isEqualToString:@"rightStickBackground"]) {
+            RS_CENTER_X = buttonState.position.x;
+            RS_CENTER_Y = buttonState.position.y;
+        }
+    }
+}
+
+/**
+ * Loads the selected OSC profile and lays out each button associated with that profile onto the screen
+ */
+
+# define LR2_Y_UP_OFFSET 8
+# define LR1_Y_DOWN_OFFSET 3.5
+- (void) positionAndResizeSingleControllerLayers {
+    OSCProfile *oscProfile = [profilesManager getSelectedProfile];
+    bool defaultProfileSelected = [profilesManager getIndexOfSelectedProfile] == 0;
+    
+    for (NSData *buttonStateEncoded in oscProfile.buttonStates) {
+        
+        OnScreenButtonState *buttonStateDecoded = [NSKeyedUnarchiver unarchivedObjectOfClass:[OnScreenButtonState class] fromData:buttonStateEncoded error:nil];
+        
+        for (CALayer *buttonLayer in self.OSCButtonLayers) {    // iterate through each button layer on screen and position and hide/unhide each according to the instructions of its associated 'buttonState'
+            if ([buttonLayer.name isEqualToString:buttonStateDecoded.name]) {
+                if ([buttonLayer.name isEqualToString:@"upButton"] == NO &&
+                    [buttonLayer.name isEqualToString:@"rightButton"] == NO &&
+                    [buttonLayer.name isEqualToString:@"downButton"] == NO &&
+                    [buttonLayer.name isEqualToString:@"leftButton"] == NO &&
+                    [buttonLayer.name isEqualToString:@"leftStick"] == NO &&
+                    [buttonLayer.name isEqualToString:@"rightStick"] == NO) {   // Don't move these buttons since they've already been positioned correctly in the 'drawButtons' and 'drawSticks' methods called before this method is called. The 'buttonStateDecoded' object associated with these buttons contains positions relative to a parent CALayer which only exists on 'LayoutOnScreenControls'. These positions relative to the parent layers would translate incorrectly when placed on the game stream VC's 'view' layer
+                    buttonLayer.position = buttonStateDecoded.position;
+                }
+                buttonLayer.hidden = buttonStateDecoded.isHidden;
+                
+                // adjust default layout for largerStickLR1
+                if( defaultProfileSelected && _largerStickLR1)
+                    if([buttonLayer.name isEqualToString:@"l2Button"] || [buttonLayer.name isEqualToString:@"r2Button"]) buttonLayer.position = CGPointMake(buttonLayer.position.x, buttonLayer.position.y - LR2_Y_UP_OFFSET);
+                    if([buttonLayer.name isEqualToString:@"l1Button"] || [buttonLayer.name isEqualToString:@"r1Button"]) buttonLayer.position = CGPointMake(buttonLayer.position.x, buttonLayer.position.y + LR1_Y_DOWN_OFFSET);
+                
+                // Here we deal with resizing single layer controllers only
+                if ([buttonLayer.name isEqualToString:@"l1Button"] ||
+                    [buttonLayer.name isEqualToString:@"r1Button"] ||
+                    [buttonLayer.name isEqualToString:@"l2Button"] ||
+                    [buttonLayer.name isEqualToString:@"r2Button"] ||
+                    [buttonLayer.name isEqualToString:@"aButton"] ||
+                    [buttonLayer.name isEqualToString:@"bButton"] ||
+                    [buttonLayer.name isEqualToString:@"xButton"] ||
+                    [buttonLayer.name isEqualToString:@"yButton"] ||
+                    [buttonLayer.name isEqualToString:@"selectButton"] ||
+                    [buttonLayer.name isEqualToString:@"startButton"]){
+                    CGFloat sizeFactor = buttonStateDecoded.oscLayerSizeFactor;
+                    if(sizeFactor == 0) sizeFactor = 1.0; // dealing with invalid sizefactor
+                    [self resizeControllerLayerWith:buttonLayer and:sizeFactor];
+                }
+            }
+        }
+    }
+}
+
+- (void) setOpacityForStandardControllerLayers {
+    for(CALayer* oscLayer in self.OSCButtonLayers){
+        if(oscLayer == self._leftStick ||
+           oscLayer == self._rightStick){
+            oscLayer.opacity = DEFAULT_STICK_OPACITY;
+        } else if(oscLayer == self._leftStickBackground ||
+           oscLayer == self._rightStickBackground){
+            oscLayer.opacity = 1.0;
+        } else{
+            oscLayer.opacity = 5.0f/6.0f;
+        }
+    }
+}
+
+
+- (void) setOpacityForCutsomControllerLayers {
+    OSCProfile *oscProfile = [profilesManager getSelectedProfile];
+    bool defaultProfileSelected = [profilesManager getIndexOfSelectedProfile] == 0;
+    
+    for (NSData *buttonStateEncoded in oscProfile.buttonStates) {
+        OnScreenButtonState *buttonStateDecoded = [NSKeyedUnarchiver unarchivedObjectOfClass:[OnScreenButtonState class] fromData:buttonStateEncoded error:nil];
+        for (CALayer *buttonLayer in self.OSCButtonLayers) {    // iterate through each button layer on screen
+            // Here we deal with resizing single layer controllers only
+            if ([buttonLayer.name isEqualToString:buttonStateDecoded.name]) {
+                if ([buttonLayer.name isEqualToString:@"l1Button"] ||
+                    [buttonLayer.name isEqualToString:@"r1Button"] ||
+                    [buttonLayer.name isEqualToString:@"l2Button"] ||
+                    [buttonLayer.name isEqualToString:@"r2Button"] ||
+                    [buttonLayer.name isEqualToString:@"aButton"] ||
+                    [buttonLayer.name isEqualToString:@"bButton"] ||
+                    [buttonLayer.name isEqualToString:@"xButton"] ||
+                    [buttonLayer.name isEqualToString:@"yButton"] ||
+                    [buttonLayer.name isEqualToString:@"selectButton"] ||
+                    [buttonLayer.name isEqualToString:@"startButton"] ||
+                    [buttonLayer.name isEqualToString:@"upButton"] ||
+                    [buttonLayer.name isEqualToString:@"rightButton"] ||
+                    [buttonLayer.name isEqualToString:@"downButton"] ||
+                    [buttonLayer.name isEqualToString:@"leftButton"]){
+                    NSLog(@"layerName: %@, alpha: %f", buttonLayer.name, buttonStateDecoded.backgroundAlpha);
+                    [self adjustControllerLayerOpacityWith:buttonLayer and:buttonStateDecoded.backgroundAlpha];
+                }
+                if([buttonLayer.name isEqualToString:@"leftStickBackground"]){
+                    [self adjustControllerLayerOpacityWith:buttonLayer and:_leftStickOpacity];
+                }
+                if([buttonLayer.name isEqualToString:@"rightStickBackground"]){
+                    [self adjustControllerLayerOpacityWith:buttonLayer and:_rightStickOpacity];
+                }
+            }
+        }
+    }
+}
+
+
 
 - (void) drawStartSelect {
     // create Start button
     UIImage* startButtonImage = [UIImage imageNamed:@"StartButton"];
+    UIImage* startButtonHdImage = [UIImage imageNamed:@"StartButtonHD"];
     _startButton.frame = CGRectMake(START_X - startButtonImage.size.width / 2, START_Y - startButtonImage.size.height / 2, startButtonImage.size.width, startButtonImage.size.height);
-    _startButton.contents = (id) startButtonImage.CGImage;
+    _startButton.contents = (id) startButtonHdImage.CGImage;
     [_view.layer addSublayer:_startButton];
     
     // create Select button
     UIImage* selectButtonImage = [UIImage imageNamed:@"SelectButton"];
+    UIImage* selectHdButtonImage = [UIImage imageNamed:@"SelectButtonHD"];
     _selectButton.frame = CGRectMake(SELECT_X - selectButtonImage.size.width / 2, SELECT_Y - selectButtonImage.size.height / 2, selectButtonImage.size.width, selectButtonImage.size.height);
-    _selectButton.contents = (id) selectButtonImage.CGImage;
+    _selectButton.contents = (id) selectHdButtonImage.CGImage;
     [_view.layer addSublayer:_selectButton];
 }
 
 - (void) drawBumpers {
+    // adjust layout for larger L2 & R2 button settings
+    if(_largerStickLR1) L1_Y = R1_Y = L1_Y + LR1_Y_DOWN_OFFSET;
+    
     // create L1 button
     UIImage* l1ButtonImage = [UIImage imageNamed:@"L1"];
+    UIImage* l1ButtonHdImage = [UIImage imageNamed:@"L1HD"];
     _l1Button.frame = CGRectMake(L1_X - l1ButtonImage.size.width / 2, L1_Y - l1ButtonImage.size.height / 2, l1ButtonImage.size.width, l1ButtonImage.size.height);
-    _l1Button.contents = (id) l1ButtonImage.CGImage;
+    _l1Button.contents = (id) l1ButtonHdImage.CGImage;
     [_view.layer addSublayer:_l1Button];
     
     // create R1 button
     UIImage* r1ButtonImage = [UIImage imageNamed:@"R1"];
+    UIImage* r1ButtonHdImage = [UIImage imageNamed:@"R1HD"];
     _r1Button.frame = CGRectMake(R1_X - r1ButtonImage.size.width / 2, R1_Y - r1ButtonImage.size.height / 2, r1ButtonImage.size.width, r1ButtonImage.size.height);
-    _r1Button.contents = (id) r1ButtonImage.CGImage;
+    _r1Button.contents = (id) r1ButtonHdImage.CGImage;
+    
+    // make l1 r1 the same size as l2 r2
+    if(_largerStickLR1){
+        UIImage* l2ButtonImage = [UIImage imageNamed:@"L2"];
+        UIImage* l2ButtonHdImage = [UIImage imageNamed:@"L2HD"];
+        _l1Button.bounds = _r1Button.bounds = CGRectMake(0, 0, l2ButtonImage.size.width, l2ButtonImage.size.height);
+    }
+    
     [_view.layer addSublayer:_r1Button];
 }
 
 - (void) drawTriggers {
+    // adjust layout for larger L2 & R2 button settings
+    if(_largerStickLR1) L2_Y = R2_Y = L2_Y - LR2_Y_UP_OFFSET;
+    
     // create L2 button
     UIImage* l2ButtonImage = [UIImage imageNamed:@"L2"];
+    UIImage* l2ButtonHdImage = [UIImage imageNamed:@"L2HD"];
     _l2Button.frame = CGRectMake(L2_X - l2ButtonImage.size.width / 2, L2_Y - l2ButtonImage.size.height / 2, l2ButtonImage.size.width, l2ButtonImage.size.height);
-    _l2Button.contents = (id) l2ButtonImage.CGImage;
+    _l2Button.contents = (id) l2ButtonHdImage.CGImage;
     [_view.layer addSublayer:_l2Button];
     
     // create R2 button
     UIImage* r2ButtonImage = [UIImage imageNamed:@"R2"];
+    UIImage* r2ButtonHdImage = [UIImage imageNamed:@"R2HD"];
     _r2Button.frame = CGRectMake(R2_X - r2ButtonImage.size.width / 2, R2_Y - r2ButtonImage.size.height / 2, r2ButtonImage.size.width, r2ButtonImage.size.height);
-    _r2Button.contents = (id) r2ButtonImage.CGImage;
+    _r2Button.contents = (id) r2ButtonHdImage.CGImage;
     [_view.layer addSublayer:_r2Button];
 }
 
 - (void) drawSticks {
     // create left analog stick
     UIImage* leftStickBgImage = [UIImage imageNamed:@"StickOuter"];
+    UIImage* stickBgHdImage = [UIImage imageNamed:@"StickOuterHD"];
+
     _leftStickBackground.frame = CGRectMake(LS_CENTER_X - leftStickBgImage.size.width / 2, LS_CENTER_Y - leftStickBgImage.size.height / 2, leftStickBgImage.size.width, leftStickBgImage.size.height);
-    _leftStickBackground.contents = (id) leftStickBgImage.CGImage;
+    _leftStickBackground.contents = (id) stickBgHdImage.CGImage;
     [_view.layer addSublayer:_leftStickBackground];
     
     UIImage* leftStickImage = [UIImage imageNamed:@"StickInner"];
+    UIImage* stickHdImage = [UIImage imageNamed:@"StickInnerHD"];
     _leftStick.frame = CGRectMake(LS_CENTER_X - leftStickImage.size.width / 2, LS_CENTER_Y - leftStickImage.size.height / 2, leftStickImage.size.width, leftStickImage.size.height);
-    _leftStick.contents = (id) leftStickImage.CGImage;
+    _leftStick.contents = (id) stickHdImage.CGImage;
+    _leftStick.opacity = _leftStickOpacity; // make stick half transparent when it's idle
     [_view.layer addSublayer:_leftStick];
     
     // create right analog stick
     UIImage* rightStickBgImage = [UIImage imageNamed:@"StickOuter"];
     _rightStickBackground.frame = CGRectMake(RS_CENTER_X - rightStickBgImage.size.width / 2, RS_CENTER_Y - rightStickBgImage.size.height / 2, rightStickBgImage.size.width, rightStickBgImage.size.height);
-    _rightStickBackground.contents = (id) rightStickBgImage.CGImage;
+    _rightStickBackground.contents = (id) stickBgHdImage.CGImage;
     [_view.layer addSublayer:_rightStickBackground];
+    
+    
     
     UIImage* rightStickImage = [UIImage imageNamed:@"StickInner"];
     _rightStick.frame = CGRectMake(RS_CENTER_X - rightStickImage.size.width / 2, RS_CENTER_Y - rightStickImage.size.height / 2, rightStickImage.size.width, rightStickImage.size.height);
-    _rightStick.contents = (id) rightStickImage.CGImage;
+    
+    _rightStick.contents = (id) stickHdImage.CGImage;
+    _rightStick.opacity = _rightStickOpacity; // make stick half transparent when it's idle
     [_view.layer addSublayer:_rightStick];
     
-    STICK_INNER_SIZE = rightStickImage.size.width;
-    STICK_OUTER_SIZE = rightStickBgImage.size.width;
+    // make stick larger
+    if(_largerStickLR1){
+        // sticks are resized here by the sizefactor persisted in the osc profile.
+        RIGHT_STICK_INNER_SIZE = rightStickImage.size.width *1.33 * _rightStickSizeFactor;
+        RIGHT_STICK_OUTER_SIZE = rightStickBgImage.size.width *1.10 * _rightStickSizeFactor;
+        _rightStick.bounds = CGRectMake(0, 0, RIGHT_STICK_INNER_SIZE, RIGHT_STICK_INNER_SIZE);
+        _rightStickBackground.bounds = CGRectMake(0, 0, RIGHT_STICK_OUTER_SIZE, RIGHT_STICK_OUTER_SIZE);
+        
+        LEFT_STICK_INNER_SIZE = rightStickImage.size.width *1.33 * _leftStickSizeFactor;
+        LEFT_STICK_OUTER_SIZE = rightStickBgImage.size.width *1.10 * _leftStickSizeFactor;
+        _leftStick.bounds = CGRectMake(0, 0, LEFT_STICK_INNER_SIZE, LEFT_STICK_INNER_SIZE);
+        _leftStickBackground.bounds = CGRectMake(0, 0, LEFT_STICK_OUTER_SIZE, LEFT_STICK_OUTER_SIZE);
+    }
+    else{
+        // sticks are resized here by the sizefactor persisted in the osc profile.
+        RIGHT_STICK_INNER_SIZE = rightStickImage.size.width * _rightStickSizeFactor;
+        RIGHT_STICK_OUTER_SIZE = rightStickBgImage.size.width * _rightStickSizeFactor;
+        _rightStick.bounds = CGRectMake(0, 0, RIGHT_STICK_INNER_SIZE, RIGHT_STICK_INNER_SIZE);
+        _rightStickBackground.bounds = CGRectMake(0, 0, RIGHT_STICK_OUTER_SIZE, RIGHT_STICK_OUTER_SIZE);
+        
+        LEFT_STICK_INNER_SIZE = rightStickImage.size.width * _leftStickSizeFactor;
+        LEFT_STICK_OUTER_SIZE = rightStickBgImage.size.width * _leftStickSizeFactor;
+        _leftStick.bounds = CGRectMake(0, 0, LEFT_STICK_INNER_SIZE, LEFT_STICK_INNER_SIZE);
+        _leftStickBackground.bounds = CGRectMake(0, 0, LEFT_STICK_OUTER_SIZE, LEFT_STICK_OUTER_SIZE);
+    }
 }
 
 - (void) drawL3R3 {
@@ -558,14 +1022,15 @@ static float L3_Y;
 - (BOOL) handleTouchMovedEvent:touches {
     BOOL updated = false;
     BOOL buttonTouch = false;
-    float rsMaxX = RS_CENTER_X + STICK_OUTER_SIZE / 2;
-    float rsMaxY = RS_CENTER_Y + STICK_OUTER_SIZE / 2;
-    float rsMinX = RS_CENTER_X - STICK_OUTER_SIZE / 2;
-    float rsMinY = RS_CENTER_Y - STICK_OUTER_SIZE / 2;
-    float lsMaxX = LS_CENTER_X + STICK_OUTER_SIZE / 2;
-    float lsMaxY = LS_CENTER_Y + STICK_OUTER_SIZE / 2;
-    float lsMinX = LS_CENTER_X - STICK_OUTER_SIZE / 2;
-    float lsMinY = LS_CENTER_Y - STICK_OUTER_SIZE / 2;
+    // we'll set fixed stick range despite stick & its background are resizable
+    float rsMaxX = RS_CENTER_X + standardStickBackgroundBounds.size.width / 2;
+    float rsMaxY = RS_CENTER_Y + standardStickBackgroundBounds.size.width / 2;
+    float rsMinX = RS_CENTER_X - standardStickBackgroundBounds.size.width / 2;
+    float rsMinY = RS_CENTER_Y - standardStickBackgroundBounds.size.width / 2;
+    float lsMaxX = LS_CENTER_X + standardStickBackgroundBounds.size.width / 2;
+    float lsMaxY = LS_CENTER_Y + standardStickBackgroundBounds.size.width / 2;
+    float lsMinX = LS_CENTER_X - standardStickBackgroundBounds.size.width / 2;
+    float lsMinY = LS_CENTER_Y - standardStickBackgroundBounds.size.width / 2;
     
     for (UITouch* touch in touches) {
         CGPoint touchLocation = [touch locationInView:_view];
@@ -577,7 +1042,7 @@ static float L3_Y;
             if (yLoc > lsMaxY) yLoc = lsMaxY;
             if (yLoc < lsMinY) yLoc = lsMinY;
             
-            _leftStick.frame = CGRectMake(xLoc - STICK_INNER_SIZE / 2, yLoc - STICK_INNER_SIZE / 2, STICK_INNER_SIZE, STICK_INNER_SIZE);
+            _leftStick.frame = CGRectMake(xLoc - LEFT_STICK_INNER_SIZE / 2, yLoc - LEFT_STICK_INNER_SIZE / 2, LEFT_STICK_INNER_SIZE, LEFT_STICK_INNER_SIZE);
             
             float xStickVal = (xLoc - LS_CENTER_X) / (lsMaxX - LS_CENTER_X);
             float yStickVal = (yLoc - LS_CENTER_Y) / (lsMaxY - LS_CENTER_Y);
@@ -588,13 +1053,13 @@ static float L3_Y;
             [_controllerSupport updateLeftStick:_controller x:0x7FFE * xStickVal y:0x7FFE * -yStickVal];
             
             updated = true;
-        } else if (touch == _rsTouch) {
+        } else if (touch == _rsTouch) { // stick move event handled here
             if (xLoc > rsMaxX) xLoc = rsMaxX;
             if (xLoc < rsMinX) xLoc = rsMinX;
             if (yLoc > rsMaxY) yLoc = rsMaxY;
             if (yLoc < rsMinY) yLoc = rsMinY;
             
-            _rightStick.frame = CGRectMake(xLoc - STICK_INNER_SIZE / 2, yLoc - STICK_INNER_SIZE / 2, STICK_INNER_SIZE, STICK_INNER_SIZE);
+            _rightStick.frame = CGRectMake(xLoc - RIGHT_STICK_INNER_SIZE / 2, yLoc - RIGHT_STICK_INNER_SIZE / 2, RIGHT_STICK_INNER_SIZE, RIGHT_STICK_INNER_SIZE);
             
             float xStickVal = (xLoc - RS_CENTER_X) / (rsMaxX - RS_CENTER_X);
             float yStickVal = (yLoc - RS_CENTER_Y) / (rsMaxY - RS_CENTER_Y);
@@ -602,8 +1067,10 @@ static float L3_Y;
             if (fabsf(xStickVal) < STICK_DEAD_ZONE) xStickVal = 0;
             if (fabsf(yStickVal) < STICK_DEAD_ZONE) yStickVal = 0;
             
-            [_controllerSupport updateRightStick:_controller x:0x7FFE * xStickVal y:0x7FFE * -yStickVal];
-            
+            [_controllerSupport updateRightStick:_controller x:0x7FFE * xStickVal y:0x7FFE * -yStickVal]; // stick value populated to the controllerSupport here
+            NSLog(@"rStickValue, x: %f, y: %f", 0x7FFE * xStickVal, 0x7FFE * yStickVal);
+            NSLog(@"real controlled instance: %@", self);
+
             updated = true;
         } else if (touch == _dpadTouch) {
             [_controllerSupport clearButtonFlag:_controller
@@ -612,16 +1079,38 @@ static float L3_Y;
             // Allow the user to slide their finger to another d-pad button
             if ([_upButton.presentationLayer hitTest:touchLocation]) {
                 [_controllerSupport setButtonFlag:_controller flags:UP_FLAG];
+                [self oscButtonTouchDownVisualEffect:_upButton];
                 updated = true;
-            } else if ([_downButton.presentationLayer hitTest:touchLocation]) {
+            } else {
+                _upButton.opacity = [_originalControllerLayerOpacityDict[_upButton.name] floatValue];
+                _upButton.shadowOpacity = 0.0;
+            }
+
+            if ([_downButton.presentationLayer hitTest:touchLocation]) {
                 [_controllerSupport setButtonFlag:_controller flags:DOWN_FLAG];
+                [self oscButtonTouchDownVisualEffect:_downButton];
                 updated = true;
-            } else if ([_leftButton.presentationLayer hitTest:touchLocation]) {
+            } else {
+                _downButton.opacity = [_originalControllerLayerOpacityDict[_downButton.name] floatValue];
+                _downButton.shadowOpacity = 0.0;
+            }
+
+            if ([_leftButton.presentationLayer hitTest:touchLocation]) {
                 [_controllerSupport setButtonFlag:_controller flags:LEFT_FLAG];
+                [self oscButtonTouchDownVisualEffect:_leftButton];
                 updated = true;
-            } else if ([_rightButton.presentationLayer hitTest:touchLocation]) {
+            } else {
+                _leftButton.opacity = [_originalControllerLayerOpacityDict[_leftButton.name] floatValue];
+                _leftButton.shadowOpacity = 0.0;
+            }
+            
+            if ([_rightButton.presentationLayer hitTest:touchLocation]) {
                 [_controllerSupport setButtonFlag:_controller flags:RIGHT_FLAG];
+                [self oscButtonTouchDownVisualEffect:_rightButton];
                 updated = true;
+            } else {
+                _rightButton.opacity = [_originalControllerLayerOpacityDict[_rightButton.name] floatValue];
+                _rightButton.shadowOpacity = 0.0;
             }
             
             buttonTouch = true;
@@ -655,189 +1144,345 @@ static float L3_Y;
         }
     }
     if (updated) {
-        [_controllerSupport updateFinished:_controller];
+        [_controllerSupport updateFinished:_controller]; // here's the method called to send controller event to the remote side
     }
     return updated || buttonTouch;
 }
 
+
+- (void)oscButtonTouchDownVisualEffect:(CALayer* )button{
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES]; // Disable implicit animations
+    
+    /*
+    if(![[_originalControllerLayerOpacityDict allKeys] containsObject:button.name]){
+        [_originalControllerLayerOpacityDict setObject:@(button.opacity) forKey:button.name];
+    }
+     */
+    
+    button.opacity = 0.9; // set a high opacity to ensure visibility of visual effect
+    button.borderColor = [UIColor clearColor].CGColor; // Color of the outline
+    button.borderWidth = 20; // Width of the outline
+    button.cornerRadius = button.bounds.size.width/2;
+    
+    // 使用 shadowPath 定义阴影形状和扩展范围
+    CGFloat spread = 15;  // 扩散的大小
+    if([button.name isEqualToString:@"leftStick"] || [button.name isEqualToString:@"rightStick"]) spread = 12;
+    CGRect largerRect = CGRectInset(button.bounds, -spread, -spread);
+    UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRoundedRect:largerRect cornerRadius:button.cornerRadius];
+    button.shadowPath = shadowPath.CGPath;
+    
+    //button.shadowColor = [[UIColor colorWithRed:0/255.0 green:110/255.0 blue:255/255.0 alpha:1.0] colorWithAlphaComponent:0.7].CGColor;
+    button.shadowColor = [[UIColor colorWithRed:0.5 green:0.5 blue:1.0 alpha:1] colorWithAlphaComponent:1].CGColor;
+    //button.shadowColor = [UIColor colorWithRed:0/255.0 green:51/255.0 blue:102/255.0 alpha:0.6].CGColor;
+    button.shadowOffset = CGSizeZero;
+    button.shadowOpacity = 1.0;
+    button.shadowRadius = 0.0; // Adjust the radius to simulate border thickness
+    [CATransaction commit];
+}
+
+
+// osc Button capturing here
 - (BOOL)handleTouchDownEvent:touches {
     BOOL updated = false;
     BOOL stickTouch = false;
     for (UITouch* touch in touches) {
+        
+        bool touchEventCapturedByOsc = false; // this flag will be reset for every touch event in the for-loop
+        
         CGPoint touchLocation = [touch locationInView:_view];
         
-        if (_aButton.superlayer != nil && [_aButton.presentationLayer hitTest:touchLocation]) {
+        if ([_aButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:A_FLAG];
             _aTouch = touch;
+            [self oscButtonTouchDownVisualEffect:_aButton];
             updated = true;
-        } else if (_bButton.superlayer != nil && [_bButton.presentationLayer hitTest:touchLocation]) {
+            touchEventCapturedByOsc = true;
+            // NSLog(@"Captured OSC A");
+        } else if ([_bButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:B_FLAG];
             _bTouch = touch;
+            [self oscButtonTouchDownVisualEffect:_bButton];
             updated = true;
-        } else if (_xButton.superlayer != nil && [_xButton.presentationLayer hitTest:touchLocation]) {
+            touchEventCapturedByOsc = true;
+            // NSLog(@"Captured OSC B");
+        } else if ([_xButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:X_FLAG];
             _xTouch = touch;
+            [self oscButtonTouchDownVisualEffect:_xButton];
             updated = true;
-        } else if (_yButton.superlayer != nil && [_yButton.presentationLayer hitTest:touchLocation]) {
+            touchEventCapturedByOsc = true;
+            // NSLog(@"Captured OSC X");
+        } else if ([_yButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:Y_FLAG];
             _yTouch = touch;
+            [self oscButtonTouchDownVisualEffect:_yButton];
             updated = true;
-        } else if (_upButton.superlayer != nil && [_upButton.presentationLayer hitTest:touchLocation]) {
+            touchEventCapturedByOsc = true;
+            // NSLog(@"Captured OSC Y");
+        } else if ([_upButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:UP_FLAG];
             _dpadTouch = touch;
+            _upTouch = touch;
+            [self oscButtonTouchDownVisualEffect:_upButton];
             updated = true;
-        } else if (_downButton.superlayer != nil && [_downButton.presentationLayer hitTest:touchLocation]) {
+            touchEventCapturedByOsc = true;
+            // NSLog(@"Captured OSC UP");
+        } else if ([_downButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:DOWN_FLAG];
             _dpadTouch = touch;
+            _downTouch = touch;
+            [self oscButtonTouchDownVisualEffect:_downButton];
             updated = true;
-        } else if (_leftButton.superlayer != nil && [_leftButton.presentationLayer hitTest:touchLocation]) {
+            touchEventCapturedByOsc = true;
+        } else if ([_leftButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:LEFT_FLAG];
             _dpadTouch = touch;
+            _leftTouch = touch;
+            [self oscButtonTouchDownVisualEffect:_leftButton];
             updated = true;
-        } else if (_rightButton.superlayer != nil && [_rightButton.presentationLayer hitTest:touchLocation]) {
+            touchEventCapturedByOsc = true;
+            // NSLog(@"Captured OSC LEFT");
+        } else if ([_rightButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:RIGHT_FLAG];
             _dpadTouch = touch;
+            _rightTouch = touch;
+            [self oscButtonTouchDownVisualEffect:_rightButton];
             updated = true;
-        } else if (_startButton.superlayer != nil && [_startButton.presentationLayer hitTest:touchLocation]) {
+            touchEventCapturedByOsc = true;
+            // NSLog(@"Captured OSC RIGHT");
+        } else if ([_startButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:PLAY_FLAG];
             _startTouch = touch;
+            [self oscButtonTouchDownVisualEffect:_startButton];
             updated = true;
-        } else if (_selectButton.superlayer != nil && [_selectButton.presentationLayer hitTest:touchLocation]) {
+            touchEventCapturedByOsc = true;
+            // NSLog(@"Captured OSC PLAY");
+        } else if ([_selectButton.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:BACK_FLAG];
             _selectTouch = touch;
+            [self oscButtonTouchDownVisualEffect:_selectButton];
             updated = true;
-        } else if (_l1Button.superlayer != nil && [_l1Button.presentationLayer hitTest:touchLocation]) {
+            touchEventCapturedByOsc = true;
+            // NSLog(@"Captured OSC BACK");
+        } else if ([_l1Button.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:LB_FLAG];
             _l1Touch = touch;
+            [self oscButtonTouchDownVisualEffect:_l1Button];
             updated = true;
-        } else if (_r1Button.superlayer != nil && [_r1Button.presentationLayer hitTest:touchLocation]) {
+            touchEventCapturedByOsc = true;
+            // NSLog(@"Captured OSC LB");
+        } else if ([_r1Button.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport setButtonFlag:_controller flags:RB_FLAG];
             _r1Touch = touch;
+            [self oscButtonTouchDownVisualEffect:_r1Button];
             updated = true;
-        } else if (_l2Button.superlayer != nil && [_l2Button.presentationLayer hitTest:touchLocation]) {
+            touchEventCapturedByOsc = true;
+            // NSLog(@"Captured OSC RB");
+        } else if ([_l2Button.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport updateLeftTrigger:_controller left:0xFF];
             _l2Touch = touch;
+            [self oscButtonTouchDownVisualEffect:_l2Button];
             updated = true;
-        } else if (_r2Button.superlayer != nil && [_r2Button.presentationLayer hitTest:touchLocation]) {
+            touchEventCapturedByOsc = true;
+            // NSLog(@"Captured OSC LeftTrigger");
+        } else if ([_r2Button.presentationLayer hitTest:touchLocation]) {
             [_controllerSupport updateRightTrigger:_controller right:0xFF];
             _r2Touch = touch;
+            [self oscButtonTouchDownVisualEffect:_r2Button];
             updated = true;
-        } else if (_l3Button.superlayer != nil && [_l3Button.presentationLayer hitTest:touchLocation]) {
+            touchEventCapturedByOsc = true;
+            // NSLog(@"Captured OSC RightTrigger");
+        } else if ([_l3Button.presentationLayer hitTest:touchLocation]) {
             if (l3Set) {
                 [_controllerSupport clearButtonFlag:_controller flags:LS_CLK_FLAG];
                 _l3Button.borderWidth = 0.0f;
+                // NSLog(@"Captured OSC LS_CLK");
             } else {
                 [_controllerSupport setButtonFlag:_controller flags:LS_CLK_FLAG];
                 _l3Button.borderWidth = 2.0f;
+                // NSLog(@"Captured OSC LS_CLK2");
             }
             l3Set = !l3Set;
             _l3Touch = touch;
             updated = true;
-        } else if (_r3Button.superlayer != nil && [_r3Button.presentationLayer hitTest:touchLocation]) {
+            touchEventCapturedByOsc = true;
+        } else if ([_r3Button.presentationLayer hitTest:touchLocation]) {
             if (r3Set) {
                 [_controllerSupport clearButtonFlag:_controller flags:RS_CLK_FLAG];
                 _r3Button.borderWidth = 0.0f;
+                // NSLog(@"Captured OSC RS_CLK");
             } else {
                 [_controllerSupport setButtonFlag:_controller flags:RS_CLK_FLAG];
                 _r3Button.borderWidth = 2.0f;
+                // NSLog(@"Captured OSC RS_CLK2");
             }
             r3Set = !r3Set;
             _r3Touch = touch;
             updated = true;
-        } else if (_leftStick.superlayer != nil && [_leftStick.presentationLayer hitTest:touchLocation]) {
+            touchEventCapturedByOsc = true;
+        } else if ([_leftStick.presentationLayer hitTest:touchLocation]) {
+            _leftStick.opacity = 1.0; // make stick opaque while being moved
             if (l3TouchStart != nil) {
                 // Find elapsed time and convert to milliseconds
                 // Use (-) modifier to conversion since receiver is earlier than now
                 double l3TouchTime = [l3TouchStart timeIntervalSinceNow] * -1000.0;
                 if (l3TouchTime < STICK_CLICK_RATE) {
                     [_controllerSupport setButtonFlag:_controller flags:LS_CLK_FLAG];
+                    [self oscButtonTouchDownVisualEffect:_leftStick];
                     updated = true;
+                    touchEventCapturedByOsc = true;
+                    // NSLog(@"Captured OSC LS_CLK3");
+
                 }
             }
             _lsTouch = touch;
             stickTouch = true;
-        } else if (_rightStick.superlayer != nil && [_rightStick.presentationLayer hitTest:touchLocation]) {
+            touchEventCapturedByOsc = true;
+        } else if ([_rightStick.presentationLayer hitTest:touchLocation]) {
+            _rightStick.opacity = 1.0; // make stick opaque while being moved
             if (r3TouchStart != nil) {
                 // Find elapsed time and convert to milliseconds
                 // Use (-) modifier to conversion since receiver is earlier than now
                 double r3TouchTime = [r3TouchStart timeIntervalSinceNow] * -1000.0;
                 if (r3TouchTime < STICK_CLICK_RATE) {
                     [_controllerSupport setButtonFlag:_controller flags:RS_CLK_FLAG];
+                    [self oscButtonTouchDownVisualEffect:_rightStick];
                     updated = true;
+                    touchEventCapturedByOsc = true;
+                    // NSLog(@"Captured OSC LS_CLK4");
                 }
             }
             _rsTouch = touch;
             stickTouch = true;
+            touchEventCapturedByOsc = true;
         }
         if (!updated && !stickTouch && [self isInDeadZone:touch]) {
             [_deadTouches addObject:touch];
             updated = true;
+            touchEventCapturedByOsc = true;
+            // NSLog(@"blablablab updated true");
         }
+        // additionally, populate the touchesCapturedByOSButton set, for native/relative touch handler to deal with.
+        if(touchEventCapturedByOsc) [touchAddrsCapturedByOnScreenControls addObject:@((uintptr_t)touch)];
     }
     if (updated) {
         [_controllerSupport updateFinished:_controller];
     }
-    return updated || stickTouch;
+    // NSLog(@"captured by OSB touches, OSC Class: %d", (uint32_t)[touchAddrsCapturedByOnScreenControls count]);
+
+    
+    bool oscTouched = updated || stickTouch;
+    if(oscTouched){
+        for (UIGestureRecognizer *gesture in _view.gestureRecognizers) { // we'll iterate the streamFrameTopLayerView, which was passed here as _view, where all the custom gestures are added) instead of the streamview, to check if that the osc buttons are pressed
+            if ([gesture isKindOfClass:[CustomTapGestureRecognizer class]]) {
+                // This is a CustomTapGestureRecognizer
+                CustomTapGestureRecognizer *tapGesture = (CustomTapGestureRecognizer *)gesture;
+                tapGesture.containOnScreenControllerTaps = true;
+                // Perform actions with tapGesture
+            }
+        }
+    }
+    
+    return oscTouched;
 }
 
 - (BOOL)handleTouchUpEvent:touches {
     BOOL updated = false;
     BOOL touched = false;
     for (UITouch* touch in touches) {
+        
+        // remove the touch obj from touchesCapturedByOnScreenButtons
+        if([touchAddrsCapturedByOnScreenControls containsObject:@((uintptr_t)touch)]) [touchAddrsCapturedByOnScreenControls removeObject:@((uintptr_t)touch)];
+        
         if (touch == _aTouch) {
             [_controllerSupport clearButtonFlag:_controller flags:A_FLAG];
             _aTouch = nil;
+            _aButton.opacity = [_originalControllerLayerOpacityDict[_aButton.name] floatValue];
+            _aButton.shadowOpacity = 0.0; // reset button shadow & background color
             updated = true;
         } else if (touch == _bTouch) {
             [_controllerSupport clearButtonFlag:_controller flags:B_FLAG];
             _bTouch = nil;
+            _bButton.opacity = [_originalControllerLayerOpacityDict[_bButton.name] floatValue];
+            _bButton.shadowOpacity = 0.0;
             updated = true;
         } else if (touch == _xTouch) {
             [_controllerSupport clearButtonFlag:_controller flags:X_FLAG];
             _xTouch = nil;
+            _xButton.opacity = [_originalControllerLayerOpacityDict[_xButton.name] floatValue];
+            _xButton.shadowOpacity = 0.0;
             updated = true;
         } else if (touch == _yTouch) {
             [_controllerSupport clearButtonFlag:_controller flags:Y_FLAG];
             _yTouch = nil;
+            _yButton.opacity = [_originalControllerLayerOpacityDict[_yButton.name] floatValue];
+            _yButton.shadowOpacity = 0.0;
             updated = true;
         } else if (touch == _dpadTouch) {
             [_controllerSupport clearButtonFlag:_controller
                                           flags:UP_FLAG | DOWN_FLAG | LEFT_FLAG | RIGHT_FLAG];
             _dpadTouch = nil;
+            _upButton.opacity = [_originalControllerLayerOpacityDict[_upButton.name] floatValue];
+            _upButton.shadowOpacity = 0.0;
+            _leftButton.opacity = [_originalControllerLayerOpacityDict[_leftButton.name] floatValue];
+            _leftButton.shadowOpacity = 0.0;
+            _rightButton.opacity = [_originalControllerLayerOpacityDict[_rightButton.name] floatValue];
+            _rightButton.shadowOpacity = 0.0;
+            _downButton.opacity = [_originalControllerLayerOpacityDict[_downButton.name] floatValue];
+            _downButton.shadowOpacity = 0.0;
             updated = true;
         } else if (touch == _startTouch) {
             [_controllerSupport clearButtonFlag:_controller flags:PLAY_FLAG];
             _startTouch = nil;
+            _startButton.opacity = [_originalControllerLayerOpacityDict[_startButton.name] floatValue];
+            _startButton.shadowOpacity = 0.0;
             updated = true;
         } else if (touch == _selectTouch) {
             [_controllerSupport clearButtonFlag:_controller flags:BACK_FLAG];
             _selectTouch = nil;
+            _selectButton.opacity = [_originalControllerLayerOpacityDict[_selectButton.name] floatValue];
+            _selectButton.shadowOpacity = 0.0;
             updated = true;
         } else if (touch == _l1Touch) {
             [_controllerSupport clearButtonFlag:_controller flags:LB_FLAG];
             _l1Touch = nil;
+            _l1Button.opacity = [_originalControllerLayerOpacityDict[_l1Button.name] floatValue];
+            _l1Button.shadowOpacity = 0.0;
             updated = true;
         } else if (touch == _r1Touch) {
             [_controllerSupport clearButtonFlag:_controller flags:RB_FLAG];
             _r1Touch = nil;
+            _r1Button.opacity = [_originalControllerLayerOpacityDict[_r1Button.name] floatValue];
+            _r1Button.shadowOpacity = 0.0;
             updated = true;
         } else if (touch == _l2Touch) {
             [_controllerSupport updateLeftTrigger:_controller left:0];
+            _l2Button.opacity = [_originalControllerLayerOpacityDict[_l2Button.name] floatValue];
             _l2Touch = nil;
+            _l2Button.shadowOpacity = 0.0;
             updated = true;
         } else if (touch == _r2Touch) {
             [_controllerSupport updateRightTrigger:_controller right:0];
+            _r2Button.opacity = [_originalControllerLayerOpacityDict[_r2Button.name] floatValue];
             _r2Touch = nil;
+            _r2Button.shadowOpacity = 0.0;
             updated = true;
         } else if (touch == _lsTouch) {
-            _leftStick.frame = CGRectMake(LS_CENTER_X - STICK_INNER_SIZE / 2, LS_CENTER_Y - STICK_INNER_SIZE / 2, STICK_INNER_SIZE, STICK_INNER_SIZE);
+            _leftStick.frame = CGRectMake(LS_CENTER_X - LEFT_STICK_INNER_SIZE / 2, LS_CENTER_Y - LEFT_STICK_INNER_SIZE / 2, LEFT_STICK_INNER_SIZE, LEFT_STICK_INNER_SIZE);
+            _leftStick.opacity = [_originalControllerLayerOpacityDict[_leftStick.name] floatValue];
+            _leftStick.shadowOpacity = 0.0;
+            _leftStick.opacity = _leftStickOpacity; // reset stick to half transparent
             [_controllerSupport updateLeftStick:_controller x:0 y:0];
             [_controllerSupport clearButtonFlag:_controller flags:LS_CLK_FLAG];
             l3TouchStart = [NSDate date];
             _lsTouch = nil;
             updated = true;
         } else if (touch == _rsTouch) {
-            _rightStick.frame = CGRectMake(RS_CENTER_X - STICK_INNER_SIZE / 2, RS_CENTER_Y - STICK_INNER_SIZE / 2, STICK_INNER_SIZE, STICK_INNER_SIZE);
+            _rightStick.frame = CGRectMake(RS_CENTER_X - RIGHT_STICK_INNER_SIZE / 2, RS_CENTER_Y - RIGHT_STICK_INNER_SIZE / 2, RIGHT_STICK_INNER_SIZE, RIGHT_STICK_INNER_SIZE);
+            _rightStick.opacity = [_originalControllerLayerOpacityDict[_rightStick.name] floatValue];
+            _rightStick.shadowOpacity = 0.0;
+            _rightStick.opacity = _rightStickOpacity;
             [_controllerSupport updateRightStick:_controller x:0 y:0];
             [_controllerSupport clearButtonFlag:_controller flags:RS_CLK_FLAG];
             r3TouchStart = [NSDate date];
@@ -867,6 +1512,75 @@ static float L3_Y;
 - (BOOL) isInDeadZone:(UITouch*) touch {
     // Dynamically evaluate deadzones based on the controls
     // on screen at the time
+    
+    // DZ capturing shall be refactored in CustomOSC Mode & non-default profile condition
+    if(self._level == OnScreenControlsLevelCustom && [profilesManager getIndexOfSelectedProfile] != 0){
+        CGPoint touchLocation  = [touch locationInView:_view];
+        for (NSString *key in _activeCustomOscButtonPositionDict) {
+            NSValue *value = _activeCustomOscButtonPositionDict[key];
+            CGPoint buttonPosition = [value CGPointValue];
+            CGFloat xOffset = fabs(touchLocation.x - buttonPosition.x);
+            CGFloat yOffset = fabs(touchLocation.y - buttonPosition.y);
+            
+            CGFloat dzHalfWidth;
+            CGFloat dzHalfHeight;
+            // CGFloat _oscTapExlusionAreaSizeFactor; // the factor to resize the DZ
+            // NSLog(@"_AreaSize: %f", _oscTapExlusionAreaSizeFactor);
+
+            if ([key isEqualToString:@"l2Button"]) {
+                dzHalfWidth = _l2Button.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _l2Button.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
+            } else if ([key isEqualToString:@"l1Button"]) {  // set the same DZ size as other buttons
+                dzHalfWidth = _l2Button.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _l2Button.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
+            } else if ([key isEqualToString:@"dPad"]) {
+                dzHalfWidth = _leftButton.bounds.size.width * _oscTapExlusionAreaSizeFactor; // dPad specially handled
+                dzHalfHeight = _upButton.bounds.size.height * _oscTapExlusionAreaSizeFactor;
+            } else if ([key isEqualToString:@"selectButton"]) {
+                dzHalfWidth = _selectButton.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _selectButton.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
+            } else if ([key isEqualToString:@"leftStickBackground"]) {
+                dzHalfWidth = _leftStickBackground.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor; // stick backgound size is too big to be the base line
+                dzHalfHeight = _leftStickBackground.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
+            } else if ([key isEqualToString:@"rightStickBackground"]) {
+                dzHalfWidth = _rightStickBackground.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _rightStickBackground.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
+            } else if ([key isEqualToString:@"r2Button"]) {
+                dzHalfWidth = _r2Button.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _r2Button.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
+            } else if ([key isEqualToString:@"r1Button"]) { // set the same DZ size as other buttons
+                dzHalfWidth = _l2Button.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _l2Button.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
+            } else if ([key isEqualToString:@"aButton"]) {
+                dzHalfWidth = _aButton.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _aButton.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
+            } else if ([key isEqualToString:@"bButton"]) {
+                dzHalfWidth = _bButton.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _bButton.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
+            } else if ([key isEqualToString:@"xButton"]) {
+                dzHalfWidth = _xButton.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _xButton.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
+            } else if ([key isEqualToString:@"yButton"]) {
+                dzHalfWidth = _yButton.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _yButton.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
+            } else if ([key isEqualToString:@"startButton"]) {
+                dzHalfWidth = _startButton.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _startButton.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
+            } else {
+                dzHalfWidth = _aButton.bounds.size.width * 0.5 * _oscTapExlusionAreaSizeFactor;
+                dzHalfHeight = _aButton.bounds.size.height * 0.5 * _oscTapExlusionAreaSizeFactor;
+            }
+            
+            if (xOffset < dzHalfWidth && yOffset < dzHalfHeight) {
+                //NSLog(@"captured in DZ");
+                return true;
+            }
+        }
+        return false;
+    }
+    
+
+    // Here is the original non-custom DZ capturing
     if (_leftButton.superlayer != nil && [self isDpadDeadZone:touch]) {
         return true;
     }
@@ -982,7 +1696,234 @@ static float L3_Y;
     CGPoint touchLocation = [touch locationInView:_view];
     return (touchLocation.x > deadZoneStartX && touchLocation.x < deadZoneEndX
             && touchLocation.y > deadZoneStartY && touchLocation.y < deadZoneEndY);
+}
+
++ (CGFloat) getControllerLayerSizeFactor:(CALayer*)layer{
+    CGFloat sizeFactor = 1.0;
+    if([layer.name isEqualToString:@"aButton"]||
+        [layer.name isEqualToString:@"bButton"] ||
+        [layer.name isEqualToString:@"xButton"] ||
+        [layer.name isEqualToString:@"yButton"] ||
+        [layer.name isEqualToString:@"l1Button"] ||
+        [layer.name isEqualToString:@"l2Button"] ||
+        [layer.name isEqualToString:@"r1Button"] ||
+        [layer.name isEqualToString:@"r2Button"]){
+        sizeFactor = layer.bounds.size.width / standardRoundButtonBounds.size.width;
+    }
+    
+    if([layer.name isEqualToString:@"selectButton"] ||
+        [layer.name isEqualToString:@"startButton"]) {
+        sizeFactor = layer.bounds.size.width / standardRectangleButtonBounds.size.width;
+    }
+    
+    if([layer.name isEqualToString:@"rightStickBackground"]) {
+        sizeFactor = layer.bounds.size.width / standardStickBackgroundBounds.size.width;
+    }
+
+    if([layer.name isEqualToString:@"leftStickBackground"]){
+        sizeFactor = layer.bounds.size.width / standardStickBackgroundBounds.size.width;
+    }
+
+    if([layer.name isEqualToString:@"dPad"]){
+        for(CALayer* subLayer in layer.sublayers){
+            if([subLayer.name isEqualToString:@"upButton"]){
+                sizeFactor = subLayer.bounds.size.height / standardUpDownButtonBounds.size.height;
+                break;
+            }
+        }
+    }
+    
+    // sub controller layers embedded in super layers
+    if([layer.name isEqualToString:@"upButton"] ||
+       [layer.name isEqualToString:@"downButton"]){
+        sizeFactor = layer.bounds.size.height / standardUpDownButtonBounds.size.height;
+    }
+    
+    if([layer.name isEqualToString:@"leftButton"] ||
+       [layer.name isEqualToString:@"rightButton"]){
+        sizeFactor = layer.bounds.size.width / standardUpDownButtonBounds.size.height; // left & right buttons are just 90 rotations of up & down buttons
+    }
+    
+    if([layer.name isEqualToString:@"leftStick"] ||
+       [layer.name isEqualToString:@"rightStick"]){
+        sizeFactor = layer.bounds.size.width / standardStickBounds.size.width;
+    }
+
+
+    return sizeFactor;
+}
+
+- (CGFloat) getControllerLayerOpacity:(CALayer*)layer{
+    CGFloat opacity = 0.5;
+    if([layer.name isEqualToString:@"aButton"]||
+        [layer.name isEqualToString:@"bButton"] ||
+        [layer.name isEqualToString:@"xButton"] ||
+        [layer.name isEqualToString:@"yButton"] ||
+        [layer.name isEqualToString:@"l1Button"] ||
+        [layer.name isEqualToString:@"l2Button"] ||
+        [layer.name isEqualToString:@"r1Button"] ||
+        [layer.name isEqualToString:@"r2Button"] ||
+        [layer.name isEqualToString:@"selectButton"] ||
+        [layer.name isEqualToString:@"startButton"]){
+        opacity = layer.opacity;
+    }
+        
+    if([layer.name isEqualToString:@"rightStickBackground"]){
+        opacity = self._rightStick.opacity;
+    }
+
+    if([layer.name isEqualToString:@"leftStickBackground"]){
+        opacity = self._leftStick.opacity;
+    }
+    
+    if([layer.name isEqualToString:@"dPad"]){
+        opacity = self._leftButton.opacity;
+    }
+
+    return opacity;
+}
+
+/*
+- (void) resizeControllerLayers{
     
 }
+*/
+
+- (void) resizeControllerLayerWith:(CALayer*)layer and:(CGFloat)sizeFactor{
+    // CALayer* superLayer = layer.superlayer;
+    // if(layerBeingDragged.name == @"")
+    if (layer == self._aButton ||
+        layer == self._bButton ||
+        layer == self._xButton ||
+        layer == self._yButton ||
+        layer == self._l1Button ||
+        layer == self._l2Button ||
+        layer == self._r1Button ||
+        layer == self._r2Button){
+        layer.bounds = CGRectMake(layer.bounds.origin.x, layer.bounds.origin.y, standardRoundButtonBounds.size.width * sizeFactor, standardRoundButtonBounds.size.height * sizeFactor);
+    }
+    
+    if (layer == self._selectButton ||
+        layer == self._startButton) {
+        layer.bounds = CGRectMake(layer.bounds.origin.x, layer.bounds.origin.y, standardRectangleButtonBounds.size.width * sizeFactor, standardRectangleButtonBounds.size.height * sizeFactor);
+    }
+    
+    if (layer == self._rightStickBackground) {
+        // Resize the rightStick & Background bounds
+        self._rightStickBackground.bounds = CGRectMake(layer.bounds.origin.x, layer.bounds.origin.y, standardStickBackgroundBounds.size.width * sizeFactor, standardStickBackgroundBounds.size.height * sizeFactor);
+        self._rightStick.bounds = CGRectMake(layer.bounds.origin.x, layer.bounds.origin.y, standardStickBounds.size.width * sizeFactor, standardStickBounds.size.height * sizeFactor);
+
+        // Retrieve the current frame to account for transformations, this will update the coords for new position CGPointMake
+        CGRect transformedBackgroundFrame = self._rightStickBackground.frame;
+
+        // Explicitly adjust the position of _rightStickBackground using the transformed frame
+        self._rightStickBackground.position = CGPointMake(CGRectGetMidX(transformedBackgroundFrame), CGRectGetMidY(transformedBackgroundFrame));
+
+        // Update the position of _rightStick to match the new center of the transformed _rightStickBackground
+        self._rightStick.position = CGPointMake(CGRectGetMidX(self._rightStickBackground.bounds), CGRectGetMidY(self._rightStickBackground.bounds));
+    }
+
+    if (layer == self._leftStickBackground){
+        // Resize the rightStick & Background bounds
+        self._leftStickBackground.bounds = CGRectMake(layer.bounds.origin.x, layer.bounds.origin.y, standardStickBackgroundBounds.size.width * sizeFactor, standardStickBackgroundBounds.size.height * sizeFactor);
+        self._leftStick.bounds = CGRectMake(layer.bounds.origin.x, layer.bounds.origin.y, standardStickBounds.size.width * sizeFactor, standardStickBounds.size.height * sizeFactor);
+
+        // Retrieve the current frame to account for transformations, this will update the coords for new position CGPointMake
+        CGRect transformedBackgroundFrame = self._leftStickBackground.frame;
+
+        // Explicitly adjust the position of _rightStickBackground using the transformed frame
+        self._leftStickBackground.position = CGPointMake(CGRectGetMidX(transformedBackgroundFrame), CGRectGetMidY(transformedBackgroundFrame));
+
+        // Update the position of _leftStick to match the new center of the transformed _rightStickBackground
+        self._leftStick.position = CGPointMake(CGRectGetMidX(self._leftStickBackground.bounds), CGRectGetMidY(self._leftStickBackground.bounds));
+    }
+
+    if (layer == self._dPadBackground){
+        // Calculate the distances of each button from the shared center based on their transformed positions
+        CGFloat newDPadDistFactor = 0.2/sizeFactor;
+
+        // 1. Resize and reposition the Down button
+        
+        CGFloat newLongSideLength = standardLeftRightButtonBounds.size.width * sizeFactor;
+        CGFloat newShortSideLength = standardLeftRightButtonBounds.size.height * sizeFactor;
+
+        
+        // this will anchor the center point of the dPad
+        // must * _dPadSizeFactor (the current size factor retrieved from selected osc profile)
+        CGPoint sharedCenter = CGPointMake(standardLeftRightButtonBounds.size.width * _dPadSizeFactor + 10, standardLeftRightButtonBounds.size.width * _dPadSizeFactor + 10); //this will anchor the center point of the dPad
+
+        // Resize and reposition the Up button
+        _upButton.anchorPoint = CGPointMake(0.5, 1 + newDPadDistFactor);
+        _upButton.bounds = CGRectMake(0, 0, newShortSideLength, newLongSideLength);
+        _upButton.position = CGPointMake(sharedCenter.x, sharedCenter.y);
+
+        // Resize and reposition the Down button
+        _downButton.anchorPoint = CGPointMake(0.5, 0 - newDPadDistFactor);
+        _downButton.bounds = CGRectMake(0, 0, newShortSideLength, newLongSideLength);
+        _downButton.position = CGPointMake(sharedCenter.x, sharedCenter.y);
+
+        // Resize and reposition the Right button
+        _rightButton.anchorPoint = CGPointMake(0 - newDPadDistFactor, 0.5);
+        _rightButton.bounds = CGRectMake(0, 0, newLongSideLength, newShortSideLength);
+        _rightButton.position = CGPointMake(sharedCenter.x, sharedCenter.y);
+
+        // Resize and reposition the Left button
+        _leftButton.anchorPoint = CGPointMake(1 + newDPadDistFactor, 0.5);
+        _leftButton.bounds = CGRectMake(0, 0, newLongSideLength, newShortSideLength);
+        _leftButton.position = CGPointMake(sharedCenter.x, sharedCenter.y);
+    }
+}
+
+
+
+- (void) adjustControllerLayerOpacityWith:(CALayer*)layer and:(CGFloat)alpha{
+    // CALayer* superLayer = layer.superlayer;
+    // if(layerBeingDragged.name == @"")
+    CGFloat targetAlpha;
+    
+    if(alpha == 0.0 || alpha == 1.0) targetAlpha = 5.0f/6.0f; // invalid alpha value
+    else targetAlpha = alpha;
+    
+    NSLog(@"alphas: %f",targetAlpha);
+
+    if (layer == self._aButton ||
+        layer == self._bButton ||
+        layer == self._xButton ||
+        layer == self._yButton ||
+        layer == self._l1Button ||
+        layer == self._l2Button ||
+        layer == self._r1Button ||
+        layer == self._r2Button ||
+        layer == self._selectButton ||
+        layer == self._startButton ||
+        layer == self._upButton ||
+        layer == self._rightButton ||
+        layer == self._downButton ||
+        layer == self._leftButton){
+            // layer.backgroundColor = [UIColor clearColor].CGColor;
+            layer.opacity = targetAlpha;
+    }
+    
+    
+    if (layer == self._dPadBackground ){
+        self._upButton.opacity = targetAlpha;
+        self._rightButton.opacity = targetAlpha;
+        self._downButton.opacity = targetAlpha;
+        self._leftButton.opacity = targetAlpha;
+    }
+
+    
+    if (layer == self._rightStickBackground) {
+        self._rightStick.opacity = targetAlpha;
+        self._rightStickBackground.opacity = targetAlpha + 1.0f/6.0f;
+        NSLog(@"right stick init alpha: %f", targetAlpha);
+    }
+
+    if (layer == self._leftStickBackground){
+        self._leftStick.opacity = targetAlpha;
+        self._leftStickBackground.opacity = targetAlpha + 1.0f/6.0f;
+    }
+}
+
 
 @end

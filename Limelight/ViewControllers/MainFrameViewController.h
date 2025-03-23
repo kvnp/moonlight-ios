@@ -20,6 +20,11 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *settingsButton;
 #if !TARGET_OS_TV
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *upButton;
+@property (nonatomic, assign) bool settingsExpandedInStreamView;
+
+-(void)simulateSettingsButtonPress;
+-(void)reloadStreamConfig;
+-(bool)isIPhonePortrait;
 #endif
 
 @end

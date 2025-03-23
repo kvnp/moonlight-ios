@@ -3,40 +3,50 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 48;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		693B3A9B218638CD00982F7B /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 693B3A9A218638CD00982F7B /* Settings.bundle */; };
+		840751B32BF49C050096B657 /* CustomTapGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 840751B22BF49C050096B657 /* CustomTapGestureRecognizer.m */; };
+		84203F232C5F24C00032EEED /* OnScreenButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84203F222C5F24C00032EEED /* OnScreenButtonView.swift */; };
+		84351B0E2C29ACCB00A77989 /* LayoutOnScreenControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 84351B072C29ACCA00A77989 /* LayoutOnScreenControls.m */; };
+		84351B0F2C29ACCB00A77989 /* OnScreenButtonState.m in Sources */ = {isa = PBXBuildFile; fileRef = 84351B092C29ACCA00A77989 /* OnScreenButtonState.m */; };
+		84351B102C29ACCB00A77989 /* OSCProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 84351B0A2C29ACCA00A77989 /* OSCProfile.m */; };
+		84351B112C29ACCB00A77989 /* OSCProfilesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 84351B0B2C29ACCB00A77989 /* OSCProfilesManager.m */; };
+		84351B2B2C29AD6100A77989 /* LayoutOnScreenControlsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 84351B252C29AD6000A77989 /* LayoutOnScreenControlsViewController.m */; };
+		84351B2C2C29AD6100A77989 /* OSCProfilesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 84351B272C29AD6000A77989 /* OSCProfilesTableViewController.m */; };
+		84351B2D2C29AD6100A77989 /* ToolBarContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 84351B292C29AD6000A77989 /* ToolBarContainerView.m */; };
+		84351B5C2C29ADBE00A77989 /* ProfileTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 84351B592C29ADBE00A77989 /* ProfileTableViewCell.m */; };
+		84351B5D2C29ADBE00A77989 /* ProfileTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84351B5B2C29ADBE00A77989 /* ProfileTableViewCell.xib */; };
+		843CC7F02C1E757D00BBC475 /* NativeTouchPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 843CC7EF2C1E757D00BBC475 /* NativeTouchPointer.m */; };
+		843CC7F62C1E7A1700BBC475 /* NativeTouchHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 843CC7F52C1E7A1700BBC475 /* NativeTouchHandler.m */; };
+		843E93BE2C41528700B1651F /* OrientationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843E93BD2C41528700B1651F /* OrientationHelper.swift */; };
+		844CD0EB2C7F8500004861A7 /* PureNativeTouchHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 844CD0EA2C7F8500004861A7 /* PureNativeTouchHandler.m */; };
+		8454AC662C31907F00F0A302 /* iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8454AC682C31907F00F0A302 /* iPad.storyboard */; };
+		8454AC6A2C319BDA00F0A302 /* iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8454AC6C2C319BDA00F0A302 /* iPhone.storyboard */; };
+		84591A512BE1625E006AAB10 /* CustomEdgeSlideGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 84591A502BE1625E006AAB10 /* CustomEdgeSlideGestureRecognizer.m */; };
+		84E1CDEC2C4F67D300547904 /* CommandManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E1CDEB2C4F67D300547904 /* CommandManager.swift */; };
+		84E1CDEF2C4F688E00547904 /* CommandManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E1CDEE2C4F688E00547904 /* CommandManagerViewController.swift */; };
+		84E1CDFA2C4FE83400547904 /* SwiftLocalizationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E1CDF92C4FE83400547904 /* SwiftLocalizationHelper.swift */; };
+		84FD0B512C31338D006B5BE5 /* LocalizationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 84FD0B502C31338D006B5BE5 /* LocalizationHelper.m */; };
+		84FD0B542C3134A6006B5BE5 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 84FD0B532C3134A6006B5BE5 /* Localizable.xcstrings */; };
 		98181BE92791277400E43572 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 98181BE82791275D00E43572 /* libSDL2.a */; };
-		98181BEB2791278F00E43572 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 98181BEA2791278300E43572 /* libSDL2.a */; };
 		98181BED2791281100E43572 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98181BEC2791281100E43572 /* CoreMotion.framework */; };
 		9819CC14254F107A008A7C8E /* RelativeTouchHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 9819CC13254F107A008A7C8E /* RelativeTouchHandler.m */; };
-		9819CC1D254F1730008A7C8E /* RelativeTouchHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 9819CC13254F107A008A7C8E /* RelativeTouchHandler.m */; };
 		9819CC22254F180F008A7C8E /* AbsoluteTouchHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 9819CC21254F180F008A7C8E /* AbsoluteTouchHandler.m */; };
 		9827E7A32514366900F25707 /* HapticContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 9827E7A22514366900F25707 /* HapticContext.m */; };
-		9827E7A42514366900F25707 /* HapticContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 9827E7A22514366900F25707 /* HapticContext.m */; };
 		9832D1361BBCD5C50036EF48 /* TemporaryApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 9832D1351BBCD5C50036EF48 /* TemporaryApp.m */; };
-		9865DC30213260B40005B9B9 /* libmoonlight-common-tv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FB1A68152132509400507771 /* libmoonlight-common-tv.a */; };
-		9865DC31213260F10005B9B9 /* mkcert.c in Sources */ = {isa = PBXBuildFile; fileRef = FB89460719F646E200339C8A /* mkcert.c */; };
-		9865DC36213287F30005B9B9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FB290D0319B2C406004C83CF /* AppDelegate.m */; };
-		9865DC37213287FE0005B9B9 /* StreamFrameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FB89462719F646E200339C8A /* StreamFrameViewController.m */; };
-		9865DC38213287FE0005B9B9 /* LoadingFrameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FB4A23B71A9D3637004D2EF2 /* LoadingFrameViewController.m */; };
-		9865DC3C2132922E0005B9B9 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9865DC3B2132922E0005B9B9 /* GameController.framework */; };
-		9865DC3E21332D660005B9B9 /* MainFrameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FB89462519F646E200339C8A /* MainFrameViewController.m */; };
 		98882A062AF60F7000C5A11C /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 98882A032AF60F5300C5A11C /* libavcodec.a */; };
 		98882A072AF60F7200C5A11C /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 98882A052AF60F5300C5A11C /* libavformat.a */; };
 		98882A082AF60F7400C5A11C /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 98882A042AF60F5300C5A11C /* libavutil.a */; };
-		98882A0C2AF60F9E00C5A11C /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 98882A0A2AF60F9000C5A11C /* libavcodec.a */; };
-		98882A0D2AF60FA000C5A11C /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 98882A0B2AF60F9000C5A11C /* libavformat.a */; };
-		98882A0E2AF60FA300C5A11C /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 98882A092AF60F9000C5A11C /* libavutil.a */; };
 		988FCD41293B091B003050E2 /* KeyboardInputField.m in Sources */ = {isa = PBXBuildFile; fileRef = 988FCD40293B091B003050E2 /* KeyboardInputField.m */; };
 		988FCD42293B091B003050E2 /* KeyboardInputField.m in Sources */ = {isa = PBXBuildFile; fileRef = 988FCD40293B091B003050E2 /* KeyboardInputField.m */; };
+		9890CF6B203B7EE1006C4B06 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 9890CF6A203B7EE1006C4B06 /* libxml2.tbd */; };
 		9896219723D15C7000211983 /* X1Kit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9896219623D15C7000211983 /* X1Kit.swift */; };
-		9896219A23D56E8100211983 /* X1Kit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9896219623D15C7000211983 /* X1Kit.swift */; };
 		9897B6A1221260EF00966419 /* Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 9897B6A0221260EF00966419 /* Controller.m */; };
 		9897B6A62212732C00966419 /* Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 9897B6A0221260EF00966419 /* Controller.m */; };
 		98B9CE6D27B2144B00B473C4 /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98B9CE6C27B2144B00B473C4 /* AVKit.framework */; };
+		98A2E31229B5256E00CA17A7 /* OpenSSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98A2E31029B5256200CA17A7 /* OpenSSL.xcframework */; };
 		98CFB82F1CAD481B0048EF74 /* libmoonlight-common.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 98AB2E841CAD46840089BB98 /* libmoonlight-common.a */; };
 		98D5856D1C0EA79600F6CC00 /* TemporaryHost.m in Sources */ = {isa = PBXBuildFile; fileRef = 98D5856C1C0EA79600F6CC00 /* TemporaryHost.m */; };
 		98D585701C0ED0E800F6CC00 /* TemporarySettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 98D5856F1C0ED0E800F6CC00 /* TemporarySettings.m */; };
@@ -94,8 +104,6 @@
 		FB290D0419B2C406004C83CF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FB290D0319B2C406004C83CF /* AppDelegate.m */; };
 		FB290D0719B2C406004C83CF /* Limelight.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FB290D0519B2C406004C83CF /* Limelight.xcdatamodeld */; };
 		FB290D0919B2C406004C83CF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB290D0819B2C406004C83CF /* Images.xcassets */; };
-		FB290E7919B37D81004C83CF /* iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FB290E7819B37D81004C83CF /* iPad.storyboard */; };
-		FB290E7B19B38036004C83CF /* iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FB290E7A19B38036004C83CF /* iPhone.storyboard */; };
 		FB4678ED1A50C40900377732 /* OnScreenControls.m in Sources */ = {isa = PBXBuildFile; fileRef = FB4678EC1A50C40900377732 /* OnScreenControls.m */; };
 		FB4678FA1A55FFAD00377732 /* DiscoveryManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FB4678F91A55FFAD00377732 /* DiscoveryManager.m */; };
 		FB4678FF1A565DAC00377732 /* WakeOnLanManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FB4678FE1A565DAC00377732 /* WakeOnLanManager.m */; };
@@ -156,18 +164,51 @@
 			remoteGlobalIDString = FB1A67EF21324EE300507771;
 			remoteInfo = "moonlight-common-tv";
 		};
-		FB1A68162132509800507771 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 98AB2E7F1CAD46830089BB98 /* moonlight-common.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = FB1A67EE21324EE300507771;
-			remoteInfo = "moonlight-common-tv";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		566E9D2B2770B23A00EF7BFE /* Moonlight v1.7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Moonlight v1.7.xcdatamodel"; sourceTree = "<group>"; };
 		693B3A9A218638CD00982F7B /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		840751B12BF49B5A0096B657 /* CustomTapGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomTapGestureRecognizer.h; sourceTree = "<group>"; };
+		840751B22BF49C050096B657 /* CustomTapGestureRecognizer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomTapGestureRecognizer.m; sourceTree = "<group>"; };
+		84203F222C5F24C00032EEED /* OnScreenButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnScreenButtonView.swift; sourceTree = "<group>"; };
+		84351B062C29ACCA00A77989 /* OnScreenButtonState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OnScreenButtonState.h; sourceTree = "<group>"; };
+		84351B072C29ACCA00A77989 /* LayoutOnScreenControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LayoutOnScreenControls.m; sourceTree = "<group>"; };
+		84351B082C29ACCA00A77989 /* OSCProfilesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSCProfilesManager.h; sourceTree = "<group>"; };
+		84351B092C29ACCA00A77989 /* OnScreenButtonState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OnScreenButtonState.m; sourceTree = "<group>"; };
+		84351B0A2C29ACCA00A77989 /* OSCProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSCProfile.m; sourceTree = "<group>"; };
+		84351B0B2C29ACCB00A77989 /* OSCProfilesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSCProfilesManager.m; sourceTree = "<group>"; };
+		84351B0C2C29ACCB00A77989 /* LayoutOnScreenControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutOnScreenControls.h; sourceTree = "<group>"; };
+		84351B0D2C29ACCB00A77989 /* OSCProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSCProfile.h; sourceTree = "<group>"; };
+		84351B252C29AD6000A77989 /* LayoutOnScreenControlsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LayoutOnScreenControlsViewController.m; sourceTree = "<group>"; };
+		84351B262C29AD6000A77989 /* OSCProfilesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSCProfilesTableViewController.h; sourceTree = "<group>"; };
+		84351B272C29AD6000A77989 /* OSCProfilesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSCProfilesTableViewController.m; sourceTree = "<group>"; };
+		84351B282C29AD6000A77989 /* LayoutOnScreenControlsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutOnScreenControlsViewController.h; sourceTree = "<group>"; };
+		84351B292C29AD6000A77989 /* ToolBarContainerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToolBarContainerView.m; sourceTree = "<group>"; };
+		84351B2A2C29AD6000A77989 /* ToolBarContainerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToolBarContainerView.h; sourceTree = "<group>"; };
+		84351B592C29ADBE00A77989 /* ProfileTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileTableViewCell.m; sourceTree = "<group>"; };
+		84351B5A2C29ADBE00A77989 /* ProfileTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileTableViewCell.h; sourceTree = "<group>"; };
+		84351B5B2C29ADBE00A77989 /* ProfileTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProfileTableViewCell.xib; sourceTree = "<group>"; };
+		843CC7EE2C1E757D00BBC475 /* NativeTouchPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeTouchPointer.h; sourceTree = "<group>"; };
+		843CC7EF2C1E757D00BBC475 /* NativeTouchPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NativeTouchPointer.m; sourceTree = "<group>"; };
+		843CC7F42C1E778000BBC475 /* NativeTouchHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NativeTouchHandler.h; sourceTree = "<group>"; };
+		843CC7F52C1E7A1700BBC475 /* NativeTouchHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NativeTouchHandler.m; sourceTree = "<group>"; };
+		843E93BD2C41528700B1651F /* OrientationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationHelper.swift; sourceTree = "<group>"; };
+		844CD0E82C7F847E004861A7 /* PureNativeTouchHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PureNativeTouchHandler.h; sourceTree = "<group>"; };
+		844CD0EA2C7F8500004861A7 /* PureNativeTouchHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PureNativeTouchHandler.m; sourceTree = "<group>"; };
+		8454AC672C31907F00F0A302 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/iPad.storyboard; sourceTree = "<group>"; };
+		8454AC692C31907F00F0A302 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/iPad.xcstrings; sourceTree = "<group>"; };
+		8454AC6B2C319BDA00F0A302 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/iPhone.storyboard; sourceTree = "<group>"; };
+		8454AC6D2C319BDA00F0A302 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/iPhone.xcstrings; sourceTree = "<group>"; };
+		84591A4F2BE16240006AAB10 /* CustomEdgeSlideGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomEdgeSlideGestureRecognizer.h; sourceTree = "<group>"; };
+		84591A502BE1625E006AAB10 /* CustomEdgeSlideGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomEdgeSlideGestureRecognizer.m; sourceTree = "<group>"; };
+		84D8EB932C5146AD00FC10A9 /* Moonlight-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Moonlight-Bridging-Header.h"; sourceTree = "<group>"; };
+		84E1CDEB2C4F67D300547904 /* CommandManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandManager.swift; sourceTree = "<group>"; };
+		84E1CDEE2C4F688E00547904 /* CommandManagerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandManagerViewController.swift; sourceTree = "<group>"; };
+		84E1CDF92C4FE83400547904 /* SwiftLocalizationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftLocalizationHelper.swift; sourceTree = "<group>"; };
+		84FD0B4F2C313343006B5BE5 /* LocalizationHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalizationHelper.h; sourceTree = "<group>"; };
+		84FD0B502C31338D006B5BE5 /* LocalizationHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocalizationHelper.m; sourceTree = "<group>"; };
+		84FD0B532C3134A6006B5BE5 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		9803CCAB254F9EAF00EE185E /* ConnectionCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConnectionCallbacks.h; sourceTree = "<group>"; };
 		98132E8C20BC9A62007A053F /* Moonlight v1.1.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Moonlight v1.1.xcdatamodel"; sourceTree = "<group>"; };
 		98181BE82791275D00E43572 /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = libs/SDL2/lib/iOS/libSDL2.a; sourceTree = "<group>"; };
@@ -208,12 +249,10 @@
 		98D5856C1C0EA79600F6CC00 /* TemporaryHost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TemporaryHost.m; path = Database/TemporaryHost.m; sourceTree = "<group>"; };
 		98D5856E1C0ED0E800F6CC00 /* TemporarySettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TemporarySettings.h; path = Database/TemporarySettings.h; sourceTree = "<group>"; };
 		98D5856F1C0ED0E800F6CC00 /* TemporarySettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TemporarySettings.m; path = Database/TemporarySettings.m; sourceTree = "<group>"; };
-		D4746EEA1CBC740C006FB401 /* Moonlight-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Moonlight-Bridging-Header.h"; path = "Input/Moonlight-Bridging-Header.h"; sourceTree = "<group>"; };
 		DC1F5A05206436B10037755F /* ConnectionHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionHelper.h; sourceTree = "<group>"; };
 		DC1F5A06206436B20037755F /* ConnectionHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectionHelper.m; sourceTree = "<group>"; };
 		FB1A674B2131E65900507771 /* KeyboardSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardSupport.h; sourceTree = "<group>"; };
 		FB1A674C2131E65900507771 /* KeyboardSupport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardSupport.m; sourceTree = "<group>"; };
-		FB1A67532132419700507771 /* Moonlight TV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Moonlight TV.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB1A675F2132419700507771 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		FB1A67612132419A00507771 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FB1A67632132419A00507771 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -224,7 +263,7 @@
 		FB1D59961BBCCB6400F482CA /* ComputerScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComputerScrollView.m; sourceTree = "<group>"; };
 		FB1D59981BBCCD7E00F482CA /* AppCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppCollectionView.h; sourceTree = "<group>"; };
 		FB1D59991BBCCD7E00F482CA /* AppCollectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppCollectionView.m; sourceTree = "<group>"; };
-		FB290CEE19B2C406004C83CF /* Moonlight.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Moonlight.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB290CEE19B2C406004C83CF /* Moonlight-ZWM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Moonlight-ZWM.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB290CF119B2C406004C83CF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FB290CF319B2C406004C83CF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		FB290CF519B2C406004C83CF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -237,8 +276,6 @@
 		FB290D0319B2C406004C83CF /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		FB290D0619B2C406004C83CF /* Limelight.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Limelight.xcdatamodel; sourceTree = "<group>"; };
 		FB290D0819B2C406004C83CF /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		FB290E7819B37D81004C83CF /* iPad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = iPad.storyboard; sourceTree = SOURCE_ROOT; };
-		FB290E7A19B38036004C83CF /* iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = iPhone.storyboard; sourceTree = SOURCE_ROOT; };
 		FB4678EB1A50C40900377732 /* OnScreenControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OnScreenControls.h; sourceTree = "<group>"; };
 		FB4678EC1A50C40900377732 /* OnScreenControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OnScreenControls.m; sourceTree = "<group>"; };
 		FB4678F21A51BDCB00377732 /* Limelight 0.3.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Limelight 0.3.0.xcdatamodel"; sourceTree = "<group>"; };
@@ -357,6 +394,56 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		84351B052C29ACAF00A77989 /* CustomOSC */ = {
+			isa = PBXGroup;
+			children = (
+				84351B0C2C29ACCB00A77989 /* LayoutOnScreenControls.h */,
+				84351B072C29ACCA00A77989 /* LayoutOnScreenControls.m */,
+				84351B062C29ACCA00A77989 /* OnScreenButtonState.h */,
+				84351B092C29ACCA00A77989 /* OnScreenButtonState.m */,
+				84351B0D2C29ACCB00A77989 /* OSCProfile.h */,
+				84351B0A2C29ACCA00A77989 /* OSCProfile.m */,
+				84351B082C29ACCA00A77989 /* OSCProfilesManager.h */,
+				84351B0B2C29ACCB00A77989 /* OSCProfilesManager.m */,
+			);
+			path = CustomOSC;
+			sourceTree = "<group>";
+		};
+		84351B242C29AD2E00A77989 /* CustomOSCViewControl */ = {
+			isa = PBXGroup;
+			children = (
+				84351B2E2C29AD6600A77989 /* Cells */,
+				84351B282C29AD6000A77989 /* LayoutOnScreenControlsViewController.h */,
+				84351B252C29AD6000A77989 /* LayoutOnScreenControlsViewController.m */,
+				84351B262C29AD6000A77989 /* OSCProfilesTableViewController.h */,
+				84351B272C29AD6000A77989 /* OSCProfilesTableViewController.m */,
+				84351B2A2C29AD6000A77989 /* ToolBarContainerView.h */,
+				84351B292C29AD6000A77989 /* ToolBarContainerView.m */,
+			);
+			path = CustomOSCViewControl;
+			sourceTree = "<group>";
+		};
+		84351B2E2C29AD6600A77989 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				84351B5A2C29ADBE00A77989 /* ProfileTableViewCell.h */,
+				84351B592C29ADBE00A77989 /* ProfileTableViewCell.m */,
+				84351B5B2C29ADBE00A77989 /* ProfileTableViewCell.xib */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		84FD0B492C312C0B006B5BE5 /* Localization */ = {
+			isa = PBXGroup;
+			children = (
+				84FD0B4F2C313343006B5BE5 /* LocalizationHelper.h */,
+				84FD0B502C31338D006B5BE5 /* LocalizationHelper.m */,
+				84FD0B532C3134A6006B5BE5 /* Localizable.xcstrings */,
+				84E1CDF92C4FE83400547904 /* SwiftLocalizationHelper.swift */,
+			);
+			path = Localization;
+			sourceTree = "<group>";
+		};
 		9896219423D15C2900211983 /* X1Kit */ = {
 			isa = PBXGroup;
 			children = (
@@ -401,8 +488,7 @@
 		FB290CEF19B2C406004C83CF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				FB290CEE19B2C406004C83CF /* Moonlight.app */,
-				FB1A67532132419700507771 /* Moonlight TV.app */,
+				FB290CEE19B2C406004C83CF /* Moonlight-ZWM.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -437,7 +523,10 @@
 		FB290CF919B2C406004C83CF /* Moonlight */ = {
 			isa = PBXGroup;
 			children = (
-				D4746EEA1CBC740C006FB401 /* Moonlight-Bridging-Header.h */,
+				84D8EB932C5146AD00FC10A9 /* Moonlight-Bridging-Header.h */,
+				84FD0B492C312C0B006B5BE5 /* Localization */,
+				8454AC682C31907F00F0A302 /* iPad.storyboard */,
+				8454AC6C2C319BDA00F0A302 /* iPhone.storyboard */,
 				FB89460419F646E200339C8A /* Crypto */,
 				FB89460919F646E200339C8A /* Input */,
 				FB89460E19F646E200339C8A /* Network */,
@@ -452,8 +541,6 @@
 				FBDE86DF19F7A837001C18A8 /* UIComputerView.m */,
 				FBDE86E419F82297001C18A8 /* UIAppView.h */,
 				FBDE86E519F82297001C18A8 /* UIAppView.m */,
-				FB290E7819B37D81004C83CF /* iPad.storyboard */,
-				FB290E7A19B38036004C83CF /* iPhone.storyboard */,
 				FB89463719F6473800339C8A /* Launch Screen.xib */,
 				FB290D0819B2C406004C83CF /* Images.xcassets */,
 				FB290D0519B2C406004C83CF /* Limelight.xcdatamodeld */,
@@ -461,6 +548,7 @@
 				FB1D59961BBCCB6400F482CA /* ComputerScrollView.m */,
 				FB1D59981BBCCD7E00F482CA /* AppCollectionView.h */,
 				FB1D59991BBCCD7E00F482CA /* AppCollectionView.m */,
+				843E93BD2C41528700B1651F /* OrientationHelper.swift */,
 			);
 			name = Moonlight;
 			path = Limelight;
@@ -493,10 +581,13 @@
 		FB89460919F646E200339C8A /* Input */ = {
 			isa = PBXGroup;
 			children = (
+				84351B052C29ACAF00A77989 /* CustomOSC */,
 				FB89460A19F646E200339C8A /* ControllerSupport.h */,
 				FB89460B19F646E200339C8A /* ControllerSupport.m */,
 				FB89460C19F646E200339C8A /* StreamView.h */,
 				FB89460D19F646E200339C8A /* StreamView.m */,
+				843CC7EE2C1E757D00BBC475 /* NativeTouchPointer.h */,
+				843CC7EF2C1E757D00BBC475 /* NativeTouchPointer.m */,
 				FB4678EB1A50C40900377732 /* OnScreenControls.h */,
 				FB4678EC1A50C40900377732 /* OnScreenControls.m */,
 				FB1A674B2131E65900507771 /* KeyboardSupport.h */,
@@ -505,12 +596,20 @@
 				9897B6A32212610800966419 /* Controller.h */,
 				9827E7A22514366900F25707 /* HapticContext.m */,
 				9827E7A7251436EA00F25707 /* HapticContext.h */,
+				840751B12BF49B5A0096B657 /* CustomTapGestureRecognizer.h */,
+				840751B22BF49C050096B657 /* CustomTapGestureRecognizer.m */,
 				9819CC12254F107A008A7C8E /* RelativeTouchHandler.h */,
+				843CC7F42C1E778000BBC475 /* NativeTouchHandler.h */,
+				844CD0E82C7F847E004861A7 /* PureNativeTouchHandler.h */,
+				844CD0EA2C7F8500004861A7 /* PureNativeTouchHandler.m */,
+				843CC7F52C1E7A1700BBC475 /* NativeTouchHandler.m */,
 				9819CC13254F107A008A7C8E /* RelativeTouchHandler.m */,
 				9819CC20254F180F008A7C8E /* AbsoluteTouchHandler.h */,
 				9819CC21254F180F008A7C8E /* AbsoluteTouchHandler.m */,
 				988FCD3F293B091B003050E2 /* KeyboardInputField.h */,
 				988FCD40293B091B003050E2 /* KeyboardInputField.m */,
+				84E1CDEB2C4F67D300547904 /* CommandManager.swift */,
+				84203F222C5F24C00032EEED /* OnScreenButtonView.swift */,
 			);
 			path = Input;
 			sourceTree = "<group>";
@@ -561,6 +660,9 @@
 		FB89462319F646E200339C8A /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				84351B242C29AD2E00A77989 /* CustomOSCViewControl */,
+				84591A502BE1625E006AAB10 /* CustomEdgeSlideGestureRecognizer.m */,
+				84591A4F2BE16240006AAB10 /* CustomEdgeSlideGestureRecognizer.h */,
 				FBD3495119FF36FB002D2A60 /* SWRevealViewController.h */,
 				FBD3495219FF36FB002D2A60 /* SWRevealViewController.m */,
 				FB89462419F646E200339C8A /* MainFrameViewController.h */,
@@ -571,6 +673,7 @@
 				FBD3494F19FF2174002D2A60 /* SettingsViewController.m */,
 				FB4A23B61A9D3637004D2EF2 /* LoadingFrameViewController.h */,
 				FB4A23B71A9D3637004D2EF2 /* LoadingFrameViewController.m */,
+				84E1CDEE2C4F688E00547904 /* CommandManagerViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -680,26 +783,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		FB1A67522132419700507771 /* Moonlight TV */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = FB1A67682132419A00507771 /* Build configuration list for PBXNativeTarget "Moonlight TV" */;
-			buildPhases = (
-				FB1A674F2132419700507771 /* Sources */,
-				FB1A67502132419700507771 /* Frameworks */,
-				FB1A67512132419700507771 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				FB1A68172132509800507771 /* PBXTargetDependency */,
-			);
-			name = "Moonlight TV";
-			packageProductDependencies = (
-			);
-			productName = "Moonlight TV";
-			productReference = FB1A67532132419700507771 /* Moonlight TV.app */;
-			productType = "com.apple.product-type.application";
-		};
 		FB290CED19B2C406004C83CF /* Moonlight */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = FB290D2019B2C406004C83CF /* Build configuration list for PBXNativeTarget "Moonlight" */;
@@ -713,11 +796,9 @@
 			dependencies = (
 				98AB2E861CAD468B0089BB98 /* PBXTargetDependency */,
 			);
-			name = Moonlight;
-			packageProductDependencies = (
-			);
+			name = "Moonlight";
 			productName = Limelight;
-			productReference = FB290CEE19B2C406004C83CF /* Moonlight.app */;
+			productReference = FB290CEE19B2C406004C83CF /* Moonlight-ZWM.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -730,16 +811,6 @@
 				LastUpgradeCheck = 1400;
 				ORGANIZATIONNAME = "Moonlight Game Streaming Project";
 				TargetAttributes = {
-					FB1A67522132419700507771 = {
-						CreatedOnToolsVersion = 9.4.1;
-						LastSwiftMigration = 1140;
-						ProvisioningStyle = Automatic;
-						SystemCapabilities = {
-							com.apple.GameControllers.appletvos = {
-								enabled = 1;
-							};
-						};
-					};
 					FB290CED19B2C406004C83CF = {
 						LastSwiftMigration = 1140;
 					};
@@ -752,6 +823,9 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
+				"zh-Hant",
+				"zh-HK",
 			);
 			mainGroup = FB290CE519B2C406004C83CF;
 			packageReferences = (
@@ -766,8 +840,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				FB290CED19B2C406004C83CF /* Moonlight */,
-				FB1A67522132419700507771 /* Moonlight TV */,
+				FB290CED19B2C406004C83CF /* Moonlight-ZWM */,
 			);
 		};
 /* End PBXProject section */
@@ -790,85 +863,23 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
-		FB1A67512132419700507771 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				693B3A9B218638CD00982F7B /* Settings.bundle in Resources */,
-				FB1A681E21328A1B00507771 /* Images.xcassets in Resources */,
-				FB1A67622132419A00507771 /* Assets.xcassets in Resources */,
-				FB1A67602132419700507771 /* Main.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		FB290CEC19B2C406004C83CF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FB290E7919B37D81004C83CF /* iPad.storyboard in Resources */,
 				FB290CFE19B2C406004C83CF /* InfoPlist.strings in Resources */,
-				FB290E7B19B38036004C83CF /* iPhone.storyboard in Resources */,
 				FB290D0919B2C406004C83CF /* Images.xcassets in Resources */,
 				FB89463819F6473800339C8A /* Launch Screen.xib in Resources */,
+				8454AC662C31907F00F0A302 /* iPad.storyboard in Resources */,
+				8454AC6A2C319BDA00F0A302 /* iPhone.storyboard in Resources */,
+				84FD0B542C3134A6006B5BE5 /* Localizable.xcstrings in Resources */,
+				84351B5D2C29ADBE00A77989 /* ProfileTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		FB1A674F2132419700507771 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				9827E7A42514366900F25707 /* HapticContext.m in Sources */,
-				9897B6A62212732C00966419 /* Controller.m in Sources */,
-				9865DC3E21332D660005B9B9 /* MainFrameViewController.m in Sources */,
-				9865DC36213287F30005B9B9 /* AppDelegate.m in Sources */,
-				FB1A6819213284FB00507771 /* UIComputerView.m in Sources */,
-				FB1A681A213284FB00507771 /* UIAppView.m in Sources */,
-				FB1A681B213284FB00507771 /* ComputerScrollView.m in Sources */,
-				FB1A681C213284FB00507771 /* AppCollectionView.m in Sources */,
-				9865DC37213287FE0005B9B9 /* StreamFrameViewController.m in Sources */,
-				9865DC38213287FE0005B9B9 /* LoadingFrameViewController.m in Sources */,
-				9865DC31213260F10005B9B9 /* mkcert.c in Sources */,
-				FB1A67E32132498A00507771 /* Limelight.xcdatamodeld in Sources */,
-				FB1A67DE2132460A00507771 /* Utils.m in Sources */,
-				FB1A67E02132460A00507771 /* Logger.m in Sources */,
-				FB1A67D52132460400507771 /* ControllerSupport.m in Sources */,
-				FB1A67D82132460400507771 /* StreamView.m in Sources */,
-				9896219A23D56E8100211983 /* X1Kit.swift in Sources */,
-				FB1A67DA2132460400507771 /* OnScreenControls.m in Sources */,
-				FB1A67DC2132460400507771 /* KeyboardSupport.m in Sources */,
-				FB1A67CD213245F800507771 /* DataManager.m in Sources */,
-				FB1A67CF213245F800507771 /* TemporaryApp.m in Sources */,
-				FB1A67D1213245F800507771 /* TemporaryHost.m in Sources */,
-				FB1A67D3213245F800507771 /* TemporarySettings.m in Sources */,
-				FB1A67C3213245EA00507771 /* AppAssetManager.m in Sources */,
-				FB1A67C5213245EA00507771 /* AppAssetRetriever.m in Sources */,
-				FB1A67C7213245EA00507771 /* PairManager.m in Sources */,
-				FB1A67C9213245EA00507771 /* WakeOnLanManager.m in Sources */,
-				FB1A67CB213245EA00507771 /* ConnectionHelper.m in Sources */,
-				FB1A67BD213245E000507771 /* DiscoveryManager.m in Sources */,
-				FB1A67BF213245E000507771 /* DiscoveryWorker.m in Sources */,
-				FB1A67C1213245E000507771 /* MDNSManager.m in Sources */,
-				FB1A67B1213245D500507771 /* HttpManager.m in Sources */,
-				FB1A67B3213245D500507771 /* HttpRequest.m in Sources */,
-				FB1A67B5213245D500507771 /* HttpResponse.m in Sources */,
-				FB1A67B7213245D500507771 /* ServerInfoResponse.m in Sources */,
-				FB1A67B9213245D500507771 /* AppAssetResponse.m in Sources */,
-				FB1A67BB213245D500507771 /* AppListResponse.m in Sources */,
-				9819CC1D254F1730008A7C8E /* RelativeTouchHandler.m in Sources */,
-				FB1A67AB213245C500507771 /* CryptoManager.m in Sources */,
-				FB1A67AF213245C500507771 /* IdManager.m in Sources */,
-				988FCD42293B091B003050E2 /* KeyboardInputField.m in Sources */,
-				FB1A67A3213245BD00507771 /* Connection.m in Sources */,
-				FB1A67A5213245BD00507771 /* StreamConfiguration.m in Sources */,
-				FB1A67A7213245BD00507771 /* StreamManager.m in Sources */,
-				FB1A67A9213245BD00507771 /* VideoDecoderRenderer.m in Sources */,
-				FB1A67A12132458C00507771 /* main.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		FB290CEA19B2C406004C83CF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -877,6 +888,8 @@
 				9819CC22254F180F008A7C8E /* AbsoluteTouchHandler.m in Sources */,
 				9819CC14254F107A008A7C8E /* RelativeTouchHandler.m in Sources */,
 				FB1A674D2131E65900507771 /* KeyboardSupport.m in Sources */,
+				84591A512BE1625E006AAB10 /* CustomEdgeSlideGestureRecognizer.m in Sources */,
+				843CC7F62C1E7A1700BBC475 /* NativeTouchHandler.m in Sources */,
 				FB89463219F646E200339C8A /* VideoDecoderRenderer.m in Sources */,
 				FB290D0419B2C406004C83CF /* AppDelegate.m in Sources */,
 				FB9AFD401A7E127D00872C98 /* AppListResponse.m in Sources */,
@@ -884,19 +897,27 @@
 				FBDE86E619F82297001C18A8 /* UIAppView.m in Sources */,
 				FB89462F19F646E200339C8A /* Connection.m in Sources */,
 				FB9AFD321A7D867C00872C98 /* AppAssetRetriever.m in Sources */,
+				843E93BE2C41528700B1651F /* OrientationHelper.swift in Sources */,
 				FB4678FF1A565DAC00377732 /* WakeOnLanManager.m in Sources */,
+				84E1CDEC2C4F67D300547904 /* CommandManager.swift in Sources */,
 				FB53E1431BE5DC4400CD6ECE /* IdManager.m in Sources */,
 				9897B6A1221260EF00966419 /* Controller.m in Sources */,
+				84351B112C29ACCB00A77989 /* OSCProfilesManager.m in Sources */,
 				FB89462919F646E200339C8A /* mkcert.c in Sources */,
 				FB9AFD281A7C84ED00872C98 /* HttpResponse.m in Sources */,
 				FBDE86E019F7A837001C18A8 /* UIComputerView.m in Sources */,
 				FB89463019F646E200339C8A /* StreamConfiguration.m in Sources */,
 				FBD3495319FF36FB002D2A60 /* SWRevealViewController.m in Sources */,
+				84203F232C5F24C00032EEED /* OnScreenButtonView.swift in Sources */,
+				84FD0B512C31338D006B5BE5 /* LocalizationHelper.m in Sources */,
 				FB1D59971BBCCB6400F482CA /* ComputerScrollView.m in Sources */,
 				FBD3495019FF2174002D2A60 /* SettingsViewController.m in Sources */,
+				843CC7F02C1E757D00BBC475 /* NativeTouchPointer.m in Sources */,
 				FB89462C19F646E200339C8A /* HttpManager.m in Sources */,
 				FB89462D19F646E200339C8A /* MDNSManager.m in Sources */,
+				84351B0F2C29ACCB00A77989 /* OnScreenButtonState.m in Sources */,
 				FB89462B19F646E200339C8A /* StreamView.m in Sources */,
+				840751B32BF49C050096B657 /* CustomTapGestureRecognizer.m in Sources */,
 				FB4678FA1A55FFAD00377732 /* DiscoveryManager.m in Sources */,
 				98D5856D1C0EA79600F6CC00 /* TemporaryHost.m in Sources */,
 				FB89463519F646E200339C8A /* MainFrameViewController.m in Sources */,
@@ -905,22 +926,31 @@
 				FB89463619F646E200339C8A /* StreamFrameViewController.m in Sources */,
 				9827E7A32514366900F25707 /* HapticContext.m in Sources */,
 				9832D1361BBCD5C50036EF48 /* TemporaryApp.m in Sources */,
+				84E1CDEF2C4F688E00547904 /* CommandManagerViewController.swift in Sources */,
+				844CD0EB2C7F8500004861A7 /* PureNativeTouchHandler.m in Sources */,
+				84351B102C29ACCB00A77989 /* OSCProfile.m in Sources */,
+				84351B2C2C29AD6100A77989 /* OSCProfilesTableViewController.m in Sources */,
 				98D585701C0ED0E800F6CC00 /* TemporarySettings.m in Sources */,
 				FB89462819F646E200339C8A /* CryptoManager.m in Sources */,
 				DC1F5A07206436B20037755F /* ConnectionHelper.m in Sources */,
 				FB89462E19F646E200339C8A /* PairManager.m in Sources */,
 				FB9AFD371A7E02DB00872C98 /* HttpRequest.m in Sources */,
 				FB4678ED1A50C40900377732 /* OnScreenControls.m in Sources */,
+				84E1CDFA2C4FE83400547904 /* SwiftLocalizationHelper.swift in Sources */,
 				FB290D0019B2C406004C83CF /* main.m in Sources */,
 				9896219723D15C7000211983 /* X1Kit.swift in Sources */,
 				FBD3494319FC9C04002D2A60 /* AppAssetManager.m in Sources */,
 				FB6549561A57907E001C8F39 /* DiscoveryWorker.m in Sources */,
+				84351B0E2C29ACCB00A77989 /* LayoutOnScreenControls.m in Sources */,
 				FB89462A19F646E200339C8A /* ControllerSupport.m in Sources */,
 				FB9AFD3D1A7E111600872C98 /* AppAssetResponse.m in Sources */,
 				FBD349621A0089F6002D2A60 /* DataManager.m in Sources */,
 				FB4A23B81A9D3637004D2EF2 /* LoadingFrameViewController.m in Sources */,
 				FB9AFD3A1A7E05CE00872C98 /* ServerInfoResponse.m in Sources */,
+				84351B2B2C29AD6100A77989 /* LayoutOnScreenControlsViewController.m in Sources */,
+				84351B5C2C29ADBE00A77989 /* ProfileTableViewCell.m in Sources */,
 				FB89463119F646E200339C8A /* StreamManager.m in Sources */,
+				84351B2D2C29AD6100A77989 /* ToolBarContainerView.m in Sources */,
 				988FCD41293B091B003050E2 /* KeyboardInputField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -933,14 +963,27 @@
 			name = "moonlight-common";
 			targetProxy = 98AB2E851CAD468B0089BB98 /* PBXContainerItemProxy */;
 		};
-		FB1A68172132509800507771 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "moonlight-common-tv";
-			targetProxy = FB1A68162132509800507771 /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		8454AC682C31907F00F0A302 /* iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8454AC672C31907F00F0A302 /* Base */,
+				8454AC692C31907F00F0A302 /* mul */,
+			);
+			name = iPad.storyboard;
+			sourceTree = "<group>";
+		};
+		8454AC6C2C319BDA00F0A302 /* iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8454AC6B2C319BDA00F0A302 /* Base */,
+				8454AC6D2C319BDA00F0A302 /* mul */,
+			);
+			name = iPhone.storyboard;
+			sourceTree = "<group>";
+		};
 		FB1A675E2132419700507771 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1196,10 +1239,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = DM46QST4M7;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = FRL23UV4N9;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Limelight/Limelight-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -1208,8 +1251,15 @@
 					"$(PROJECT_DIR)/moonlight-common/moonlight-common-c/src",
 					"$(SDKROOT)/usr/include/libxml2/**",
 					"$(PROJECT_DIR)/libs/**",
+					"$(PROJECT_DIR)/Limelight/Input/CustomOSC",
+					"$(PROJECT_DIR)/Limelight/ViewControllers/CustomOSCViewControl",
+					"$(PROJECT_DIR)/Limelight/ViewControllers/CustomOSCViewControl/Cells",
+					"$(PROJECT_DIR)/Limelight/Input",
+					"$(PROJECT_DIR)/Limelight/Localization",
+					"$(PROJECT_DIR)/Limelight/Database",
 				);
 				INFOPLIST_FILE = "Limelight/Limelight-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = MoonlightZWM;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
@@ -1236,8 +1286,9 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Limelight/Input/Moonlight-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Limelight/Moonlight-Bridging-Header.h";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "Moonlight-Swift.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
@@ -1253,8 +1304,8 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = DM46QST4M7;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = FRL23UV4N9;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Limelight/Limelight-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -1263,8 +1314,15 @@
 					"$(PROJECT_DIR)/moonlight-common/moonlight-common-c/src",
 					"$(SDKROOT)/usr/include/libxml2/**",
 					"$(PROJECT_DIR)/libs/**",
+					"$(PROJECT_DIR)/Limelight/Input/CustomOSC",
+					"$(PROJECT_DIR)/Limelight/ViewControllers/CustomOSCViewControl",
+					"$(PROJECT_DIR)/Limelight/ViewControllers/CustomOSCViewControl/Cells",
+					"$(PROJECT_DIR)/Limelight/Input",
+					"$(PROJECT_DIR)/Limelight/Localization",
+					"$(PROJECT_DIR)/Limelight/Database",
 				);
 				INFOPLIST_FILE = "Limelight/Limelight-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = MoonlightZWM;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
@@ -1304,15 +1362,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		FB1A67682132419A00507771 /* Build configuration list for PBXNativeTarget "Moonlight TV" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				FB1A67662132419A00507771 /* Debug */,
-				FB1A67672132419A00507771 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		FB290CE919B2C406004C83CF /* Build configuration list for PBXProject "Moonlight" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1322,7 +1371,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		FB290D2019B2C406004C83CF /* Build configuration list for PBXNativeTarget "Moonlight" */ = {
+		FB290D2019B2C406004C83CF /* Build configuration list for PBXNativeTarget "Moonlight-ZWM" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FB290D2119B2C406004C83CF /* Debug */,

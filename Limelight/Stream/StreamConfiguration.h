@@ -27,10 +27,12 @@
 @property BOOL playAudioOnPC;
 @property BOOL swapABXYButtons;
 @property int motionMode;
+@property BOOL largerStickLR1;
 @property int audioConfiguration;
 @property int supportedVideoFormats;
 @property BOOL multiController;
 @property BOOL useFramePacing;
 @property NSData* serverCert;
+@property int mouseMode;
 
 @end

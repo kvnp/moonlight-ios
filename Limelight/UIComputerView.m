@@ -7,6 +7,7 @@
 //
 
 #import "UIComputerView.h"
+#import "LocalizationHelper.h"
 
 @implementation UIComputerView {
     TemporaryHost* _host;
@@ -104,7 +105,7 @@ static const int LABEL_DY = 20;
     
     [self addTarget:self action:@selector(addClicked) forControlEvents:UIControlEventPrimaryActionTriggered];
     
-    [_hostLabel setText:@"Add Host Manually"];
+    [_hostLabel setText:[LocalizationHelper localizedStringForKey:@"Add Host Manually"]];
     [_hostLabel sizeToFit];
     
     [_hostOverlay setImage:[UIImage imageNamed:@"AddOverlayIcon"]];

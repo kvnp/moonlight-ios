@@ -27,6 +27,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 #import "SWRevealViewController.h"
+#import "DataManager.h"
 
 
 #pragma mark - StatusBar Helper Function
@@ -552,6 +553,7 @@ static CGFloat scaledValue( CGFloat v1, CGFloat min2, CGFloat max2, CGFloat min1
     const int kDirectionPanThreshold = 5;
     
     UITouch *touch = [touches anyObject];
+    
     CGPoint nowPoint = [touch locationInView:self.view];
     
     if (fabs(nowPoint.x - _beginPoint.x) > kDirectionPanThreshold) _dragging = YES;
@@ -626,10 +628,10 @@ const int FrontViewPositionNone = 0xff;
     _frontViewPosition = FrontViewPositionLeft;
     _rearViewPosition = FrontViewPositionLeft;
     _rightViewPosition = FrontViewPositionLeft;
-    _rearViewRevealWidth = 510.0f;
+    _rearViewRevealWidth = 492.0f;
     _rearViewRevealOverdraw = 60.0f;
     _rearViewRevealDisplacement = 40.0f;
-    _rightViewRevealWidth = 510.0f;
+    _rightViewRevealWidth = 492.0f;
     _rightViewRevealOverdraw = 60.0f;
     _rightViewRevealDisplacement = 40.0f;
     _bounceBackOnOverdraw = YES;
@@ -718,6 +720,36 @@ const int FrontViewPositionNone = 0xff;
     [self _setFrontViewPosition:initialPosition withDuration:0.0];
 }
 
+
+- (UIInterfaceOrientationMask)getCurrentOrientation{
+    CGFloat screenHeightInPoints = CGRectGetHeight([[UIScreen mainScreen] bounds]);
+    CGFloat screenWidthInPoints = CGRectGetWidth([[UIScreen mainScreen] bounds]);
+    //lock the orientation accordingly after streaming is started
+    if(screenWidthInPoints > screenHeightInPoints) return UIInterfaceOrientationMaskLandscape;
+    else return UIInterfaceOrientationMaskPortrait|UIInterfaceOrientationMaskPortraitUpsideDown;
+}
+
+
+// tested on iOS17. this method does not call back on iOS14, runtime orientation limitation not working for iOS14. Probably depends on iOS16 or higher.
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+    // Return the supported interface orientations based on the current state
+    // NSLog(@"supportedInterfaceOrientations called back 666");
+    //lock the orientation accordingly after streaming is started
+    DataManager* dataMan = [[DataManager alloc] init];
+    Settings *currentSettings = [dataMan retrieveSettings];
+    //Handle allow portrait on & off
+    if(currentSettings.allowPortrait){
+        if (self.isStreaming || self.mainFrameIsInHostView) return [self getCurrentOrientation]; //orientation change is not allowed in streaming or mainframe host view
+        else return UIInterfaceOrientationMaskAll;
+    }
+    else return UIInterfaceOrientationMaskLandscape;
+}
+
+
+
+- (void)viewDidLoad{
+    self.isStreaming = false; //init this flag
+}
 
 - (void)viewDidAppear:(BOOL)animated
 {
@@ -888,6 +920,7 @@ const int FrontViewPositionNone = 0xff;
         [_contentView.frontView addGestureRecognizer:_panGestureRecognizer];
     }
     return _panGestureRecognizer;
+    return nil;
 }
 
 
@@ -1233,8 +1266,7 @@ const int FrontViewPositionNone = 0xff;
     CGFloat translation = [recognizer translationInView:_contentView].x;
     
     CGFloat baseLocation = [_contentView frontLocationForPosition:_panInitialFrontPosition];
-    CGFloat xLocation = baseLocation + translation;
-    
+    CGFloat xLocation = baseLocation + translation; // buggy on portrait mode??/
     if ( xLocation < 0 )
     {
         if ( _rightViewController == nil ) xLocation = 0;

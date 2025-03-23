@@ -28,7 +28,7 @@
     self.externalAddress = host.externalAddress;
     self.localAddress = host.localAddress;
     self.ipv6Address = host.ipv6Address;
-    self.mac = host.mac;
+    if(!(host.mac == nil || [host.mac isEqualToString:@"00:00:00:00:00:00"])) self.mac = host.mac; // try to fix invalid mac happens in some cases
     self.name = host.name;
     self.uuid = host.uuid;
     self.serverCodecModeSupport = host.serverCodecModeSupport;
@@ -70,9 +70,9 @@
     if (self.ipv6Address != nil) {
         parentHost.ipv6Address = self.ipv6Address;
     }
-    if (self.mac != nil) {
-        parentHost.mac = self.mac;
-    }
+    // try to fix invalid mac happens in some cases
+    // 添加主机crash问题重点关注
+    if (!(self.mac == nil || [self.mac isEqualToString:@"00:00:00:00:00:00"])) parentHost.mac = self.mac;
     if (self.serverCert != nil) {
         parentHost.serverCert = self.serverCert;
     }

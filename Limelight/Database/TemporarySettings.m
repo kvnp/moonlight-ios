@@ -83,9 +83,26 @@
     self.swapABXYButtons = settings.swapABXYButtons;
     self.onscreenControls = settings.onscreenControls;
     self.motionMode = settings.motionMode;
+    self.reverseMouseWheelDirection = settings.reverseMouseWheelDirection;
+    self.largerStickLR1 = settings.largerStickLR1;
     self.btMouseSupport = settings.btMouseSupport;
-    self.absoluteTouchMode = settings.absoluteTouchMode;
+    // self.absoluteTouchMode = settings.absoluteTouchMode;
+    self.touchMode = settings.touchMode;
     self.statsOverlay = settings.statsOverlay;
+    self.keyboardToggleFingers = settings.keyboardToggleFingers;
+    self.oscLayoutToolFingers = settings.oscLayoutToolFingers;
+    self.slideToSettingsScreenEdge = settings.slideToSettingsScreenEdge;
+    self.slideToSettingsDistance = settings.slideToSettingsDistance;
+    self.liftStreamViewForKeyboard = settings.liftStreamViewForKeyboard;
+    self.showKeyboardToolbar = settings.showKeyboardToolbar;
+    self.oscTapExlusionAreaSize = settings.oscTapExlusionAreaSize;
+    self.touchPointerVelocityFactor = settings.touchPointerVelocityFactor;
+    self.mousePointerVelocityFactor = settings.mousePointerVelocityFactor;
+    self.pointerVelocityModeDivider = settings.pointerVelocityModeDivider;
+    self.allowPortrait = settings.allowPortrait;
+    self.resolutionSelected = settings.resolutionSelected;
+    self.externalDisplayMode = settings.externalDisplayMode;
+    self.mouseMode = settings.mouseMode;
 #endif
     self.uniqueId = settings.uniqueId;
     

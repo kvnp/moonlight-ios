@@ -311,6 +311,9 @@ typedef NS_ENUM(NSInteger, SWRevealToggleAnimationType)
 // Delegate
 @property (nonatomic,weak) id<SWRevealViewControllerDelegate> delegate;
 
+@property (nonatomic,assign) bool isStreaming;
+@property (nonatomic,assign) bool mainFrameIsInHostView;
+
 @end
 
 

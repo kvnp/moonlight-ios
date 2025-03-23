@@ -59,6 +59,18 @@
                      audioConfig:(NSInteger)audioConfig
                 onscreenControls:(NSInteger)onscreenControls
                       motionMode:(NSInteger)motionMode
+           keyboardToggleFingers:(NSInteger)keyboardToggleFingers
+            oscLayoutToolFingers:(NSInteger)oscLayoutToolFingers
+       slideToSettingsScreenEdge:(NSInteger)slideToSettingsScreenEdge
+             slideToSettingsDistance:(CGFloat)slideToSettingsDistance
+      pointerVelocityModeDivider:(CGFloat)pointerVelocityModeDivider
+      touchPointerVelocityFactor:(CGFloat)touchPointerVelocityFactor
+      mousePointerVelocityFactor:(CGFloat)mousePointerVelocityFactor
+          oscTapExlusionAreaSize:(CGFloat)oscTapExlusionAreaSize
+      reverseMouseWheelDirection:(BOOL)reverseMouseWheelDirection
+                  largerStickLR1:(BOOL)largerStickLR1
+       liftStreamViewForKeyboard:(BOOL)liftStreamViewForKeyboard
+             showKeyboardToolbar:(BOOL)showKeyboardToolbar
                    optimizeGames:(BOOL)optimizeGames
                  multiController:(BOOL)multiController
                  swapABXYButtons:(BOOL)swapABXYButtons
@@ -67,8 +79,13 @@
                   useFramePacing:(BOOL)useFramePacing
                        enableHdr:(BOOL)enableHdr
                   btMouseSupport:(BOOL)btMouseSupport
-               absoluteTouchMode:(BOOL)absoluteTouchMode
-                    statsOverlay:(BOOL)statsOverlay {
+               // absoluteTouchMode:(BOOL)absoluteTouchMode
+                       touchMode:(NSInteger)touchMode
+                    statsOverlay:(BOOL)statsOverlay 
+                   allowPortrait:(BOOL)allowPortrait
+              resolutionSelected:(NSInteger)resolutionSelected
+             externalDisplayMode:(NSInteger)externalDisplayMode
+                       mouseMode:(NSInteger)mouseMode {
     
     [_managedObjectContext performBlockAndWait:^{
         Settings* settingsToSave = [self retrieveSettings];
@@ -79,6 +96,18 @@
         settingsToSave.audioConfig = [NSNumber numberWithInteger:audioConfig];
         settingsToSave.onscreenControls = [NSNumber numberWithInteger:onscreenControls];
         settingsToSave.motionMode = [NSNumber numberWithInteger:motionMode];
+        settingsToSave.keyboardToggleFingers = [NSNumber numberWithInteger:(uint16_t)keyboardToggleFingers];
+        settingsToSave.oscLayoutToolFingers = [NSNumber numberWithInteger:(uint16_t)oscLayoutToolFingers];
+        settingsToSave.slideToSettingsScreenEdge = [NSNumber numberWithInteger:(uint32_t)slideToSettingsScreenEdge];
+        settingsToSave.slideToSettingsDistance = [NSNumber numberWithFloat:slideToSettingsDistance];
+        settingsToSave.pointerVelocityModeDivider = [NSNumber numberWithFloat:pointerVelocityModeDivider];
+        settingsToSave.touchPointerVelocityFactor = [NSNumber numberWithFloat:touchPointerVelocityFactor];
+        settingsToSave.mousePointerVelocityFactor = [NSNumber numberWithFloat:mousePointerVelocityFactor];
+        settingsToSave.oscTapExlusionAreaSize = [NSNumber numberWithFloat:oscTapExlusionAreaSize];
+        settingsToSave.reverseMouseWheelDirection = reverseMouseWheelDirection;
+        settingsToSave.largerStickLR1 = largerStickLR1;
+        settingsToSave.liftStreamViewForKeyboard = liftStreamViewForKeyboard;
+        settingsToSave.showKeyboardToolbar = showKeyboardToolbar;
         settingsToSave.optimizeGames = optimizeGames;
         settingsToSave.multiController = multiController;
         settingsToSave.swapABXYButtons = swapABXYButtons;
@@ -87,9 +116,13 @@
         settingsToSave.useFramePacing = useFramePacing;
         settingsToSave.enableHdr = enableHdr;
         settingsToSave.btMouseSupport = btMouseSupport;
-        settingsToSave.absoluteTouchMode = absoluteTouchMode;
+        // settingsToSave.absoluteTouchMode = absoluteTouchMode;
+        settingsToSave.touchMode = [NSNumber numberWithInteger:(uint16_t)touchMode];
         settingsToSave.statsOverlay = statsOverlay;
-        
+        settingsToSave.allowPortrait = allowPortrait;
+        settingsToSave.resolutionSelected = [NSNumber numberWithInteger:resolutionSelected];
+        settingsToSave.externalDisplayMode = [NSNumber numberWithInteger:externalDisplayMode];
+        settingsToSave.mouseMode = [NSNumber numberWithInteger:mouseMode];
         [self saveData];
     }];
 }

@@ -13,6 +13,7 @@
 #import <netinet/in.h>
 #import <arpa/inet.h>
 #import <netdb.h>
+#import <ifaddrs.h>
 
 @implementation WakeOnLanManager
 
@@ -40,21 +41,27 @@ static const int dynamicPorts[numDynamicPorts] = {
 + (void) wakeHost:(TemporaryHost*)host {
     NSData* wolPayload = [WakeOnLanManager createPayload:host];
     
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         NSString* address;
         struct addrinfo hints, *res, *curr;
         
         // try all ip addresses
         if (i == 0 && host.localAddress != nil) {
             address = host.localAddress;
+            NSLog(@"localAddress in wakeHost: %@", host.localAddress);
         } else if (i == 1 && host.externalAddress != nil) {
             address = host.externalAddress;
+            NSLog(@"externalAddress in wakeHost: %@", address);
         } else if (i == 2 && host.address != nil) {
             address = host.address;
+            NSLog(@"Address in wakeHost: %@", address);
         } else if (i == 3 && host.ipv6Address != nil) {
             address = host.ipv6Address;
+            NSLog(@"ipv6Address in wakeHost: %@", address);
         } else if (i == 4) {
             address = @"255.255.255.255";
+        } else if (i == 5 && host.localAddress != nil) {
+            address = host.localAddress;
         } else {
             // Requested address wasn't present
             continue;
@@ -64,6 +71,16 @@ static const int dynamicPorts[numDynamicPorts] = {
         NSString* rawAddress = [Utils addressPortStringToAddress:address];
         unsigned short basePort = [Utils addressPortStringToPort:address];
         
+        // Loop 5 is for using the broadcast address
+        if (i == 5) {
+            NSString *subnetMask = [self getSubnetMask];
+            if (subnetMask == nil) {
+                subnetMask = @"255.255.255.0";
+            }
+            rawAddress = [self calculateBroadcastAddressForIP:rawAddress withSubnetMask:subnetMask];
+        }
+        NSLog(@"rawAddress in wakeHost: %@", rawAddress);
+
         memset(&hints, 0, sizeof(hints));
         hints.ai_family = AF_UNSPEC;
         hints.ai_flags = AI_ADDRCONFIG;
@@ -148,4 +165,58 @@ static const int dynamicPorts[numDynamicPorts] = {
     return [Utils hexToBytes:macString];
 }
 
+
++ (NSString *)calculateBroadcastAddressForIP:(NSString *)ipAddress withSubnetMask:(NSString *)subnetMask {
+    struct in_addr ip;
+    struct in_addr mask;
+    struct in_addr broadcast;
+    
+    if (inet_pton(AF_INET, [ipAddress UTF8String], &ip) != 1) {
+        NSLog(@"Invalid IP address format");
+        return nil;
+    }
+    
+    if (inet_pton(AF_INET, [subnetMask UTF8String], &mask) != 1) {
+        NSLog(@"Invalid subnet mask format");
+        return nil;
+    }
+    
+    broadcast.s_addr = ip.s_addr | ~mask.s_addr;
+    
+    char broadcastAddress[INET_ADDRSTRLEN];
+    if (inet_ntop(AF_INET, &broadcast, broadcastAddress, INET_ADDRSTRLEN) == NULL) {
+        NSLog(@"Failed to convert broadcast address to string");
+        return nil;
+    }
+    
+    return [NSString stringWithUTF8String:broadcastAddress];
+}
+
++ (NSString *)getSubnetMask {
+    struct ifaddrs *interfaces = NULL;
+    struct ifaddrs *temp_addr = NULL;
+    NSString *subnetMask = nil;
+    
+    // Retrieve the current interfaces - returns 0 on success
+    if (getifaddrs(&interfaces) == 0) {
+        // Loop through linked list of interfaces
+        temp_addr = interfaces;
+        while (temp_addr != NULL) {
+            if (temp_addr->ifa_addr->sa_family == AF_INET) {
+                // Check if interface is en0 which is the wifi connection on the iPhone
+                if ([[NSString stringWithUTF8String:temp_addr->ifa_name] isEqualToString:@"en0"]) {
+                    // Get NSString from C String
+                    subnetMask = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_netmask)->sin_addr)];
+                    break;
+                }
+            }
+            temp_addr = temp_addr->ifa_next;
+        }
+    }
+    
+    // Free memory
+    freeifaddrs(interfaces);
+    
+    return subnetMask;
+}
 @end

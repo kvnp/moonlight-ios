@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate.h"
+#import "MainFrameViewController.h"
+#import "Moonlight-Swift.h"
 
 @implementation AppDelegate
 
@@ -22,17 +24,34 @@ static NSString* DB_NAME = @"Moonlight_tvOS.bin";
 static NSString* DB_NAME = @"Limelight_iOS.sqlite";
 #endif
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+
 #if !TARGET_OS_TV
-    UIApplicationShortcutItem* shortcut = [launchOptions valueForKey:UIApplicationLaunchOptionsShortcutItemKey];
-    if (shortcut != nil) {
-        _pcUuidToLoad = (NSString*)[shortcut.userInfo objectForKey:@"UUID"];
+
+/*
+// orietation limitatioin test
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+    UIViewController *topController = window.rootViewController;
+    while (topController.presentedViewController) {
+        topController = topController.presentedViewController;
     }
-#endif
+    return [topController supportedInterfaceOrientations];
+}
+*/
+
+/*
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+    NSLog(@"orientation limit");
+        return UIInterfaceOrientationMaskLandscape;
+}
+*/
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // Override point for command tool customization after application launch (works only when user default is nil)
+    [CommandManager presetDefaultCommands];
     return YES;
 }
 
-#if !TARGET_OS_TV
+
 - (void)application:(UIApplication *)application performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem completionHandler:(void (^)(BOOL succeeded))completionHandler {
     _pcUuidToLoad = (NSString*)[shortcutItem.userInfo objectForKey:@"UUID"];
     _shortcutCompletionHandler = completionHandler;
